@@ -1,0 +1,166 @@
+---
+title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge"
+abbrev: "ACME-DNS-ACCOUNT-01"
+category: info
+
+docname: draft-todo-chariton-dns-account-01-latest
+v: 3
+area: Security
+workgroup: ACME Working Group
+keyword: acme
+ipr: full3978trust200902
+venue:
+  group: WG
+  type: Working Group
+  mail: WG@example.com
+  arch: https://example.com/WG
+  github: daknob/draft-todo-chariton-dns-account-01
+  latest: https://example.com/LATEST
+
+author:
+ -
+    fullname: Antonios A. Chariton
+    organization: Google
+    email: aac@google.com
+ -
+    fullname: Amir Omidi
+    organization: Google
+    email: aaomidi@google.com
+ -
+    fullname: James Kasten
+    organization: Google
+    email: jdkasten@google.com
+ -
+    fullname: Fotis Loukos
+    organization: Google
+    email: fotisl@google.com
+
+normative:
+  FIPS180-4:
+    title: "Secure Hash Standard (SHS)"
+    date: 2015-08
+
+informative:
+
+--- abstract
+
+This document specifies a new challenge type for the Automated Certificate Management Environment (ACME) protocol which allows an ACME client to respond to a domain control validation challenge presented by an ACME server with a DNS resource that is keyed by the ACME account identification.
+
+--- middle
+
+# Introduction
+
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This unique label creates an impediment limiting the number of other entities domain validation can be delegated to.
+
+This document specifies a new challenge type, `dns-account-01`. This challenge leverages the ACME Account Resource URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through ACME account-unique DNS records.
+
+This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since this new challenge does not modify or build on any pre-existing challenges, the ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using this challenge an opt-in process.
+
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+# DNS-ACCOUNT-01 Challenge
+
+When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a `TXT` resource record containing a designated value for a specific validation domain name.
+
+* type (required, string): The string "dns-account-01".
+* token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC4086}} for additional information on additional requirements for secure randomness.
+
+```
+{
+    "type": "dns-account-01",
+    "url": "https://example.com/acme/chall/i00MGYwLWIx",
+    "status": "pending",
+    "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
+}
+```
+
+A client can fulfill this challenge by performing the following steps:
+
+Construct a key authorization from the "token" value provided in the challenge and the client's account key<br>
+Compute the SHA-256 digest {{FIPS180-4}} of the key authorization<br>
+Construct the validation domain name by prepending the following label to the domain name being validated:
+
+```
+"_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
+```
+
+SHA-256 is the SHA hashing operation defined in {{!RFC6234}}.<br>
+[0:10) is the operation that selects the first ten bytes from the previous SHA256 operation.<br>
+base32 is the operation defined in {{!RFC4648}}<br>
+Account Resource URL is defined in {{!RFC8555}}
+
+The `"||"` operator indicates concatenation of strings.
+
+Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
+
+For example, if the domain name being validated is "www.example.org", and the account URL of "https://example.com/acme/acct/ExampleAccount" then the client would provision the following DNS record:
+
+```
+_acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+```
+
+(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
+
+Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
+
+```
+POST /acme/chall/Rg5dV14Gh1Q
+Host: example.com
+Content-Type: application/jose+json
+
+{
+  "protected": base64url({
+    "alg": "ES256",
+    "kid": "https://example.com/acme/acct/evOfKhNU60wg",
+    "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+    "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+  }),
+  "payload": base64url({}),
+  "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+}
+```
+
+On receiving a response, the server constructs and stores the key authorization from the challenge "token" value and the current client account key.
+
+To validate the `dns-account-01` challenge, the server performs the following steps:
+
+Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization<br>
+Compute the validation domain name with the account URL of the ACME account requesting validation<br>
+Query for `TXT` records for the validation domain name<br>
+Verify that the contents of one of the TXT records match the digest value
+
+If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server MUST fail the validation and mark the challenge as invalid.
+
+The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
+
+# Security Considerations
+
+As this challenge that is introduced only differs in the left-most label of the domain name from the existing `dns-01` challenge, the same security considerations apply.
+
+In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size.
+
+SHA-256 was picked due to its broad adoption, hardware support, and existing need in implementations that would likely support `dns-account-01`.
+
+The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
+
+# IANA Considerations
+
+## ACME Validation Method
+
+The "ACME Validation Methods" registry is to be updated to include the following entry:
+
+```
+label: dns-account-01
+identifier-type: dns
+ACME: Y
+Reference: This document
+```
+
+
+--- back
+
+# Acknowledgments
+{:numbered="false"}
+
