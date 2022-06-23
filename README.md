@@ -1,17 +1,17 @@
-# TODO - Your title
+# Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the individual Internet-Draft, "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge".
 
-* [Editor's Copy](https://aaomidi.github.io/test-standard/#go.draft-todo-aaomidi-memes.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-todo-aaomidi-memes)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-todo-aaomidi-memes)
-* [Compare Editor's Copy to Individual Draft](https://aaomidi.github.io/test-standard/#go.draft-todo-aaomidi-memes.diff)
+* [Editor's Copy](https://aaomidi.github.io/draft-todo-chariton-dns-account-01/#go.draft-todo-chariton-dns-account.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-todo-chariton-dns-account)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-todo-chariton-dns-account)
+* [Compare Editor's Copy to Individual Draft](https://aaomidi.github.io/draft-todo-chariton-dns-account-01/#go.draft-todo-chariton-dns-account.diff)
 
 
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/aaomidi/test-standard/blob//CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/aaomidi/draft-todo-chariton-dns-account-01/blob/main/CONTRIBUTING.md).
 
 Contributions can be made by creating pull requests.
 The GitHub interface supports creating pull requests using the Edit (✏) button.
