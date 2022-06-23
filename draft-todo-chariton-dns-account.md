@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACM
 abbrev: "ACME-DNS-ACCOUNT-01"
 category: info
 
-docname: draft-todo-chariton-dns-account-01-latest
+docname: draft-todo-chariton-dns-account-latest
 v: 3
 area: Security
 workgroup: ACME Working Group
