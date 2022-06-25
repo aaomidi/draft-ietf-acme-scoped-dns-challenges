@@ -1,5 +1,8 @@
 name: "Update"
 
+concurrency:
+  group: update
+
 on:
   push:
     paths-ignore:
