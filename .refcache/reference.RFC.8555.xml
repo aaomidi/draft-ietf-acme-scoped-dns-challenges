@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference  anchor='RFC8555' target='https://www.rfc-editor.org/info/rfc8555'>
+<front>
+<title>Automatic Certificate Management Environment (ACME)</title>
+<author initials='R.' surname='Barnes' fullname='R. Barnes'><organization /></author>
+<author initials='J.' surname='Hoffman-Andrews' fullname='J. Hoffman-Andrews'><organization /></author>
+<author initials='D.' surname='McCarney' fullname='D. McCarney'><organization /></author>
+<author initials='J.' surname='Kasten' fullname='J. Kasten'><organization /></author>
+<date year='2019' month='March' />
+<abstract><t>Public Key Infrastructure using X.509 (PKIX) certificates are used for a number of purposes, the most significant of which is the authentication of domain names.  Thus, certification authorities (CAs) in the Web PKI are trusted to verify that an applicant for a certificate legitimately represents the domain name(s) in the certificate.  As of this writing, this verification is done through a collection of ad hoc mechanisms.  This document describes a protocol that a CA and an applicant can use to automate the process of verification and certificate issuance.  The protocol also provides facilities for other certificate management functions, such as certificate revocation.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='8555'/>
+<seriesInfo name='DOI' value='10.17487/RFC8555'/>
+</reference>
