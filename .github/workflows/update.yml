@@ -11,42 +11,31 @@ on:
     - LICENSE.md
     - .gitignore
     - docs/*
-  pull_request:
-    paths-ignore:
-    - README.md
-    - CONTRIBUTING.md
-    - LICENSE.md
-    - .gitignore
-    - docs/*
   workflow_dispatch:
 
 jobs:
   build:
-    name: "Update"
+    name: Update
     runs-on: ubuntu-latest
 
     steps:
-    - name: "Checkout"
+    - name: Checkout 📋
       uses: actions/checkout@v2
 
-    - name: "Setup tools"
+    - name: Setup 🏗️
       run: |
         sudo apt-get install --yes xml2rfc ruby
         sudo gem install kramdown-rfc
-        git config --global user.name "${GITHUB_ACTOR}"
-        git config --global user.email "${GITHUB_ACTOR}"@users.noreply.github.com
 
-    - name: "Update GitHub Pages"
+    - name: Generate 🔨
       run: |
         /usr/local/bin/kramdown-rfc2629 --v3 draft-todo-chariton-dns-account-01.md  > docs/draft.xml
         cd docs
         xml2rfc --text --html --v3 draft.xml
         mv draft.html index.html
 
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-
-    - name: "Push changes"
-      run: |
-        git add -A && git commit -m "Update RFC" --allow-empty
-        git push -u origin HEAD
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: docs # The folder the action should deploy.
