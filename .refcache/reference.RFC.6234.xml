@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference  anchor='RFC6234' target='https://www.rfc-editor.org/info/rfc6234'>
+<front>
+<title>US Secure Hash Algorithms (SHA and SHA-based HMAC and HKDF)</title>
+<author initials='D.' surname='Eastlake 3rd' fullname='D. Eastlake 3rd'><organization /></author>
+<author initials='T.' surname='Hansen' fullname='T. Hansen'><organization /></author>
+<date year='2011' month='May' />
+<abstract><t>Federal Information Processing Standard, FIPS</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6234'/>
+<seriesInfo name='DOI' value='10.17487/RFC6234'/>
+</reference>
