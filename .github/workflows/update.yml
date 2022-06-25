@@ -28,11 +28,8 @@ jobs:
       run: |
         sudo apt-get install --yes xml2rfc ruby
         sudo gem install kramdown-rfc
-        git config --global user.name '${GITHUB_ACTOR}'
-        git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
-
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR}"@users.noreply.github.com
 
     - name: "Update GitHub Pages"
       run: |
@@ -40,6 +37,9 @@ jobs:
         cd docs
         xml2rfc --text --html --v3 draft.xml
         mv draft.html index.html
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: "Push changes"
       run: |
