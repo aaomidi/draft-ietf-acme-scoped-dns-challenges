@@ -7,12 +7,14 @@ on:
     - CONTRIBUTING.md
     - LICENSE.md
     - .gitignore
+    - docs/*
   pull_request:
     paths-ignore:
     - README.md
     - CONTRIBUTING.md
     - LICENSE.md
     - .gitignore
+    - docs/*
   workflow_dispatch:
 
 jobs:
@@ -38,8 +40,8 @@ jobs:
         xml2rfc --text --html --v3 draft.xml
         mv draft.html index.html
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
 
     - name: "Push changes"
       run: |
