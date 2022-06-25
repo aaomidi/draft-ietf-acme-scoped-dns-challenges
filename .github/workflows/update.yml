@@ -26,13 +26,13 @@ jobs:
 
     - name: "Setup tools"
       run: |
-        ls
         sudo apt-get install --yes ruby-kramdown-rfc2629 xml2rfc
         git config --global user.name '${GITHUB_ACTOR}'
         git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
 
     - name: "Update GitHub Pages"
       run: |
+        ls
         kramdown-rfc2629 --v3 draft-todo-chariton-dns-account-01.md > docs/draft.xml
         cd docs
         xml2rfc --text --html --v3 draft.xml
