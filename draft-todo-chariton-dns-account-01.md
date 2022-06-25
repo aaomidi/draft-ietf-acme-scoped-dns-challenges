@@ -15,7 +15,7 @@ venue:
   mail: WG@example.com
   arch: https://example.com/WG
   github: daknob/draft-todo-chariton-dns-account-01
-  latest: https://example.com/LATEST
+  latest: https://daknob.github.io/draft-todo-chariton-dns-account-01/
 
 author:
  -
