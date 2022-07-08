@@ -5,9 +5,10 @@
 ACME Working Group                                        A. A. Chariton
 Internet-Draft                                                  A. Omidi
 Intended status: Informational                                 J. Kasten
-Expires: 27 December 2022                                      F. Loukos
+Expires: 9 January 2023                                        F. Loukos
+                                                        S. A. Janikowski
                                                                   Google
-                                                            25 June 2022
+                                                             8 July 2022
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
@@ -48,20 +49,21 @@ Status of This Memo
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
 
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 1]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
-
-
-
-Chariton, et al.        Expires 27 December 2022                [Page 1]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
-
-
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 December 2022.
+   This Internet-Draft will expire on 9 January 2023.
 
 Copyright Notice
 
@@ -103,17 +105,18 @@ Table of Contents
    allows any domain name to delegate its domain validation to more than
    one service through ACME account-unique DNS records.
 
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 2]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
    This RFC does not intend to deprecate the "dns-01" challenge
    specified in [RFC8555].  Since this new challenge does not modify or
    build on any pre-existing challenges, the ability to complete the
-
-
-
-Chariton, et al.        Expires 27 December 2022                [Page 2]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
-
-
    "dns-account-01" challenge requires ACME server operators to deploy
    new changes to their codebase.  This makes adopting and using this
    challenge an opt-in process.
@@ -158,17 +161,19 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
    SHA-256 is the SHA hashing operation defined in [RFC6234].
    [0:10) is the operation that selects the first ten bytes from the
    previous SHA256 operation.
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 3]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
    base32 is the operation defined in [RFC4648]
    Account Resource URL is defined in [RFC8555]
 
    The ""||"" operator indicates concatenation of strings.
-
-
-
-Chariton, et al.        Expires 27 December 2022                [Page 3]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
-
 
    Provision a DNS "TXT" record with the base64url digest value under
    the constructed domain validation name
@@ -212,19 +217,21 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
 
    If all the above verifications succeed, then the validation is
    successful.  If no DNS record is found, or DNS record and response
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 4]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
    payload do not pass these checks, then the server MUST fail the
    validation and mark the challenge as invalid.
 
    The client SHOULD de-provision the resource record(s) provisioned for
    this challenge once the challenge is complete, i.e., once the
    "status" field of the challenge has the value "valid" or "invalid".
-
-
-
-Chariton, et al.        Expires 27 December 2022                [Page 4]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
-
 
 4.  Security Considerations
 
@@ -266,6 +273,15 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 5]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
@@ -273,14 +289,6 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
               "Randomness Requirements for Security", BCP 106, RFC 4086,
               DOI 10.17487/RFC4086, June 2005,
               <https://www.rfc-editor.org/info/rfc4086>.
-
-
-
-
-Chariton, et al.        Expires 27 December 2022                [Page 5]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 June 2022
-
 
    [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
@@ -322,15 +330,63 @@ Authors' Addresses
    Email: jdkasten@google.com
 
 
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 6]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
    Fotis Loukos
    Google
 
    Email: fotisl@google.com
 
 
+   Stanislaw A. Janikowski
+   Google
+
+   Email: stanwise@google.com
 
 
 
 
 
-Chariton, et al.        Expires 27 December 2022                [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chariton, et al.         Expires 9 January 2023                 [Page 7]
