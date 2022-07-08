@@ -34,6 +34,10 @@ author:
     fullname: Fotis Loukos
     organization: Google
     email: fotisl@google.com
+ -
+    fullname: Stanislaw A. Janikowski
+    organization: Google
+    email: stanwise@google.com
 
 normative:
   FIPS180-4:
