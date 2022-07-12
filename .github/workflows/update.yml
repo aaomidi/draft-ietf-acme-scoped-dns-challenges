@@ -5,6 +5,8 @@ concurrency:
 
 on:
   push:
+    branches:
+    - main
     paths-ignore:
     - README.md
     - CONTRIBUTING.md
