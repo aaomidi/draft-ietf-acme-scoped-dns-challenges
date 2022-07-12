@@ -86,10 +86,10 @@ Table of Contents
    3.  DNS-ACCOUNT-01 Challenge  . . . . . . . . . . . . . . . . . .   3
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  ACME Validation Method  . . . . . . . . . . . . . . . . .   5
+     5.1.  ACME Validation Method  . . . . . . . . . . . . . . . . .   6
    6.  Normative References  . . . . . . . . . . . . . . . . . . . .   6
    Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -153,15 +153,15 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    A client can fulfill this challenge by performing the following
    steps:
 
-   Construct a key authorization from the "token" value provided in the
-   challenge and the client's account key
-   Compute the SHA-256 digest [FIPS180-4] of the key authorization
-   Construct the validation domain name by prepending the following
-   label to the domain name being validated:
+   *  Construct a key authorization from the "token" value provided in
+      the challenge and the client's account key
 
-   "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
+   *  Compute the SHA-256 digest [FIPS180-4] of the key authorization
 
+   *  Construct the validation domain name by prepending the following
+      label to the domain name being validated:
 
+      "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10])
 
 
 
@@ -170,16 +170,19 @@ Chariton, et al.         Expires 13 January 2023                [Page 3]
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
-   SHA-256 is the SHA hashing operation defined in [RFC6234].
-   [0:10) is the operation that selects the first ten bytes from the
-   previous SHA256 operation.
-   base32 is the operation defined in [RFC4648]
-   Account Resource URL is defined in [RFC8555]
+      -  SHA-256 is the SHA hashing operation defined in [RFC6234]
 
-   The ""||"" operator indicates concatenation of strings.
+      -  [0:10] is the operation that selects the first ten bytes (bytes
+         0 through 9 inclusive) from the previous SHA256 operation
 
-   Provision a DNS "TXT" record with the base64url digest value under
-   the constructed domain validation name
+      -  base32 is the operation defined in [RFC4648]
+
+      -  Account Resource URL is defined in [RFC8555]
+
+      -  The ""||"" operator indicates concatenation of strings
+
+   *  Provision a DNS "TXT" record with the base64url digest value under
+      the constructed domain validation name
 
    For example, if the domain name being validated is "www.example.org",
    and the account URL of "https://example.com/acme/acct/ExampleAccount"
@@ -215,9 +218,6 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    To validate the "dns-account-01" challenge, the server performs the
    following steps:
 
-   Compute the SHA-256 digest [FIPS180-4] of the stored key
-   authorization
-   Compute the validation domain name with the account URL of the ACME
 
 
 
@@ -226,10 +226,16 @@ Chariton, et al.         Expires 13 January 2023                [Page 4]
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
-   account requesting validation
-   Query for "TXT" records for the validation domain name
-   Verify that the contents of one of the TXT records match the digest
-   value
+   *  Compute the SHA-256 digest [FIPS180-4] of the stored key
+      authorization
+
+   *  Compute the validation domain name with the account URL of the
+      ACME account requesting validation
+
+   *  Query for "TXT" records for the validation domain name
+
+   *  Verify that the contents of one of the TXT records match the
+      digest value
 
    If all the above verifications succeed, then the validation is
    successful.  If no DNS record is found, or DNS record and response
@@ -265,6 +271,17 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 5.  IANA Considerations
 
+
+
+
+
+
+
+Chariton, et al.         Expires 13 January 2023                [Page 5]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
 5.1.  ACME Validation Method
 
    The "ACME Validation Methods" registry is to be updated to include
@@ -275,17 +292,13 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    ACME: Y
    Reference: This document
 
-
-
-Chariton, et al.         Expires 13 January 2023                [Page 5]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
-
-
 6.  Normative References
 
    [FIPS180-4]
-              "Secure Hash Standard (SHS)", August 2015.
+              National Institute of Standards and Technology, "Secure
+              Hash Standard (SHS)", August 2015,
+              <https://csrc.nist.gov/publications/detail/fips/180/4/
+              final>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -317,6 +330,14 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 Acknowledgments
 
+
+
+
+Chariton, et al.         Expires 13 January 2023                [Page 6]
+
+Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
 Authors' Addresses
 
    Antonios A. Chariton
@@ -329,13 +350,6 @@ Authors' Addresses
    Google
 
    Email: aaomidi@google.com
-
-
-
-
-Chariton, et al.         Expires 13 January 2023                [Page 6]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
    James Kasten
@@ -354,20 +368,6 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    Google
 
    Email: stanwise@google.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

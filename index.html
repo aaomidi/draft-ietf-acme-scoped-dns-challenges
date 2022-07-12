@@ -1250,29 +1250,43 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 </pre><a href="#section-3-3" class="pilcrow">¶</a>
 </div>
 <p id="section-3-4">A client can fulfill this challenge by performing the following steps:<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">Construct a key authorization from the "token" value provided in the challenge and the client's account key <br>
-Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization <br>
-Construct the validation domain name by prepending the following label to the domain name being validated:<a href="#section-3-5" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-3-6">
+<ul>
+<li id="section-3-5.1">Construct a key authorization from the <code>token</code> value provided in the challenge and the client's account key<a href="#section-3-5.1" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.2">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<a href="#section-3-5.2" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.3">
+          <p id="section-3-5.3.1">Construct the validation domain name by prepending the following label to the domain name being validated:<a href="#section-3-5.3.1" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-3-5.3.2">
 <pre>
-"_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
-</pre><a href="#section-3-6" class="pilcrow">¶</a>
+"_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10])
+</pre><a href="#section-3-5.3.2" class="pilcrow">¶</a>
 </div>
-<p id="section-3-7">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span>. <br>
-[0:10) is the operation that selects the first ten bytes from the previous SHA256 operation. <br>
-base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span> <br>
-Account Resource URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span><a href="#section-3-7" class="pilcrow">¶</a></p>
-<p id="section-3-8">The <code>"||"</code> operator indicates concatenation of strings.<a href="#section-3-8" class="pilcrow">¶</a></p>
-<p id="section-3-9">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-3-9" class="pilcrow">¶</a></p>
-<p id="section-3-10">For example, if the domain name being validated is "www.example.org", and the account URL of "https://example.com/acme/acct/ExampleAccount" then the client would provision the following DNS record:<a href="#section-3-10" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-3-11">
+<ul>
+<li id="section-3-5.3.3.1">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span><a href="#section-3-5.3.3.1" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.3.3.2">[0:10] is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation<a href="#section-3-5.3.3.2" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.3.3.3">base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span><a href="#section-3-5.3.3.3" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.3.3.4">Account Resource URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span><a href="#section-3-5.3.3.4" class="pilcrow">¶</a>
+</li>
+<li id="section-3-5.3.3.5">The <code>"||"</code> operator indicates concatenation of strings<a href="#section-3-5.3.3.5" class="pilcrow">¶</a>
+</li>
+</ul>
+</li>
+<li id="section-3-5.4">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-3-5.4" class="pilcrow">¶</a>
+</li>
+</ul>
+<p id="section-3-6">For example, if the domain name being validated is "www.example.org", and the account URL of "https://example.com/acme/acct/ExampleAccount" then the client would provision the following DNS record:<a href="#section-3-6" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-3-7">
 <pre>
 _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-</pre><a href="#section-3-11" class="pilcrow">¶</a>
+</pre><a href="#section-3-7" class="pilcrow">¶</a>
 </div>
-<p id="section-3-12">(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)<a href="#section-3-12" class="pilcrow">¶</a></p>
-<p id="section-3-13">Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-3-13" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-3-14">
+<p id="section-3-8">(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)<a href="#section-3-8" class="pilcrow">¶</a></p>
+<p id="section-3-9">Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-3-9" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-3-10">
 <pre>
 POST /acme/chall/Rg5dV14Gh1Q
 Host: example.com
@@ -1288,16 +1302,22 @@ Content-Type: application/jose+json
   "payload": base64url({}),
   "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
 }
-</pre><a href="#section-3-14" class="pilcrow">¶</a>
+</pre><a href="#section-3-10" class="pilcrow">¶</a>
 </div>
-<p id="section-3-15">On receiving a response, the server constructs and stores the key authorization from the challenge "token" value and the current client account key.<a href="#section-3-15" class="pilcrow">¶</a></p>
-<p id="section-3-16">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-3-16" class="pilcrow">¶</a></p>
-<p id="section-3-17">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization <br>
-Compute the validation domain name with the account URL of the ACME account requesting validation <br>
-Query for <code>TXT</code> records for the validation domain name <br>
-Verify that the contents of one of the TXT records match the digest value<a href="#section-3-17" class="pilcrow">¶</a></p>
-<p id="section-3-18">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-3-18" class="pilcrow">¶</a></p>
-<p id="section-3-19">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3-19" class="pilcrow">¶</a></p>
+<p id="section-3-11">On receiving a response, the server constructs and stores the key authorization from the challenge <code>token</code> value and the current client account key.<a href="#section-3-11" class="pilcrow">¶</a></p>
+<p id="section-3-12">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-3-12" class="pilcrow">¶</a></p>
+<ul>
+<li id="section-3-13.1">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<a href="#section-3-13.1" class="pilcrow">¶</a>
+</li>
+<li id="section-3-13.2">Compute the validation domain name with the account URL of the ACME account requesting validation<a href="#section-3-13.2" class="pilcrow">¶</a>
+</li>
+<li id="section-3-13.3">Query for <code>TXT</code> records for the validation domain name<a href="#section-3-13.3" class="pilcrow">¶</a>
+</li>
+<li id="section-3-13.4">Verify that the contents of one of the TXT records match the digest value<a href="#section-3-13.4" class="pilcrow">¶</a>
+</li>
+</ul>
+<p id="section-3-14">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-3-14" class="pilcrow">¶</a></p>
+<p id="section-3-15">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3-15" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1341,7 +1361,7 @@ Reference: This document
 <dl class="references">
 <dt id="FIPS180-4">[FIPS180-4]</dt>
 <dd>
-<span class="refTitle">"Secure Hash Standard (SHS)"</span>, <time datetime="2015-08">August 2015</time>. </dd>
+<span class="refAuthor">National Institute of Standards and Technology</span>, <span class="refTitle">"Secure Hash Standard (SHS)"</span>, <time datetime="2015-08">August 2015</time>, <span>&lt;<a href="https://csrc.nist.gov/publications/detail/fips/180/4/final">https://csrc.nist.gov/publications/detail/fips/180/4/final</a>&gt;</span>. </dd>
 <dt id="RFC2119">[RFC2119]</dt>
 <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
