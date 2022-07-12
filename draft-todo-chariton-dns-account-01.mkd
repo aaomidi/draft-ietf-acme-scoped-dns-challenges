@@ -85,14 +85,14 @@ When the identifier being validated is a domain name, the client can prove contr
 
 A client can fulfill this challenge by performing the following steps:
 
-- Construct a key authorization from the "token" value provided in the challenge and the client's account key
+- Construct a key authorization from the `token` value provided in the challenge and the client's account key
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following label to the domain name being validated:
 
-      "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
+      "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10])
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
-   - [0:10) is the operation that selects the first ten bytes from the previous SHA256 operation
+   - [0:10] is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
    - base32 is the operation defined in {{!RFC4648}}
    - Account Resource URL is defined in {{!RFC8555}}
    - The `"||"` operator indicates concatenation of strings
@@ -126,7 +126,7 @@ Content-Type: application/jose+json
 }
 ~~~
 
-On receiving a response, the server constructs and stores the key authorization from the challenge "token" value and the current client account key.
+On receiving a response, the server constructs and stores the key authorization from the challenge `token` value and the current client account key.
 
 To validate the `dns-account-01` challenge, the server performs the following steps:
 
