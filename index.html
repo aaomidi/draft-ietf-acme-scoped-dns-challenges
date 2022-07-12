@@ -6,7 +6,7 @@
 <meta content="initial-scale=1.0" name="viewport">
 <title>Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge</title>
 <meta content="Antonios A. Chariton" name="author">
-<meta content="Amir Omidi" name="author">
+<meta content="Amir A. Omidi" name="author">
 <meta content="James Kasten" name="author">
 <meta content="Fotis Loukos" name="author">
 <meta content="Stanislaw A. Janikowski" name="author">
@@ -1087,7 +1087,7 @@ ol.type-I { list-style-type: lower-roman; }
 <div class="org">Google</div>
 </div>
 <div class="author">
-      <div class="author-name">A. Omidi</div>
+      <div class="author-name">A. A. Omidi</div>
 <div class="org">Google</div>
 </div>
 <div class="author">
@@ -1239,38 +1239,46 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <li id="section-3-2.2">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="xref">RFC4086</a>]</span> for additional information on additional requirements for secure randomness.<a href="#section-3-2.2" class="pilcrow">¶</a>
 </li>
 </ul>
-<p id="section-3-3"><code>
+<div class="artwork art-text alignLeft" id="section-3-3">
+<pre>
 {
     "type": "dns-account-01",
     "url": "https://example.com/acme/chall/i00MGYwLWIx",
     "status": "pending",
     "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
 }
-</code><a href="#section-3-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-3-3" class="pilcrow">¶</a>
+</div>
 <p id="section-3-4">A client can fulfill this challenge by performing the following steps:<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">Construct a key authorization from the "token" value provided in the challenge and the client's account key<br>
-Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<br>
+<p id="section-3-5">Construct a key authorization from the "token" value provided in the challenge and the client's account key <br>
+Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization <br>
 Construct the validation domain name by prepending the following label to the domain name being validated:<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6"><code>
+<div class="artwork art-text alignLeft" id="section-3-6">
+<pre>
 "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
-</code><a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span>.<br>
-[0:10) is the operation that selects the first ten bytes from the previous SHA256 operation.<br>
-base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span><br>
+</pre><a href="#section-3-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3-7">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span>. <br>
+[0:10) is the operation that selects the first ten bytes from the previous SHA256 operation. <br>
+base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span> <br>
 Account Resource URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span><a href="#section-3-7" class="pilcrow">¶</a></p>
 <p id="section-3-8">The <code>"||"</code> operator indicates concatenation of strings.<a href="#section-3-8" class="pilcrow">¶</a></p>
 <p id="section-3-9">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-3-9" class="pilcrow">¶</a></p>
 <p id="section-3-10">For example, if the domain name being validated is "www.example.org", and the account URL of "https://example.com/acme/acct/ExampleAccount" then the client would provision the following DNS record:<a href="#section-3-10" class="pilcrow">¶</a></p>
-<p id="section-3-11"><code>
+<div class="artwork art-text alignLeft" id="section-3-11">
+<pre>
 _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-</code><a href="#section-3-11" class="pilcrow">¶</a></p>
+</pre><a href="#section-3-11" class="pilcrow">¶</a>
+</div>
 <p id="section-3-12">(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)<a href="#section-3-12" class="pilcrow">¶</a></p>
 <p id="section-3-13">Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-3-13" class="pilcrow">¶</a></p>
-<p id="section-3-14">```
+<div class="artwork art-text alignLeft" id="section-3-14">
+<pre>
 POST /acme/chall/Rg5dV14Gh1Q
 Host: example.com
-Content-Type: application/jose+json<a href="#section-3-14" class="pilcrow">¶</a></p>
-<p id="section-3-15">{
+Content-Type: application/jose+json
+
+{
   "protected": base64url({
     "alg": "ES256",
     "kid": "https://example.com/acme/acct/evOfKhNU60wg",
@@ -1280,15 +1288,16 @@ Content-Type: application/jose+json<a href="#section-3-14" class="pilcrow">¶</a
   "payload": base64url({}),
   "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
 }
-```<a href="#section-3-15" class="pilcrow">¶</a></p>
-<p id="section-3-16">On receiving a response, the server constructs and stores the key authorization from the challenge "token" value and the current client account key.<a href="#section-3-16" class="pilcrow">¶</a></p>
-<p id="section-3-17">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-3-17" class="pilcrow">¶</a></p>
-<p id="section-3-18">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<br>
-Compute the validation domain name with the account URL of the ACME account requesting validation<br>
-Query for <code>TXT</code> records for the validation domain name<br>
-Verify that the contents of one of the TXT records match the digest value<a href="#section-3-18" class="pilcrow">¶</a></p>
-<p id="section-3-19">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-3-19" class="pilcrow">¶</a></p>
-<p id="section-3-20">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3-20" class="pilcrow">¶</a></p>
+</pre><a href="#section-3-14" class="pilcrow">¶</a>
+</div>
+<p id="section-3-15">On receiving a response, the server constructs and stores the key authorization from the challenge "token" value and the current client account key.<a href="#section-3-15" class="pilcrow">¶</a></p>
+<p id="section-3-16">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-3-16" class="pilcrow">¶</a></p>
+<p id="section-3-17">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization <br>
+Compute the validation domain name with the account URL of the ACME account requesting validation <br>
+Query for <code>TXT</code> records for the validation domain name <br>
+Verify that the contents of one of the TXT records match the digest value<a href="#section-3-17" class="pilcrow">¶</a></p>
+<p id="section-3-18">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-3-18" class="pilcrow">¶</a></p>
+<p id="section-3-19">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3-19" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1313,12 +1322,14 @@ Verify that the contents of one of the TXT records match the digest value<a href
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-acme-validation-method-2" class="section-name selfRef">ACME Validation Method</a>
         </h3>
 <p id="section-5.1-1">The "ACME Validation Methods" registry is to be updated to include the following entry:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1-2"><code>
+<div class="artwork art-text alignLeft" id="section-5.1-2">
+<pre>
 label: dns-account-01
 identifier-type: dns
 ACME: Y
 Reference: This document
-</code><a href="#section-5.1-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-5.1-2" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 </section>
@@ -1372,7 +1383,7 @@ Reference: This document
 </div>
 </address>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Amir Omidi</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Amir A. Omidi</span></div>
 <div dir="auto" class="left"><span class="org">Google</span></div>
 <div class="email">
 <span>Email:</span>

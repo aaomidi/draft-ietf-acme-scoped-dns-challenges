@@ -3,7 +3,7 @@
 
 
 ACME Working Group                                        A. A. Chariton
-Internet-Draft                                                  A. Omidi
+Internet-Draft                                               A. A. Omidi
 Intended status: Informational                                 J. Kasten
 Expires: 13 January 2023                                       F. Loukos
                                                         S. A. Janikowski
@@ -87,7 +87,7 @@ Table of Contents
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
      5.1.  ACME Validation Method  . . . . . . . . . . . . . . . . .   5
-   6.  Normative References  . . . . . . . . . . . . . . . . . . . .   5
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . .   6
    Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   6
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
 
@@ -143,9 +143,12 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
       including padding characters ("=").  See [RFC4086] for additional
       information on additional requirements for secure randomness.
 
-   "{ "type": "dns-account-01", "url": "https://example.com/acme/chall/
-   i00MGYwLWIx", "status": "pending", "token":
-   "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx" }"
+   {
+       "type": "dns-account-01",
+       "url": "https://example.com/acme/chall/i00MGYwLWIx",
+       "status": "pending",
+       "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
+   }
 
    A client can fulfill this challenge by performing the following
    steps:
@@ -156,11 +159,8 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    Construct the validation domain name by prepending the following
    label to the domain name being validated:
 
-   ""_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))"
+   "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10))
 
-   SHA-256 is the SHA hashing operation defined in [RFC6234].
-   [0:10) is the operation that selects the first ten bytes from the
-   previous SHA256 operation.
 
 
 
@@ -170,6 +170,9 @@ Chariton, et al.         Expires 13 January 2023                [Page 3]
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
+   SHA-256 is the SHA hashing operation defined in [RFC6234].
+   [0:10) is the operation that selects the first ten bytes from the
+   previous SHA256 operation.
    base32 is the operation defined in [RFC4648]
    Account Resource URL is defined in [RFC8555]
 
@@ -182,8 +185,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    and the account URL of "https://example.com/acme/acct/ExampleAccount"
    then the client would provision the following DNS record:
 
-   "_acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT
-   "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI""
+   _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
 
    (In the above, "..." indicates that the token and the JWK thumbprint
    in the key authorization have been truncated to fit on the page.)
@@ -191,14 +193,20 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    Respond to the ACME server with an empty object ({}) to acknowledge
    that the challenge can be validated by the server
 
-   ``` POST /acme/chall/Rg5dV14Gh1Q Host: example.com Content-Type:
-   application/jose+json
+   POST /acme/chall/Rg5dV14Gh1Q
+   Host: example.com
+   Content-Type: application/jose+json
 
-   { "protected": base64url({ "alg": "ES256", "kid":
-   "https://example.com/acme/acct/evOfKhNU60wg", "nonce":
-   "SS2sSl1PtspvFZ08kNtzKd", "url": "https://example.com/acme/chall/
-   Rg5dV14Gh1Q" }), "payload": base64url({}), "signature":
-   "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4" } ```
+   {
+     "protected": base64url({
+       "alg": "ES256",
+       "kid": "https://example.com/acme/acct/evOfKhNU60wg",
+       "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+       "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+     }),
+     "payload": base64url({}),
+     "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+   }
 
    On receiving a response, the server constructs and stores the key
    authorization from the challenge "token" value and the current client
@@ -210,14 +218,6 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    Compute the SHA-256 digest [FIPS180-4] of the stored key
    authorization
    Compute the validation domain name with the account URL of the ACME
-   account requesting validation
-   Query for "TXT" records for the validation domain name
-   Verify that the contents of one of the TXT records match the digest
-   value
-
-   If all the above verifications succeed, then the validation is
-   successful.  If no DNS record is found, or DNS record and response
-
 
 
 
@@ -226,6 +226,13 @@ Chariton, et al.         Expires 13 January 2023                [Page 4]
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
+   account requesting validation
+   Query for "TXT" records for the validation domain name
+   Verify that the contents of one of the TXT records match the digest
+   value
+
+   If all the above verifications succeed, then the validation is
+   successful.  If no DNS record is found, or DNS record and response
    payload do not pass these checks, then the server MUST fail the
    validation and mark the challenge as invalid.
 
@@ -263,17 +270,10 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    The "ACME Validation Methods" registry is to be updated to include
    the following entry:
 
-   "label: dns-account-01 identifier-type: dns ACME: Y Reference: This
-   document"
-
-6.  Normative References
-
-   [FIPS180-4]
-              "Secure Hash Standard (SHS)", August 2015.
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-
+   label: dns-account-01
+   identifier-type: dns
+   ACME: Y
+   Reference: This document
 
 
 
@@ -282,6 +282,13 @@ Chariton, et al.         Expires 13 January 2023                [Page 5]
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
 
 
+6.  Normative References
+
+   [FIPS180-4]
+              "Secure Hash Standard (SHS)", August 2015.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
@@ -318,17 +325,10 @@ Authors' Addresses
    Email: aac@google.com
 
 
-   Amir Omidi
+   Amir A. Omidi
    Google
 
    Email: aaomidi@google.com
-
-
-   James Kasten
-   Google
-
-   Email: jdkasten@google.com
-
 
 
 
@@ -336,6 +336,12 @@ Authors' Addresses
 Chariton, et al.         Expires 13 January 2023                [Page 6]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
+
+
+   James Kasten
+   Google
+
+   Email: jdkasten@google.com
 
 
    Fotis Loukos
@@ -348,12 +354,6 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                 July 2022
    Google
 
    Email: stanwise@google.com
-
-
-
-
-
-
 
 
 
