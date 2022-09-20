@@ -12,7 +12,7 @@
 ]>
 
 
-<rfc ipr="full3978trust200902" docName="draft-todo-chariton-dns-account-01-01" category="info" tocInclude="true" sortRefs="true" symRefs="true">
+<rfc ipr="full3978trust200902" docName="draft-todo-chariton-dns-account-01-00" category="info" tocInclude="true" sortRefs="true" symRefs="true">
   <front>
     <title abbrev="ACME-DNS-ACCOUNT-01">Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge</title>
 
@@ -328,20 +328,20 @@ Reference: This document
   </back>
 
 <!-- ##markdown-source:
-H4sIAAAAAAAAA51Z63LbNhb+z6fAMj/W3rVkyZfE0Wx3qtpO4sSXxLKTOp1O
-DZGQBIskGAKUoibps+yz7JPtdwCQomQnTXcmE0skcHCu3/kO1Gq1AiNNInos
-7JdGpdyImB2KwsiRjPCFnfGMj0UqMsOOs5ksVGY/b/QPz4432dH5gJ3yoUiw
-6500E0aPWT+KVIlFJ0fscMKTRGRjEQZ8OCzEjA7CmhZ2tvqHhxfX51etTjcM
-6LCxKhY9JrORCoJYRRlPoVdc8JFpGRWrVjThhTQqa8WZbnF3CDbjXwC5uwEv
-BO+xgYhKLFsEc1VMx4Uq855T6x2+y2zMntOzYCoWWBD3GI9SEci86LFRmSS7
-T58cmKLUZqfTedrZCWYiK0UvYMxLevccn80ih2ar8hhLuUxowY/iI0/zRLQj
-leIxL6JJj02MyXVve7vxbtvKGsNt5RB28mmmhtt/bi72JHCWNkuhbm/biWpL
-9R1StoOAl2aiCtjWgkhmrXcu72dYL5Vm/TYF0G63S1Qx5pn8nRupsh57rtQ4
-EfaFcLZzHv04tk+d7fcEp7IgoRepjOV3SlS09ptSX+J/zV5xbcT3qXkXT+3i
+H4sIAAAAAAAAA51Z23bbNhZ951dgmIexZyxZ8iVxtKazqtpO4sSXxLKTOl1d
+NURCEiySYAhQipqk3zLfMl82+wAgRclOms6LLZHAwbnusw/UarUCI00ieizs
+l0al3IiYHYrCyJGM8IWd8YyPRSoyw46zmSxUZj9v9A/PjjfZ0fmAnfKhSLDr
+nTQTRo9ZP4pUiUUnR+xwwpNEZGMRBnw4LMSMDsKaFna2+oeHF9fnV61ONwzo
+sLEqFj0ms5EKglhFGU+hV1zwkWkZFatWNOGFNCprxZlucXcINrc6nQBydwNe
+CN5jAxGVWLYI5qqYjgtV5j2n1jt8l9mYPadnwVQssCDuMR6lIpB50WOjMkl2
+nz45MEWpzU6n87SzE8xEVopewJiX9O45PptFDs1W5TGWcpnQgh/FR57miWhH
+KsVjXkSTHpsYk+ve9nbj3baVNYbbyiHs5NNMDbf/3FzsSeAsbZZC3d62E9WW
+6jukbAcBL81EFbCtBZHMWu9c3s+wXirN+m0KoN1ul6hizDP5OzdSZT32XKlx
+IuwL4WznPPpxbJ862+8JTmVBQi9SGcvvlKho7TelvsRfzV5xbcT3qXkXT+3i
 b0p9pozU7FSVU6W/S+qINiTflDkwkKATPicnvMTnqZrr6fd5QmPvXGrRPCDI
 VIGSlTOboc9OXg+6B53WXs/uq+ra1oNgL7ieWAViXsRsY/BisBnadTGSqcd2
 Ot39VufA7eTFWDTSK9JF1Ibipj1Ws+28HCaEDdBTb8fCQLvtkcz1Ns7e3sPH
-jCdWTJ1fzNvXY+d2G0/YSaahXwmAUaNaK83wl12JaJKpRI0XQUBYUFsYtFot
+jCdWTJ1fzNvXY+d2G0/YSaahXwmAUaNaK83wn12JaJKpRI0XQUBYUFsYtFot
 xofaFDwyQXA1QXwAE6UFJJ2LCJiFROAsE3MWVcBjixXBKZiZCPb/gFxeKKMi
 lbD5REYTBrmIGlR1qBIlktYaxQqhcwUD8JFDMYQtY5HKTIGtM57I2Brf0CzH
 DuyFMsNFLU+LYiYKNic05RZgsUqVRQRLJtwwGA3ocnusRbTJ1zWTMeQ5q3BU
@@ -354,7 +354,7 @@ karC5lzGVCbsAdImIdrdeLKSd5WCLlspbLpyIdIF0mF3ppCeSHZXILGAmVGV
 IX+Whc20a7OBzKwekL4ai/qcVMVytADksGEpkxj6Ww/gyJb4CByjLKm36S2r
 Ax/KBKyBlAO0okU3dWuEtnFeXQDNwlU5Am1Uob2ZiVpUamY2/orEog9GKhZD
 roWPWcqnlF6xyq16hISldum8GlGEIzcteAW4FAlNnn7EDlU2oxwHJtutRwI4
-LO13V+jADEZ8R7Pw7HpwFW65v+z8wn6+PH5zfXJ5fESfBy/6p6f1h8CvGLy4
+LO13V+jADEZ8R7Pw7HpwFW65/+z8wn6+PH5zfXJ5fESfBy/6p6f1h8CvGLy4
 uD49Wn5a7jy8ODs7Pj9ym/GUrTwKwrP+Dd6QVuHF66uTi/P+aUhRNSslxgub
 lqhEypICsaJa5DqIhY4KOXSZ8NPh6//+p7vnM2Kn230KIPLp0X2yhy/zicjc
 aSpLFv4rPL4IeJ4LXpAU+BJln0vDE0Sfa6Ynap4xAIWAN//xC3nm1x771zDK
@@ -371,14 +371,14 @@ nYPHqCXrXaz2pK1mYyqzkLp8472T2uZPu7Qjnc5BmUOpP/74I/hk2WBIwQh7
 VHY02TN/NiqQULbvWJ1vfabYUokdBq7kk0W6Zd39XddcELLtaWle+lYGJGrt
 7D9msUQjMgh1PTEg1rY8xX2NVjSmFQ/XmKtn4f2+Zryjba7zrW5ahRT4xw0L
 4RpD/C1knz/bvN7d2fBmbDxEoDZ/6fS6nV83raBWbbHUlQNQbnpCh7o+ba2g
-XtkkGo93duERJ8HJqwQsN9lq1+BQkXGvRrKAT8Fv4AkipxvuT6cmTE9dDWrM
+XtkkGo93duERJ8HJqwQsN9lq1+BQkXGvRrKAT8Fv4AkipxvuX6cmTE9dDWrM
 MpvLMMNnM6lKTbqRpvUJ7nhn8v3j7+m893jvoNL5QWZJvXZ9EzGqLbowsTKf
 tHeRB1xXUS5FlW2nyg0U6JCcSDxgLYndWXaICD9/Dm9r5oNdsZ2rNIEVfcg8
 Zow8eGqqg9cV+vsxp8n63fizimU+a51iy2EiqpITht2nsZRlQfAMSnkUARKO
 /iwNyVfhfD5vV8iD2dUzGMsUvXvJqzDp6ziFhWb72D31MQlJQtZslHNVgqHW
 rXCtcpaMuucAdL0wyrs0VbPRzizb3zfjhWiv6c12Ox12cs7gXBaeqg8/Rzdv
 D9rt9t3H/t1x+XOn/fRuvPf43U+7eDZKd7rph6uT0EHexknmmTHaOKgdVoSN
-2NoKoPeuQ1beefnuFf5i/MoRaVNl0H2gs21vKMgZRWmzxA4GI2mY90KOeamN
+2NoKoPeuQ1beefnuFf5j/MoRaVNl0H2gs21vKMgZRWmzxA4GI2mY90KOeamN
 Sr5cztX18LQyJWdMpDmouxreIZXZxqcvm3Y0iqaZmiciHoulskvg9HPfMup+
 oHainbdfX6DrNpvO5Xg/ftvdez7pvgleKLqDa172ASiR7KZ1Ze8HwTeri5Lt
 O6XFP+80jd3UAkO6UxCUs2hKdYpv+O7IkzH1quMBAKHqYFMZf7Mn2lwTs4vR
@@ -402,7 +402,7 @@ k46xVOknNwn4SZuyxQ/ybdZ3RQfagD5gJiklRal9KpWwEa3HBr+Qw7LKT5mh
 S/hzyRsjS9yNGFPSb8HDFa5V+e+4XiHT1HXkukCk1qWwdX3SP+/fq+lHj5yp
 b5dwdybQsmIX2fDhl8CYQoxJ54XPcUSxzOOKJ7r7DLHWUOnGZOGZsi2+Hlv7
 8XR5n9Vyv+LifUAq9NgNmCYwRSBGPbZy/+8Yif0xZQhWSab2a3JpLz2CTz33
-k4OIfwhHPNEi/BL8D0jy1I1eHwAA
+k4OIfwhHPNEi/BL8D+oA9cNeHwAA
 
 -->
 
