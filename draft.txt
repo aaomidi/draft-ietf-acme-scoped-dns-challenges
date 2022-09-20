@@ -5,15 +5,15 @@
 ACME Working Group                                        A. A. Chariton
 Internet-Draft                                               A. A. Omidi
 Intended status: Informational                                 J. Kasten
-Expires: 9 February 2023                                       F. Loukos
+Expires: 24 March 2023                                         F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                           8 August 2022
+                                                       20 September 2022
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-               draft-todo-chariton-dns-account-01-latest
+                 draft-todo-chariton-dns-account-01-01
 
 Abstract
 
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 1]
+Chariton, et al.          Expires 24 March 2023                 [Page 1]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,7 +63,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 February 2023.
+   This Internet-Draft will expire on 24 March 2023.
 
 Copyright Notice
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 2]
+Chariton, et al.          Expires 24 March 2023                 [Page 2]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
    This RFC does not intend to deprecate the "dns-01" challenge
@@ -165,9 +165,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 3]
+Chariton, et al.          Expires 24 March 2023                 [Page 3]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
       -  SHA-256 is the SHA hashing operation defined in [RFC6234]
@@ -221,9 +221,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 4]
+Chariton, et al.          Expires 24 March 2023                 [Page 4]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
    *  Compute the SHA-256 digest [FIPS180-4] of the stored key
@@ -277,9 +277,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 5]
+Chariton, et al.          Expires 24 March 2023                 [Page 5]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
 5.1.  ACME Validation Method
@@ -333,9 +333,9 @@ Acknowledgments
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 6]
+Chariton, et al.          Expires 24 March 2023                 [Page 6]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01               August 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01            September 2022
 
 
 Authors' Addresses
@@ -389,4 +389,4 @@ Authors' Addresses
 
 
 
-Chariton, et al.         Expires 9 February 2023                [Page 7]
+Chariton, et al.          Expires 24 March 2023                 [Page 7]
