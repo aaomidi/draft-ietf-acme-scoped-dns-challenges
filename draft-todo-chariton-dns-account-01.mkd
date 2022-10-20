@@ -161,7 +161,7 @@ _NODE NAME: _acme-challenge_*
 Reference: This document
 ~~~
 
-Where `_acme-challenge_*` denotes all node names beginning with the string `_acme-challenge-`. It does NOT refer to a DNS wildcard specification.
+Where `_acme-challenge_*` denotes all node names beginning with the string `_acme-challenge_`. It does NOT refer to a DNS wildcard specification.
 
 ## ACME Validation Method
 
