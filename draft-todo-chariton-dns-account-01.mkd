@@ -151,6 +151,18 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 
 # IANA Considerations
 
+## DNS Parameters
+
+The Underscored and Globally Scoped DNS Node Names is to be updated to include the following entry:
+
+~~~
+RR Type: TXT
+_NODE NAME: _acme-challenge_*
+Reference: This document
+~~~
+
+Where `_acme-challenge_*` denotes all node names beginning with the string `_acme-challenge-`. It does NOT refer to a DNS wildcard specification.
+
 ## ACME Validation Method
 
 The "ACME Validation Methods" registry is to be updated to include the following entry:
