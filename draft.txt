@@ -292,7 +292,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    Reference: This document
 
    Where "_acme-challenge_*" denotes all node names beginning with the
-   string "_acme-challenge-".  It does NOT refer to a DNS wildcard
+   string "_acme-challenge_".  It does NOT refer to a DNS wildcard
    specification.
 
 5.2.  ACME Validation Method
