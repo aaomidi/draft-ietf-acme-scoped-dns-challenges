@@ -1,7 +1,7 @@
 ---
 title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge"
 abbrev: "ACME-DNS-ACCOUNT-01"
-category: standard
+category: std
 
 docname: draft-chariton-dns-account-01-01
 v: 3
