@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACM
 abbrev: "ACME-DNS-ACCOUNT-01"
 category: standard
 
-docname: draft-todo-chariton-dns-account-01-01
+docname: draft-chariton-dns-account-01-01
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
@@ -92,7 +92,7 @@ A client can fulfill this challenge by performing the following steps:
       "_acme-challenge_" || base32(SHA-256(Account Resource URL)[0:10])
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
-   - [0:10] is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
+   - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
    - base32 is the operation defined in {{!RFC4648}}
    - Account Resource URL is defined in {{!RFC8555, Section 7.3}} as the value in the Location header field
    - The `"||"` operator indicates concatenation of strings
