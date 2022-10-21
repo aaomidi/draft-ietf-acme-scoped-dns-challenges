@@ -2,18 +2,18 @@
 
 
 
-ACME Working Group                                        A. A. Chariton
+Automated Certificate Management Environment              A. A. Chariton
 Internet-Draft                                               A. A. Omidi
-Intended status: Informational                                 J. Kasten
-Expires: 23 April 2023                                         F. Loukos
+Intended status: Standards Track                               J. Kasten
+Expires: 24 April 2023                                         F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                         20 October 2022
+                                                         21 October 2022
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-                 draft-todo-chariton-dns-account-01-00
+                    draft-chariton-dns-account-01-01
 
 Abstract
 
@@ -30,11 +30,12 @@ About This Document
    The latest revision of this draft can be found at
    https://daknob.github.io/draft-todo-chariton-dns-account-01/.  Status
    information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-todo-chariton-dns-account-01/.
+   https://datatracker.ietf.org/doc/draft-chariton-dns-account-01/.
 
    Discussion of this document takes place on the WG Working Group
-   mailing list (mailto:WG@example.com), which is archived at
-   https://example.com/WG.
+   mailing list (mailto:acme@ietf.org), which is archived at
+   https://datatracker.ietf.org/wg/acme/about/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/acme/.
 
    Source for this draft and an issue tracker can be found at
    https://github.com/daknob/draft-todo-chariton-dns-account-01.
@@ -52,8 +53,7 @@ Status of This Memo
 
 
 
-
-Chariton, et al.          Expires 23 April 2023                 [Page 1]
+Chariton, et al.          Expires 24 April 2023                 [Page 1]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
@@ -63,7 +63,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2023.
+   This Internet-Draft will expire on 24 April 2023.
 
 Copyright Notice
 
@@ -75,9 +75,9 @@ Copyright Notice
    license-info) in effect on the date of publication of this document.
    Please review these documents carefully, as they describe your rights
    and restrictions with respect to this document.  Code Components
-   extracted from this document must include Simplified BSD License text
-   as described in Section 4.e of the Trust Legal Provisions and are
-   provided without warranty as described in the Simplified BSD License.
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
 Table of Contents
 
@@ -94,13 +94,12 @@ Table of Contents
 
 1.  Introduction
 
-   The "dns-01" challenge specified in section 8.4 of [RFC8555] requires
-   that ACME clients validate the domain under the "_acme-challenge"
-   label for the "TXT" record.  This unique label creates an impediment
-   limiting the number of other entities domain validation can be
-   delegated to.
+   The dns-01 challenge specified in section 8.4 of [RFC8555] requires
+   that ACME clients validate the domain under the _acme-challenge label
+   for the TXT record.  This unique label creates an impediment limiting
+   the number of other entities domain validation can be delegated to.
 
-   This document specifies a new challenge type, "dns-account-01".  This
+   This document specifies a new challenge type, dns-account-01.  This
    challenge leverages the ACME Account Resource URL to present an
    account-unique stable challenge to an ACME server.  This challenge
    allows any domain name to delegate its domain validation to more than
@@ -109,16 +108,17 @@ Table of Contents
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 2]
+
+Chariton, et al.          Expires 24 April 2023                 [Page 2]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
 
-   This RFC does not intend to deprecate the "dns-01" challenge
-   specified in [RFC8555].  Since this new challenge does not modify or
-   build on any pre-existing challenges, the ability to complete the
-   "dns-account-01" challenge requires ACME server operators to deploy
-   new changes to their codebase.  This makes adopting and using this
+   This RFC does not intend to deprecate the dns-01 challenge specified
+   in [RFC8555].  Since this new challenge does not modify or build on
+   any pre-existing challenges, the ability to complete the dns-
+   account-01 challenge requires ACME server operators to deploy new
+   changes to their codebase.  This makes adopting and using this
    challenge an opt-in process.
 
 2.  Conventions and Definitions
@@ -132,7 +132,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 3.  DNS-ACCOUNT-01 Challenge
 
    When the identifier being validated is a domain name, the client can
-   prove control of that domain by provisioning a "TXT" resource record
+   prove control of that domain by provisioning a TXT resource record
    containing a designated value for a specific validation domain name.
 
    *  type (required, string): The string "dns-account-01".
@@ -153,8 +153,8 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    A client can fulfill this challenge by performing the following
    steps:
 
-   *  Construct a key authorization from the "token" value provided in
-      the challenge and the client's account key
+   *  Construct a key authorization from the token value provided in the
+      challenge and the client's account key
 
    *  Compute the SHA-256 digest [FIPS180-4] of the key authorization
 
@@ -165,7 +165,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 3]
+Chariton, et al.          Expires 24 April 2023                 [Page 3]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
@@ -180,16 +180,16 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
       -  Account Resource URL is defined in [RFC8555], Section 7.3 as
          the value in the Location header field
 
-      -  The ""||"" operator indicates concatenation of strings
+      -  The "||" operator indicates concatenation of strings
 
-   *  Provision a DNS "TXT" record with the base64url digest value under
+   *  Provision a DNS TXT record with the base64url digest value under
       the constructed domain validation name
 
    For example, if the domain name being validated is "www.example.org",
    and the account URL of "https://example.com/acme/acct/ExampleAccount"
    then the client would provision the following DNS record:
 
-   _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+_acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
 
    (In the above, "..." indicates that the token and the JWK thumbprint
    in the key authorization have been truncated to fit on the page.)
@@ -213,15 +213,15 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    }
 
    On receiving a response, the server constructs and stores the key
-   authorization from the challenge "token" value and the current client
+   authorization from the challenge token value and the current client
    account key.
 
-   To validate the "dns-account-01" challenge, the server performs the
+   To validate the dns-account-01 challenge, the server performs the
    following steps:
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 4]
+Chariton, et al.          Expires 24 April 2023                 [Page 4]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
@@ -232,7 +232,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    *  Compute the validation domain name with the account URL of the
       ACME account requesting validation
 
-   *  Query for "TXT" records for the validation domain name
+   *  Query for TXT records for the validation domain name
 
    *  Verify that the contents of one of the TXT records match the
       digest value
@@ -249,8 +249,8 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 4.  Security Considerations
 
    As this challenge that is introduced only differs in the left-most
-   label of the domain name from the existing "dns-01" challenge, the
-   same security considerations apply.
+   label of the domain name from the existing dns-01 challenge, the same
+   security considerations apply.
 
    In terms of the construction of the label prepended to the domain
    name, there is no need for a cryptographic hash.  The purpose of that
@@ -258,8 +258,8 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    minimal size.
 
    SHA-256 was picked due to its broad adoption, hardware support, and
-   existing need in implementations that would likely support "dns-
-   account-01".
+   existing need in implementations that would likely support dns-
+   account-01.
 
    The first 10 bytes were picked as a tradeoff: the value needs to be
    short enough to not significantly impact DNS record and response
@@ -277,7 +277,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 5]
+Chariton, et al.          Expires 24 April 2023                 [Page 5]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
@@ -291,8 +291,8 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
    _NODE NAME: _acme-challenge_*
    Reference: This document
 
-   Where "_acme-challenge_*" denotes all node names beginning with the
-   string "_acme-challenge_".  It does NOT refer to a DNS wildcard
+   Where _acme-challenge_* denotes all node names beginning with the
+   string _acme-challenge_. It does NOT refer to a DNS wildcard
    specification.
 
 5.2.  ACME Validation Method
@@ -327,17 +327,19 @@ Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
               <https://www.rfc-editor.org/info/rfc4648>.
 
-   [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
-              (SHA and SHA-based HMAC and HKDF)", RFC 6234,
 
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 6]
+
+
+Chariton, et al.          Expires 24 April 2023                 [Page 6]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01              October 2022
 
 
+   [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
+              (SHA and SHA-based HMAC and HKDF)", RFC 6234,
               DOI 10.17487/RFC6234, May 2011,
               <https://www.rfc-editor.org/info/rfc6234>.
 
@@ -356,31 +358,26 @@ Authors' Addresses
 
    Antonios A. Chariton
    Google
-
    Email: aac@google.com
 
 
    Amir A. Omidi
    Google
-
    Email: aaomidi@google.com
 
 
    James Kasten
    Google
-
    Email: jdkasten@google.com
 
 
    Fotis Loukos
    Google
-
    Email: fotisl@google.com
 
 
    Stanislaw A. Janikowski
    Google
-
    Email: stanwise@google.com
 
 
@@ -389,4 +386,7 @@ Authors' Addresses
 
 
 
-Chariton, et al.          Expires 23 April 2023                 [Page 7]
+
+
+
+Chariton, et al.          Expires 24 April 2023                 [Page 7]
