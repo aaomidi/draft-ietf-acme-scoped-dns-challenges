@@ -5,15 +5,15 @@
 Automated Certificate Management Environment              A. A. Chariton
 Internet-Draft                                               A. A. Omidi
 Intended status: Standards Track                               J. Kasten
-Expires: 14 May 2023                                           F. Loukos
+Expires: 11 July 2023                                          F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                        10 November 2022
+                                                          7 January 2023
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-                 draft-todo-chariton-dns-account-01-02
+                 draft-ietf-chariton-dns-account-01-00
 
 Abstract
 
@@ -30,7 +30,7 @@ About This Document
    The latest revision of this draft can be found at
    https://daknob.github.io/draft-todo-chariton-dns-account-01/.  Status
    information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-todo-chariton-dns-account-01/.
+   https://datatracker.ietf.org/doc/draft-ietf-chariton-dns-account-01/.
 
    Discussion of this document takes place on the WG Working Group
    mailing list (mailto:acme@ietf.org), which is archived at
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 1]
+Chariton, et al.          Expires 11 July 2023                  [Page 1]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,11 +63,11 @@ Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 May 2023.
+   This Internet-Draft will expire on 11 July 2023.
 
 Copyright Notice
 
-   Copyright (c) 2022 IETF Trust and the persons identified as the
+   Copyright (c) 2023 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 2]
+Chariton, et al.          Expires 11 July 2023                  [Page 2]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
    This RFC does not intend to deprecate the dns-01 challenge specified
@@ -165,9 +165,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 3]
+Chariton, et al.          Expires 11 July 2023                  [Page 3]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
       -  SHA-256 is the SHA hashing operation defined in [RFC6234]
@@ -221,9 +221,9 @@ _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 4]
+Chariton, et al.          Expires 11 July 2023                  [Page 4]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
    *  Compute the SHA-256 digest [FIPS180-4] of the stored key
@@ -277,9 +277,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 5]
+Chariton, et al.          Expires 11 July 2023                  [Page 5]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
 5.1.  DNS Parameters
@@ -333,9 +333,9 @@ Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 6]
+Chariton, et al.          Expires 11 July 2023                  [Page 6]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01             November 2022
+Internet-Draft             ACME-DNS-ACCOUNT-01              January 2023
 
 
    [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
@@ -389,4 +389,4 @@ Authors' Addresses
 
 
 
-Chariton, et al.           Expires 14 May 2023                  [Page 7]
+Chariton, et al.          Expires 11 July 2023                  [Page 7]
