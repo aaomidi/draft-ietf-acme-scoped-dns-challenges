@@ -31,7 +31,7 @@ jobs:
 
     - name: Generate 🔨
       run: |
-        /usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-chariton-dns-account-01.mkd  > docs/draft.xml
+        /usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-acme-dns-account-01.mkd  > docs/draft.xml
         cd docs
         xml2rfc --text --html --v3 draft.xml
         mv draft.html index.html
