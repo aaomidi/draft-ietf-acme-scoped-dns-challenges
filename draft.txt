@@ -5,10 +5,10 @@
 Automated Certificate Management Environment              A. A. Chariton
 Internet-Draft                                               A. A. Omidi
 Intended status: Standards Track                               J. Kasten
-Expires: 4 September 2023                                      F. Loukos
+Expires: 1 October 2023                                        F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                            3 March 2023
+                                                           30 March 2023
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 1]
+Chariton, et al.         Expires 1 October 2023                 [Page 1]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -68,7 +68,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 September 2023.
+   This Internet-Draft will expire on 1 October 2023.
 
 Copyright Notice
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 2]
+Chariton, et al.         Expires 1 October 2023                 [Page 2]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -165,7 +165,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 3]
+Chariton, et al.         Expires 1 October 2023                 [Page 3]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -221,7 +221,7 @@ _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 4]
+Chariton, et al.         Expires 1 October 2023                 [Page 4]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -277,7 +277,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 5]
+Chariton, et al.         Expires 1 October 2023                 [Page 5]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -333,7 +333,7 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 6]
+Chariton, et al.         Expires 1 October 2023                 [Page 6]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -389,7 +389,7 @@ Authors' Addresses
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 7]
+Chariton, et al.         Expires 1 October 2023                 [Page 7]
 
 Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
@@ -445,4 +445,4 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 
 
-Chariton, et al.        Expires 4 September 2023                [Page 8]
+Chariton, et al.         Expires 1 October 2023                 [Page 8]
