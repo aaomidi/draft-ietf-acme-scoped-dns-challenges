@@ -51,7 +51,10 @@ informative:
 
 --- abstract
 
-This document specifies a new challenge type for the Automated Certificate Management Environment (ACME) protocol which allows an ACME client to respond to a domain control validation challenge presented by an ACME server with a DNS resource that is keyed by the ACME account identification. This aims to allow delegation of challenge solving for a single domain to more than one system or environment.
+This document outlines a new challenge for the ACME protocol, enabling an ACME
+client to answer a domain control validation challenge from an ACME server
+using a DNS resource linked to the ACME Account ID. This allows multiple
+systems or environments to handle challenge-solving for a single domain.
 
 --- middle
 
