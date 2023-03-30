@@ -14,7 +14,7 @@ Expires: 1 October 2023                                        J. Kasten
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-                   draft-ietf-acme-dns-account-01-00
+                   draft-ietf-acme-dns-account-01-01
 
 Abstract
 
