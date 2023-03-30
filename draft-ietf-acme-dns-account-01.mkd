@@ -87,7 +87,8 @@ As now multiple labels can be used to prove domain control, and they depend on
 the ACME account, any number of them can be generated in advance, and then all
 required `CNAME` records can be created statically. The dynamic part of the
 label depends on the ACME account and not the account key, to allow for
-seamless account key rollover without the label changing.
+seamless account key rollover without the label changing. This ensures very
+long-lived labels, without any security considerations.
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in
 {{!RFC8555}}. Since this new challenge does not modify or build on any
