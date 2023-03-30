@@ -20,8 +20,8 @@ venue:
 author:
  -
     fullname: Antonios A. Chariton
-    organization: Google
-    email: aac@google.com
+    organization: Independent Contributor
+    email: daknob@daknob.net
  -
     fullname: Amir A. Omidi
     organization: Google
@@ -51,23 +51,50 @@ informative:
 
 --- abstract
 
-This document specifies a new challenge type for the Automated Certificate Management Environment (ACME) protocol which allows an ACME client to respond to a domain control validation challenge presented by an ACME server with a DNS resource that is keyed by the ACME account identification. This aims to allow delegation of challenge solving for a single domain to more than one system or environment.
+This document outlines a new challenge for the ACME protocol, enabling an ACME
+client to answer a domain control validation challenge from an ACME server
+using a DNS resource linked to the ACME Account ID. This allows multiple
+systems or environments to handle challenge-solving for a single domain.
 
 --- middle
 
 # Introduction
 
-The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This unique label creates an impediment limiting the number of other entities domain validation can be delegated to.
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that
+ACME clients validate the domain under the `_acme-challenge` label for the
+`TXT` record. This unique label creates an impediment limiting the number of
+other entities domain validation can be delegated to.
 
-In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.
+In multi-region deployments, where separate availability zones serve the same
+content, and dependencies across them are avoided, operators need a way to
+obtain a separate certificate per zone, for the same domain name. Similarly, in
+cases of zero-downtime migration, two different setups of the infrastructure
+may coexist for a long period of time, and both need access to valid
+certificates.
 
-Due to the uniqueness of the `_acme-account` label, operators today have to pick a single ACME challenge solver for their domain name, and then add a `CNAME` record to this infrastructure. A domain name can only have one `CNAME` in DNS.
+Due to the uniqueness of the `_acme-challenge` label, operators today have to
+pick a single ACME challenge solver for their domain name, and then add a
+`CNAME` record to this infrastructure. A domain name can only have one `CNAME`
+in DNS.
 
-This document specifies a new challenge type, `dns-account-01`. This challenge leverages the ACME Account Resource URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through ACME account-unique DNS records.
+This document specifies a new challenge type, `dns-account-01`. This challenge
+leverages the ACME Account Resource URL to present an account-unique stable
+challenge to an ACME server. This challenge allows any domain name to delegate
+its domain validation to more than one service through ACME account-unique DNS
+records.
 
-As now multiple labels can be used to prove domain control, and they depend on the ACME account, any number of them can be generated in advance, and then all required `CNAME` records can be created statically.
+As now multiple labels can be used to prove domain control, and they depend on
+the ACME account, any number of them can be generated in advance, and then all
+required `CNAME` records can be created statically. The dynamic part of the
+label depends on the ACME account and not the account key, to allow for
+seamless account key rollover without the label changing. This ensures very
+long-lived labels, without any security considerations.
 
-This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since this new challenge does not modify or build on any pre-existing challenges, the ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using this challenge an opt-in process.
+This RFC does not intend to deprecate the `dns-01` challenge specified in
+{{!RFC8555}}. Since this new challenge does not modify or build on any
+pre-existing challenges, the ability to complete the `dns-account-01` challenge
+requires ACME server operators to deploy new changes to their codebase. This
+makes adopting and using this challenge an opt-in process.
 
 # Conventions and Definitions
 
@@ -91,7 +118,7 @@ When the identifier being validated is a domain name, the client can prove contr
 
 A client can fulfill this challenge by performing the following steps:
 
-- Construct a key authorization from the `token` value provided in the challenge and the client's account key
+- Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following label to the domain name being validated:
 
