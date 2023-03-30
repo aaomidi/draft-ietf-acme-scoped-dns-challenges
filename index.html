@@ -11,7 +11,10 @@
 <meta content="Fotis Loukos" name="author">
 <meta content="Stanislaw A. Janikowski" name="author">
 <meta content="
-       This document specifies a new challenge type for the Automated Certificate Management Environment (ACME) protocol which allows an ACME client to respond to a domain control validation challenge presented by an ACME server with a DNS resource that is keyed by the ACME account identification. This aims to allow delegation of challenge solving for a single domain to more than one system or environment. 
+       This document outlines a new challenge for the ACME protocol, enabling an ACME
+client to answer a domain control validation challenge from an ACME server
+using a DNS resource linked to the ACME Account ID. This allows multiple
+systems or environments to handle challenge-solving for a single domain. 
     " name="description">
 <meta content="xml2rfc 3.12.2" name="generator">
 <meta content="acme" name="keyword">
@@ -1203,7 +1206,7 @@ li > p:last-of-type {
 <dd class="authors">
 <div class="author">
       <div class="author-name">A. A. Chariton</div>
-<div class="org">Google</div>
+<div class="org">Independent Contributor</div>
 </div>
 <div class="author">
       <div class="author-name">A. A. Omidi</div>
@@ -1227,7 +1230,10 @@ li > p:last-of-type {
 <h1 id="title">Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document specifies a new challenge type for the Automated Certificate Management Environment (ACME) protocol which allows an ACME client to respond to a domain control validation challenge presented by an ACME server with a DNS resource that is keyed by the ACME account identification. This aims to allow delegation of challenge solving for a single domain to more than one system or environment.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document outlines a new challenge for the ACME protocol, enabling an ACME
+client to answer a domain control validation challenge from an ACME server
+using a DNS resource linked to the ACME Account ID. This allows multiple
+systems or environments to handle challenge-solving for a single domain.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document-2">
@@ -1334,12 +1340,36 @@ li > p:last-of-type {
       <h2 id="name-introduction-2">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction-2" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The <code>dns-01</code> challenge specified in section 8.4 of <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span> requires that ACME clients validate the domain under the <code>_acme-challenge</code> label for the <code>TXT</code> record. This unique label creates an impediment limiting the number of other entities domain validation can be delegated to.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">Due to the uniqueness of the <code>_acme-account</code> label, operators today have to pick a single ACME challenge solver for their domain name, and then add a <code>CNAME</code> record to this infrastructure. A domain name can only have one <code>CNAME</code> in DNS.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">This document specifies a new challenge type, <code>dns-account-01</code>. This challenge leverages the ACME Account Resource URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through ACME account-unique DNS records.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">As now multiple labels can be used to prove domain control, and they depend on the ACME account, any number of them can be generated in advance, and then all required <code>CNAME</code> records can be created statically.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">This RFC does not intend to deprecate the <code>dns-01</code> challenge specified in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span>. Since this new challenge does not modify or build on any pre-existing challenges, the ability to complete the <code>dns-account-01</code> challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using this challenge an opt-in process.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-1">The <code>dns-01</code> challenge specified in section 8.4 of <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span> requires that
+ACME clients validate the domain under the <code>_acme-challenge</code> label for the
+<code>TXT</code> record. This unique label creates an impediment limiting the number of
+other entities domain validation can be delegated to.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">In multi-region deployments, where separate availability zones serve the same
+content, and dependencies across them are avoided, operators need a way to
+obtain a separate certificate per zone, for the same domain name. Similarly, in
+cases of zero-downtime migration, two different setups of the infrastructure
+may coexist for a long period of time, and both need access to valid
+certificates.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Due to the uniqueness of the <code>_acme-challenge</code> label, operators today have to
+pick a single ACME challenge solver for their domain name, and then add a
+<code>CNAME</code> record to this infrastructure. A domain name can only have one <code>CNAME</code>
+in DNS.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This document specifies a new challenge type, <code>dns-account-01</code>. This challenge
+leverages the ACME Account Resource URL to present an account-unique stable
+challenge to an ACME server. This challenge allows any domain name to delegate
+its domain validation to more than one service through ACME account-unique DNS
+records.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">As now multiple labels can be used to prove domain control, and they depend on
+the ACME account, any number of them can be generated in advance, and then all
+required <code>CNAME</code> records can be created statically. The dynamic part of the
+label depends on the ACME account and not the account key, to allow for
+seamless account key rollover without the label changing. This ensures very
+long-lived labels, without any security considerations.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">This RFC does not intend to deprecate the <code>dns-01</code> challenge specified in
+<span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span>. Since this new challenge does not modify or build on any
+pre-existing challenges, the ability to complete the <code>dns-account-01</code> challenge
+requires ACME server operators to deploy new changes to their codebase. This
+makes adopting and using this challenge an opt-in process.<a href="#section-1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1377,7 +1407,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 </div>
 <p id="section-3-4">A client can fulfill this challenge by performing the following steps:<a href="#section-3-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3-5.1">Construct a key authorization from the <code>token</code> value provided in the challenge and the client's account key<a href="#section-3-5.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3-5.1">Construct a key authorization <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span> from the <code>token</code> value provided in the challenge and the client's account key<a href="#section-3-5.1" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-3-5.2">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<a href="#section-3-5.2" class="pilcrow">¶</a>
 </li>
@@ -1546,10 +1576,10 @@ Reference: This document
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Antonios A. Chariton</span></div>
-<div dir="auto" class="left"><span class="org">Google</span></div>
+<div dir="auto" class="left"><span class="org">Independent Contributor</span></div>
 <div class="email">
 <span>Email:</span>
-<a href="mailto:aac@google.com" class="email">aac@google.com</a>
+<a href="mailto:daknob@daknob.net" class="email">daknob@daknob.net</a>
 </div>
 </address>
 <address class="vcard">
