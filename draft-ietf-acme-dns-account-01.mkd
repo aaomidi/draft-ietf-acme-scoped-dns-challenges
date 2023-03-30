@@ -20,8 +20,8 @@ venue:
 author:
  -
     fullname: Antonios A. Chariton
-    organization: Google
-    email: aac@google.com
+    organization: Independent Contributor
+    email: daknob@daknob.net
  -
     fullname: Amir A. Omidi
     organization: Google
