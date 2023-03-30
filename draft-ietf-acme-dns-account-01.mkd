@@ -72,7 +72,7 @@ cases of zero-downtime migration, two different setups of the infrastructure
 may coexist for a long period of time, and both need access to valid
 certificates.
 
-Due to the uniqueness of the `_acme-account` label, operators today have to
+Due to the uniqueness of the `_acme-challenge` label, operators today have to
 pick a single ACME challenge solver for their domain name, and then add a
 `CNAME` record to this infrastructure. A domain name can only have one `CNAME`
 in DNS.
