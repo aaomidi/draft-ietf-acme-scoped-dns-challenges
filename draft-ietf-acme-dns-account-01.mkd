@@ -14,8 +14,8 @@ venue:
   type: Working Group
   mail: acme@ietf.org
   arch: https://datatracker.ietf.org/wg/acme/about/
-  github: jdkasten/draft-ietf-acme-dns-account-challenge
-  latest: https://jdkasten.github.io/draft-ietf-acme-dns-account-challenge
+  github: aaomidi/draft-ietf-acme-dns-account-challenge
+  latest: https://aaomidi.github.io/draft-ietf-acme-dns-account-challenge
 
 author:
  -
