@@ -5,16 +5,16 @@
 Automated Certificate Management Environment              A. A. Chariton
 Internet-Draft                                   Independent Contributor
 Intended status: Standards Track                             A. A. Omidi
-Expires: 1 October 2023                                        J. Kasten
+Expires: 1 January 2024                                        J. Kasten
                                                                F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                           30 March 2023
+                                                            30 June 2023
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-                   draft-ietf-acme-dns-account-01-01
+                draft-ietf-acme-dns-account-challenge-01
 
 Abstract
 
@@ -29,9 +29,10 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://daknob.github.io/draft-todo-chariton-dns-account-01/.  Status
-   information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-01/.
+   https://aaomidi.github.io/draft-ietf-acme-dns-account-challenge.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-
+   challenge/.
 
    Discussion of this document takes place on the WG Working Group
    mailing list (mailto:acme@ietf.org), which is archived at
@@ -39,31 +40,35 @@ About This Document
    https://www.ietf.org/mailman/listinfo/acme/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/daknob/draft-todo-chariton-dns-account-01.
+   https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge.
 
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
    provisions of BCP 78 and BCP 79.
 
+
+
+
+
+
+
+Chariton, et al.         Expires 1 January 2024                 [Page 1]
+
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+
+
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 1]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
-
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 October 2023.
+   This Internet-Draft will expire on 1 January 2024.
 
 Copyright Notice
 
@@ -84,11 +89,11 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   3
    3.  DNS-ACCOUNT-01 Challenge  . . . . . . . . . . . . . . . . . .   3
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
      5.1.  DNS Parameters  . . . . . . . . . . . . . . . . . . . . .   6
      5.2.  ACME Validation Method  . . . . . . . . . . . . . . . . .   6
-   6.  Normative References  . . . . . . . . . . . . . . . . . . . .   6
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . .   7
    Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
@@ -99,20 +104,22 @@ Table of Contents
    for the TXT record.  This unique label creates an impediment limiting
    the number of other entities domain validation can be delegated to.
 
+
+
+
+
+
+Chariton, et al.         Expires 1 January 2024                 [Page 2]
+
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+
+
    In multi-region deployments, where separate availability zones serve
    the same content, and dependencies across them are avoided, operators
    need a way to obtain a separate certificate per zone, for the same
    domain name.  Similarly, in cases of zero-downtime migration, two
    different setups of the infrastructure may coexist for a long period
    of time, and both need access to valid certificates.
-
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 2]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
-
 
    Due to the uniqueness of the _acme-challenge label, operators today
    have to pick a single ACME challenge solver for their domain name,
@@ -156,19 +163,18 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
    *  type (required, string): The string "dns-account-01".
 
+
+
+Chariton, et al.         Expires 1 January 2024                 [Page 3]
+
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+
+
    *  token (required, string): A random value that uniquely identifies
       the challenge.  This value MUST have at least 128 bits of entropy.
       It MUST NOT contain any characters outside the base64url alphabet,
       including padding characters ("=").  See [RFC4086] for additional
       information on additional requirements for secure randomness.
-
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 3]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
-
 
    {
        "type": "dns-account-01",
@@ -211,20 +217,20 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
 
+
+
+
+
+Chariton, et al.         Expires 1 January 2024                 [Page 4]
+
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+
+
    (In the above, "..." indicates that the token and the JWK thumbprint
    in the key authorization have been truncated to fit on the page.)
 
    Respond to the ACME server with an empty object ({}) to acknowledge
    that the challenge can be validated by the server
-
-
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 4]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
-
 
    POST /acme/chall/Rg5dV14Gh1Q
    Host: example.com
@@ -268,19 +274,19 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
    this challenge once the challenge is complete, i.e., once the
    "status" field of the challenge has the value "valid" or "invalid".
 
+
+
+
+Chariton, et al.         Expires 1 January 2024                 [Page 5]
+
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+
+
 4.  Security Considerations
 
    As this challenge that is introduced only differs in the left-most
    label of the domain name from the existing dns-01 challenge, the same
    security considerations apply.
-
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 5]
-
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
-
 
    In terms of the construction of the label prepended to the domain
    name, there is no need for a cryptographic hash.  The purpose of that
@@ -324,19 +330,15 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
    ACME: Y
    Reference: This document
 
-6.  Normative References
 
 
 
-
-
-
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 6]
+Chariton, et al.         Expires 1 January 2024                 [Page 6]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
+
+6.  Normative References
 
    [FIPS180-4]
               National Institute of Standards and Technology, "Secure
@@ -387,11 +389,9 @@ Authors' Addresses
 
 
 
-
-
-Chariton, et al.         Expires 1 October 2023                 [Page 7]
+Chariton, et al.         Expires 1 January 2024                 [Page 7]
 
-Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
 
    James Kasten
@@ -445,4 +445,4 @@ Internet-Draft             ACME-DNS-ACCOUNT-01                March 2023
 
 
 
-Chariton, et al.         Expires 1 October 2023                 [Page 8]
+Chariton, et al.         Expires 1 January 2024                 [Page 8]
