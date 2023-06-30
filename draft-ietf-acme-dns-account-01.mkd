@@ -1,9 +1,9 @@
 ---
 title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge"
-abbrev: "ACME-DNS-ACCOUNT-01"
+abbrev: "ACME-DNS-CHALLENGE"
 category: std
 
-docname: draft-ietf-acme-dns-account-01-01
+docname: draft-ietf-acme-dns-account-challenge-01
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
@@ -14,8 +14,8 @@ venue:
   type: Working Group
   mail: acme@ietf.org
   arch: https://datatracker.ietf.org/wg/acme/about/
-  github: daknob/draft-todo-chariton-dns-account-01
-  latest: https://daknob.github.io/draft-todo-chariton-dns-account-01/
+  github: aaomidi/draft-ietf-acme-dns-account-challenge
+  latest: https://aaomidi.github.io/draft-ietf-acme-dns-account-challenge
 
 author:
  -
