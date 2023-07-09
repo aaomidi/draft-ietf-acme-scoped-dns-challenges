@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACM
 abbrev: "ACME-DNS-CHALLENGE"
 category: std
 
-docname: draft-ietf-acme-dns-account-challenge-01
+docname: draft-ietf-acme-dns-account-challenge-02
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
