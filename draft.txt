@@ -5,16 +5,16 @@
 Automated Certificate Management Environment              A. A. Chariton
 Internet-Draft                                   Independent Contributor
 Intended status: Standards Track                             A. A. Omidi
-Expires: 1 January 2024                                        J. Kasten
+Expires: 10 January 2024                                       J. Kasten
                                                                F. Loukos
                                                         S. A. Janikowski
                                                                   Google
-                                                            30 June 2023
+                                                             9 July 2023
 
 
   Automated Certificate Management Environment (ACME) DNS Labeled With
                        ACME Account ID Challenge
-                draft-ietf-acme-dns-account-challenge-01
+                draft-ietf-acme-dns-account-challenge-02
 
 Abstract
 
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 1]
+Chariton, et al.         Expires 10 January 2024                [Page 1]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
    Internet-Drafts are working documents of the Internet Engineering
@@ -68,7 +68,7 @@ Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 January 2024.
+   This Internet-Draft will expire on 10 January 2024.
 
 Copyright Notice
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 2]
+Chariton, et al.         Expires 10 January 2024                [Page 2]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
    In multi-region deployments, where separate availability zones serve
@@ -165,9 +165,9 @@ Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 3]
+Chariton, et al.         Expires 10 January 2024                [Page 3]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
    *  token (required, string): A random value that uniquely identifies
@@ -221,9 +221,9 @@ _acme-challenge_ujmmovf2vn55tgye.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 4]
+Chariton, et al.         Expires 10 January 2024                [Page 4]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
    (In the above, "..." indicates that the token and the JWK thumbprint
@@ -277,9 +277,9 @@ Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 5]
+Chariton, et al.         Expires 10 January 2024                [Page 5]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
 4.  Security Considerations
@@ -333,9 +333,9 @@ Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 6]
+Chariton, et al.         Expires 10 January 2024                [Page 6]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
 6.  Normative References
@@ -389,9 +389,9 @@ Authors' Addresses
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 7]
+Chariton, et al.         Expires 10 January 2024                [Page 7]
 
-Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
+Internet-Draft             ACME-DNS-CHALLENGE                  July 2023
 
 
    James Kasten
@@ -445,4 +445,4 @@ Internet-Draft             ACME-DNS-CHALLENGE                  June 2023
 
 
 
-Chariton, et al.         Expires 1 January 2024                 [Page 8]
+Chariton, et al.         Expires 10 January 2024                [Page 8]
