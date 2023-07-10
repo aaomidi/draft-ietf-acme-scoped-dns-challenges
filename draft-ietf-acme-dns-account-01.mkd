@@ -176,7 +176,7 @@ The client SHOULD de-provision the resource record(s) provisioned for this chall
 
 The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
 
-If the server is unable to find a TXT record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document.
+If the server is unable to find a TXT record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT rely on the presence of this field to construct the validation domain name.
 
 ## Implementation Considerations
 
