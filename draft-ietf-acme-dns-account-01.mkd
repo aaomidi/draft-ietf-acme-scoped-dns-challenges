@@ -122,7 +122,7 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prefixing the following label to the domain name being validated:
 
-      "_" || base32(SHA-256(Account Resource URL)[0:9]) || "_acme-challenge_"
+      "_" || base32(SHA-256(Account Resource URL)[0:9]) || "_acme-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
    - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
