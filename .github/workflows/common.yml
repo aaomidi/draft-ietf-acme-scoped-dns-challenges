@@ -1,0 +1,34 @@
+name: Generate preview
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Update
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout 📋
+      uses: actions/checkout@v2
+
+    - name: Setup 🏗️
+      run: |
+        sudo apt-get install --yes xml2rfc ruby
+        sudo gem install kramdown-rfc
+
+    - name: Generate 🔨
+      run: |
+        /usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-acme-dns-account-01.mkd > docs/draft.xml
+        cd docs
+        xml2rfc --text --html --v3 draft.xml
+        mv draft.html index.html
+
+    - name: Store Output
+      uses: actions/upload-artifact@v3
+      with:
+        name: draft
+        path: |
+          docs/index.html
+          docs/draft.xml
+        retention-days: 2

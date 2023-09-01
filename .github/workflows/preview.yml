@@ -1,0 +1,32 @@
+name: 'Netlify Preview Deploy'
+
+on:
+  pull_request:
+    types: ['opened', 'edited', 'synchronize']
+
+jobs:
+  build:
+    name: Build the preview
+    uses: ./.github/workflows/common.yml
+
+  deploy:
+    needs: 'build'
+    name: 'Deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Built Draft
+        uses: actions/download-artifact@v3
+        with:
+          name: draft
+          path: docs
+
+      - uses: nwtgck/actions-netlify@v2.0
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          publish-dir: 'docs'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          alias: deploy-preview-${{ github.event.number }}
+        timeout-minutes: 1
