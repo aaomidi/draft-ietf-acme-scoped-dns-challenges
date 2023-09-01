@@ -1,4 +1,4 @@
-name: "Update"
+name: 'Update'
 
 concurrency:
   group: update
@@ -17,24 +17,23 @@ on:
 
 jobs:
   build:
-    name: Update
+    name: Build the preview
+    uses: ./.github/workflows/common.yml
+
+  deploy:
+    needs: 'build'
+    name: Deploy to gh-pages
     runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout 📋
       uses: actions/checkout@v2
 
-    - name: Setup 🏗️
-      run: |
-        sudo apt-get install --yes xml2rfc ruby
-        sudo gem install kramdown-rfc
-
-    - name: Generate 🔨
-      run: |
-        /usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-acme-dns-account-01.mkd  > docs/draft.xml
-        cd docs
-        xml2rfc --text --html --v3 draft.xml
-        mv draft.html index.html
+    - name: Download Built Draft
+      uses: actions/download-artifact@v3
+      with:
+        name: draft
+        path: docs
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4.3.3
