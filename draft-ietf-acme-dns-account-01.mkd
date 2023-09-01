@@ -120,7 +120,7 @@ A client can fulfill this challenge by performing the following steps:
 
 - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
-- Construct the validation domain name by prefixing the following label to the domain name being validated:
+- Construct the validation domain name by prepending the following label to the domain name being validated:
 
       "_" || base32(SHA-256(Account Resource URL)[0:9]) || "_acme-challenge"
 
