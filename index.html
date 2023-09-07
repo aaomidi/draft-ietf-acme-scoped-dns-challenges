@@ -1498,6 +1498,7 @@ Content-Type: application/jose+json
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-implementation-consideration" class="section-name selfRef">Implementation Considerations</a>
         </h3>
 <p id="section-3.2-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">If this change occurs, the existing long-term <code>CNAME</code> records created by all account holders will no longer be valid. The clients will not be able to issue certificates automatically moving forward.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
