@@ -122,17 +122,17 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following label to the domain name being validated:
 
-      "_" || base32(SHA-256(Account Resource URL)[0:9]) || "_acme-challenge"
+      "_" || base32(SHA-256(Account Resource URL)[0:9]) || "._acme-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
    - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
    - base32 is the operation defined in {{!RFC4648}}
-   - Account Resource URL is defined in {{!RFC8555, Section 7.3}} as the value in the Location header field
+   - Account Resource URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
    - The `"||"` operator indicates concatenation of strings
 
 - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
 
-For example, if the domain name being validated is "www.example.org", and the account URL of "https://example.com/acme/acct/ExampleAccount" then the client would provision the following DNS record:
+For example, if the domain name being validated is `www.example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
 
 ~~~
 _ujmmovf2vn55tgye._acme-challenge.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
