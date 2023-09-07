@@ -166,7 +166,7 @@ To validate the `dns-account-01` challenge, the server performs the following st
 - Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
 - Compute the validation domain name with the account URL of the ACME account requesting validation
 - Query for `TXT` records for the validation domain name
-- Verify that the contents of one of the TXT records match the digest value
+- Verify that the contents of one of the `TXT` records match the digest value
 
 If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server MUST fail the validation and mark the challenge as invalid.
 
@@ -176,7 +176,7 @@ The client SHOULD de-provision the resource record(s) provisioned for this chall
 
 The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
 
-If the server is unable to find a TXT record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
+If the server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
 
 ## Implementation Considerations
 
