@@ -182,6 +182,8 @@ If the server is unable to find a `TXT` record for the validation domain name, i
 
 As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account.
 
+If this change occurs, the existing long-term `CNAME` records created by all account holders will no longer be valid. The clients will not be able to issue certificates automatically moving forward.
+
 # Security Considerations
 
 As this challenge that is introduced only differs in the left-most label of the domain name from the existing `dns-01` challenge, the same security considerations apply.
