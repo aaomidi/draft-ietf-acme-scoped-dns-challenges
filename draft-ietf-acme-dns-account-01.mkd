@@ -48,6 +48,7 @@ normative:
       org: National Institute of Standards and Technology
 
 informative:
+  I-D.draft-ietf-dnsop-domain-verification-techniques:
 
 --- abstract
 
@@ -89,6 +90,10 @@ required `CNAME` records can be created statically. The dynamic part of the
 label depends on the ACME account and not the account key, to allow for
 seamless account key rollover without the label changing. This ensures very
 long-lived labels, without any security considerations.
+
+Finally, this work follows all recommendations set forth in "Domain Control Validation
+using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques]. In particular, unlike `dns-01`, each validation is scoped to
+the particular label being validated.
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in
 {{!RFC8555}}. Since this new challenge does not modify or build on any
@@ -186,13 +191,13 @@ If this change occurs, the existing long-term `CNAME` records created by all acc
 
 # Security Considerations
 
-As this challenge that is introduced only differs in the left-most label of the domain name from the existing `dns-01` challenge, the same security considerations apply.
+This challenge follows the general recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}. `dns-account-01` does not attempt to introduce a "scope of validation" to the identifier for simplicity, consistency with `dns-01`, and the fact that validations can be scoped effectively via CAA records in its primary use case, the Web PKI {{?RFC8657}}. 
 
-In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size.
+`dns-account-01` only differs from `dns-01` in the addition of the left-most label so the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification.
 
-SHA-256 was picked due to its broad adoption, hardware support, and existing need in implementations that would likely support `dns-account-01`.
+In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size. SHA-256 was picked due to its broad adoption, hardware support, and existing need in implementations that would likely support `dns-account-01`.
 
-The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
+The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
 
 # IANA Considerations
 
