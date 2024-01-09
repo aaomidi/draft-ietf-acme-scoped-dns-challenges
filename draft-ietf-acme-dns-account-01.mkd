@@ -91,9 +91,10 @@ label depends on the ACME account and not the account key, to allow for
 seamless account key rollover without the label changing. This ensures very
 long-lived labels, without any security considerations.
 
-Finally, this work follows all recommendations set forth in "Domain Control Validation
-using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques]. In particular, unlike `dns-01`, each validation is scoped to
-the particular label being validated.
+Finally, this work follows all recommendations set forth in "Domain Control
+Validation using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques].
+In particular, unlike `dns-01`, each validation is scoped to the particular
+label being validated.
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in
 {{!RFC8555}}. Since this new challenge does not modify or build on any
@@ -127,12 +128,16 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following label to the domain name being validated:
 
-      "_" || base32(SHA-256(Account Resource URL)[0:9]) || "._acme-challenge"
+      "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:9]) || "._acme-" || <SCOPE> ||"-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
    - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
    - base32 is the operation defined in {{!RFC4648}}
-   - Account Resource URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
+   - ACCOUNT_RESOURCE_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
+   - SCOPE is
+     - "host" if the associated authorization applies only to the specific host name and no labels beneath it
+     - "wildcard" if the associated authorization is for a wildcard domain and contains the `wildcard` field set to true ({{?RFC8555, Section 7.1.4}})
+     - "domain" if the authorization is for both the host and all subdomains by containing the `subdomainAuthAllowed` field set to true ({{?RFC9444, Section 4.1}}).
    - The `"||"` operator indicates concatenation of strings
 
 - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
@@ -169,7 +174,7 @@ On receiving a response, the server constructs and stores the key authorization 
 To validate the `dns-account-01` challenge, the server performs the following steps:
 
 - Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the account URL of the ACME account requesting validation
+- Compute the validation domain name with the account URL of the ACME account requesting validation and the associated authorization
 - Query for `TXT` records for the validation domain name
 - Verify that the contents of one of the `TXT` records match the digest value
 
@@ -191,9 +196,9 @@ If this change occurs, the existing long-term `CNAME` records created by all acc
 
 # Security Considerations
 
-This challenge follows the general recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}. `dns-account-01` does not attempt to introduce a "scope of validation" to the identifier for simplicity, consistency with `dns-01`, and the fact that validations can be scoped effectively via CAA records in its primary use case, the Web PKI {{?RFC8657}}. 
+This challenge follows the recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}.
 
-`dns-account-01` only differs from `dns-01` in the addition of the left-most label so the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification.
+`dns-account-01` differs from `dns-01` in the both the addition of the left-most label and that challenges are scoped to the particular name being validated without relying upon CAA. However, the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification.
 
 In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size. SHA-256 was picked due to its broad adoption, hardware support, and existing need in implementations that would likely support `dns-account-01`.
 
