@@ -91,10 +91,6 @@ label depends on the ACME account and not the account key, to allow for
 seamless account key rollover without the label changing. This ensures very
 long-lived labels, without any security considerations.
 
-Finally, this work follows all recommendations set forth in "Domain Control Validation
-using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques]. In particular, unlike `dns-01`, each validation is scoped to
-the particular label being validated.
-
 This RFC does not intend to deprecate the `dns-01` challenge specified in
 {{!RFC8555}}. Since this new challenge does not modify or build on any
 pre-existing challenges, the ability to complete the `dns-account-01` challenge
