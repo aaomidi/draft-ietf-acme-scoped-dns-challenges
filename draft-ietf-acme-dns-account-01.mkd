@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACM
 abbrev: "ACME-DNS-CHALLENGE"
 category: std
 
-docname: draft-ietf-acme-dns-account-challenge-00
+docname: draft-ietf-acme-dns-account-challenge-01
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
@@ -25,7 +25,7 @@ author:
  -
     fullname: Amir A. Omidi
     organization: Spirl
-    email: aaomidi@google.com
+    email: amir@aaomidi.com
  -
     fullname: James Kasten
     organization: Google
