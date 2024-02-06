@@ -63,14 +63,22 @@ systems or environments to handle challenge-solving for a single domain.
 
 The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that
 ACME clients validate the domain under the `_acme-challenge` label for the
-`TXT` record. This unique label creates an impediment limiting the number of
-other entities domain validation can be delegated to.
+`TXT` record. This label creates several limiations in domain validation.
 
-In multi-region deployments, where separate availability zones serve the same
-content, and dependencies across them are avoided, operators need a way to
-obtain a separate certificate per zone, for the same domain name. Similarly, in
-cases of zero-downtime migration, two different setups of the infrastructure
-may coexist for a long period of time, and both need access to valid
+First, the `_acme-challenge` label, does not specify if the authorization is
+intended for a specific host, a wildcard domain, or a domain and all of its
+subdomains. This means that in practice, when validating a specific dns name
+with DNS-01, the ACME server is effectively validating that dns name, and all
+of its subdomains. This lack of scoping has security implications for the domain.
+
+Furthermore, since this label is unique to the domain, it creates an impediment
+limiting the number of other entities domain vlaidation can be delegated to.
+
+In multi-region deployments, where separate availability zones
+serve the same content, and dependencies across them are avoided, operators need
+a way to obtain a separate certificate per zone, for the same domain name.
+Similarly, in cases of zero-downtime migration, two different setups of the
+infrastructure may coexist for a long period of time, and both need access to valid
 certificates.
 
 Due to the uniqueness of the `_acme-challenge` label, operators today have to
@@ -78,11 +86,17 @@ pick a single ACME challenge solver for their domain name, and then add a
 `CNAME` record to this infrastructure. A domain name can only have one `CNAME`
 in DNS.
 
-This document specifies a new challenge type, `dns-account-01`. This challenge
-leverages the ACME Account Resource URL to present an account-unique stable
-challenge to an ACME server. This challenge allows any domain name to delegate
-its domain validation to more than one service through ACME account-unique DNS
-records.
+This document specifies two new challenge types. `dns-02` and `dns-account-01`.
+
+The `dns-02` challenge adds onto `dns-01` by introducing a scoping mechanism
+to the domain validation label. This allows for the client to specify if the
+intended domain validation is for a specific host, a wildcard domain, or a domain
+and all of its subdomains.
+
+The  `dns-account-01` leverages the ACME Account Resource URL to present an
+account-unique stable challenge to an ACME server. This challenge allows any
+domain name to delegate its domain validation to more than one service through
+ACME account-unique DNS records.
 
 As now multiple labels can be used to prove domain control, and they depend on
 the ACME account, any number of them can be generated in advance, and then all
@@ -97,10 +111,13 @@ In particular, unlike `dns-01`, each validation is scoped to the particular
 label being validated.
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in
-{{!RFC8555}}. Since this new challenge does not modify or build on any
+{{!RFC8555}}. Since these new challenge does not modify or build on any
 pre-existing challenges, the ability to complete the `dns-account-01` challenge
 requires ACME server operators to deploy new changes to their codebase. This
 makes adopting and using this challenge an opt-in process.
+
+Eventually, a domain operator may choose to not allow the use of `dns-01` through
+CAA records.
 
 # Conventions and Definitions
 
