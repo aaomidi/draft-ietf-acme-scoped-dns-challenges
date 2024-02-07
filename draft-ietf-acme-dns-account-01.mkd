@@ -67,9 +67,9 @@ ACME clients validate the domain under the `_acme-challenge` label for the
 
 First, the `_acme-challenge` label does not specify if the authorization is
 intended for a specific host, a wildcard domain, or a domain and all of its
-subdomains. Consequently, when validating a specific dns name with the DNS-01
+subdomains. Consequently, when validating a specific DNS name with the DNS-01
 challenge, the ACME server might be interpreted as validating control over
-that dns name, and potentially its subdomains. This broad validation scope can
+that DNS name, and potentially its subdomains. This broad validation scope can
 have security implications, such as erroneously assuming control over the dns
 name and all of its subdomains.
 
