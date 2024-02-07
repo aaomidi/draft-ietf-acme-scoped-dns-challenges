@@ -288,7 +288,7 @@ An ACME server may have multiple `kid` values associated with a given ACME accou
 
 These challenges follows the recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}.
 
-In both `dns-account-01` and `dns-02`, the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
+In both `dns-account-01` and `dns-02`, the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`. They both differ from `dns-01` in that the challenges are scoped to the particular name being validated without relying upon CAA ({{!RFC8659}}).
 
 ## DNS-ACCOUNT-01
 
