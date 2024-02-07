@@ -104,7 +104,7 @@ to the domain validation label. This allows for the client to specify if the
 intended domain validation is for a specific host, a wildcard domain, or a domain
 and all of its subdomains.
 
-## DNS-01
+## DNS-ACCOUNT-01
 
 The `dns-account-01` challenge leverages the ACME Account Resource URL to present
 an account-unique stable challenge to an ACME server. This challenge allows any
