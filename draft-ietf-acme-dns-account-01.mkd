@@ -221,7 +221,7 @@ A client can fulfill this challenge by performing the following steps:
       "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:9]) || "._acme-" || <SCOPE> ||"-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
-   - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA256 operation
+   - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
    - base32 is the operation defined in {{!RFC4648}}
    - ACCOUNT_RESOURCE_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
    - SCOPE is
@@ -294,7 +294,7 @@ In both `dns-account-01` and `dns-02`, the same security considerations apply fo
 
 To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.
 
-In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size. SHA-256 was picked due to its broad adoption, hardware support, and existing need in implementations that would likely support `dns-account-01`.
+In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size. SHA-256 was picked due to it already being used for existing `dns-01` challenges ({{!RFC8555, Section 8.1}}).
 
 The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
 
