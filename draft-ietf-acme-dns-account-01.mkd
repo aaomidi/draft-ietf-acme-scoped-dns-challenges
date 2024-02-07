@@ -197,6 +197,10 @@ If all the above verifications succeed, then the validation is successful. If no
 
 The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
 
+## Errors
+
+The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
+
 # DNS-ACCOUNT-01 Challenge
 
 When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a `TXT` resource record containing a designated value for a specific validation domain name.
