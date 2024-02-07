@@ -308,12 +308,12 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 The "ACME Validation Methods" registry is to be updated to include the following entries:
 
 ~~~
-label: dns-account-01
+label: dns-02
 identifier-type: dns
 ACME: Y
 Reference: This document
 
-label: dns-02
+label: dns-account-01
 identifier-type: dns
 ACME: Y
 Reference: This document
