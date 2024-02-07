@@ -154,32 +154,32 @@ A client can fulfill this challenge by performing the following steps:
 
 - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
 
-For example, if the domain name being validated is the wildcard of `*.example.org` then the client would provision the following DNS record:
+  For example, if the domain name being validated is the wildcard of `*.example.org` then the client would provision the following DNS record:
 
-~~~
-_acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-~~~
+  ~~~
+  _acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+  ~~~
 
-(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
+  (In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
 
-Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
+- Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
 
-~~~
-POST /acme/chall/Rg5dV14Gh1Q
-Host: example.com
-Content-Type: application/jose+json
+  ~~~
+  POST /acme/chall/Rg5dV14Gh1Q
+  Host: example.com
+  Content-Type: application/jose+json
 
-{
-  "protected": base64url({
-    "alg": "ES256",
-    "kid": "https://example.com/acme/acct/evOfKhNU60wg",
-    "nonce": "SS2sSl1PtspvFZ08kNtzKd",
-    "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
-  }),
-  "payload": base64url({}),
-  "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
-}
-~~~
+  {
+    "protected": base64url({
+      "alg": "ES256",
+      "kid": "https://example.com/acme/acct/evOfKhNU60wg",
+      "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+      "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+    }),
+    "payload": base64url({}),
+    "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+  }
+  ~~~
 
 On receiving a response, the server constructs and stores the key authorization from the challenge `token` value.
 
