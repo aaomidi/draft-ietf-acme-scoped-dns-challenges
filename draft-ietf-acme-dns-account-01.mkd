@@ -242,7 +242,7 @@ A client can fulfill this challenge by performing the following steps:
 For example, if the domain name being validated is `*.example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
 
 ~~~
-_ujmmovf2vn55tgye._acme-wildcard-challenge.www.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+_ujmmovf2vn55tgye._acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
 ~~~
 
 (In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
