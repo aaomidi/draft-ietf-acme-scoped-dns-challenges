@@ -65,11 +65,13 @@ The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that
 ACME clients validate the domain under the `_acme-challenge` label for the
 `TXT` record. This label creates several limiations in domain validation.
 
-First, the `_acme-challenge` label, does not specify if the authorization is
+First, the `_acme-challenge` label does not specify if the authorization is
 intended for a specific host, a wildcard domain, or a domain and all of its
-subdomains. This means that in practice, when validating a specific dns name
-with DNS-01, the ACME server is effectively validating that dns name, and all
-of its subdomains. This lack of scoping has security implications for the domain.
+subdomains. Consequently, when validating a specific dns name with the DNS-01
+challenge, the ACME server might be interpreted as validating control over
+that dns name, and potentially its subdomains. This broad validation scope can
+have security implications, such as erroneously assuming control over the dns
+name and all of its subdomains.
 
 Furthermore, since this label is unique to the domain, it creates an impediment
 limiting the number of other entities domain vlaidation can be delegated to.
@@ -297,10 +299,15 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 
 ## ACME Validation Method
 
-The "ACME Validation Methods" registry is to be updated to include the following entry:
+The "ACME Validation Methods" registry is to be updated to include the following entries:
 
 ~~~
 label: dns-account-01
+identifier-type: dns
+ACME: Y
+Reference: This document
+
+label: dns-02
 identifier-type: dns
 ACME: Y
 Reference: This document
