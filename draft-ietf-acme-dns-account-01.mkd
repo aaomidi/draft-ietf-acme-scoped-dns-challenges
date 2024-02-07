@@ -115,10 +115,10 @@ In particular, unlike `dns-01`, each validation is scoped to the particular
 label being validated.
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in
-{{!RFC8555}}. Since these new challenge does not modify or build on any
-pre-existing challenges, the ability to complete the `dns-account-01` challenge
-requires ACME server operators to deploy new changes to their codebase. This
-makes adopting and using this challenge an opt-in process.
+{{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges,
+the ability to complete the `dns-02` or `dns-account-01` challenge requires ACME server
+operators to deploy new changes to their codebase. This makes adopting and using this
+challenge an opt-in process.
 
 Eventually, a domain operator may choose to prohibit the use of `dns-01` through
 CAA records.
