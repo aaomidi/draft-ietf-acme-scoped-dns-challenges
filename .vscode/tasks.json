@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "/usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-acme-dns-account-01.mkd > docs/draft.xml && xml2rfc --text --html --v3 docs/draft.xml",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

@@ -6,5 +6,12 @@
       "VARIANT": "ubuntu-22.04"
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.live-server"
+      ]
+    }
+  }
 }
