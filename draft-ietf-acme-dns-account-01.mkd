@@ -75,6 +75,9 @@ name and all of its subdomains.
 
 Furthermore, since each domain only has a single authorization label, it creates an impediment
 limiting the number of other entities domain validation can be delegated to.
+Delegating authorization to an entity requires the use of CNAME records, which can only used once
+per DNS name (or in this case, once per authorization label). This limitation requires that
+operators to pick a single ACME challenge solver for their domain name.
 
 In multi-region deployments, where separate availability zones
 serve the same content, and dependencies across them are avoided, operators need
@@ -82,11 +85,6 @@ a way to obtain a separate certificate per zone, for the same domain name.
 Similarly, in cases of zero-downtime migration, two different setups of the
 infrastructure may coexist for a long period of time, and both need access to valid
 certificates.
-
-Due to the uniqueness of the `_acme-challenge` label, operators today have to
-pick a single ACME challenge solver for their domain name, and then add a
-`CNAME` record to this infrastructure. A domain name can only have one `CNAME`
-in DNS.
 
 This document specifies two new challenge types. `dns-02` and `dns-account-01`.
 
