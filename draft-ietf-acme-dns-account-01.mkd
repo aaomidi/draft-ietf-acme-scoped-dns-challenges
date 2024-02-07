@@ -73,7 +73,7 @@ that DNS name, and potentially its subdomains. This broad validation scope can
 have security implications, such as erroneously assuming control over the dns
 name and all of its subdomains.
 
-Furthermore, since this label is unique to the domain, it creates an impediment
+Furthermore, since each domain only has a single authorization label, it creates an impediment
 limiting the number of other entities domain validation can be delegated to.
 
 In multi-region deployments, where separate availability zones
