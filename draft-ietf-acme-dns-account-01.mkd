@@ -86,7 +86,7 @@ Similarly, in cases of zero-downtime migration, two different setups of the
 infrastructure may coexist for a long period of time, and both need access to valid
 certificates.
 
-This document specifies two new challenge types. `dns-02` and `dns-account-01`.
+This document specifies two new challenge types. `dns-02` and `dns-account-01`, which aim to address these deficiencies.
 
 This work follows all recommendations set forth in "Domain Control
 Validation using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques].
@@ -94,8 +94,8 @@ Validation using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques].
 This RFC does not intend to deprecate the `dns-01` challenge specified in
 {{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges,
 the ability to complete the `dns-02` or `dns-account-01` challenge requires ACME server
-operators to deploy new changes to their codebase. This makes adopting and using this
-challenge an opt-in process.
+operators to deploy new changes to their codebase. This makes adopting and using these
+challenges an opt-in process.
 
 ## DNS-02
 
@@ -216,7 +216,7 @@ A client can fulfill this challenge by performing the following steps:
 
 - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
-- Construct the authorization domain name by prepending the following label to the domain name being validated:
+- Construct the authorization domain name by prepending the following two labels to the domain name being validated:
 
       "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:9]) || "._acme-" || <SCOPE> ||"-challenge"
 
@@ -282,7 +282,7 @@ If the server is unable to find a `TXT` record for the authorization domain name
 
 As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account.
 
-An ACME server may have multiple `kid` values associated with a given ACME account. In such cases, the server MUST use the `kid` value that was used in the POST request to validate the challenge.
+An ACME server may have multiple `kid` values associated with a given ACME account. In such cases, the server MUST use the `kid` value that was used in the POST request to the challenge URL.
 
 # Security Considerations
 
