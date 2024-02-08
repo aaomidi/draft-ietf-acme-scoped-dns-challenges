@@ -113,8 +113,9 @@ ACME account-unique DNS records.
 
 With this new challenge, domain validation of the same DNS name can be done through
 different validation labels. Since these validation labels will depend on the ACME
-account KID, any number of them can be generated in advance. This allows all
-required `CNAME` records for domain validation delegation to be constructed statically.
+account KID ({{!RFC8555, Section 6.2}}), any number of them can be generated in advance.
+This allows all required `CNAME` records for domain validation delegation to be constructed
+statically.
 
 # Conventions and Definitions
 
@@ -218,10 +219,10 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the authorization domain name by prepending the following two labels to the domain name being validated:
 
-      "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:9]) || "._acme-" || <SCOPE> ||"-challenge"
+      "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:10]) || "._acme-" || <SCOPE> ||"-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
-   - `[0:9]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
+   - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
    - base32 is the operation defined in {{!RFC4648}}
    - ACCOUNT_RESOURCE_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
    - SCOPE is
@@ -281,8 +282,6 @@ If the server is unable to find a `TXT` record for the authorization domain name
 ## Implementation Considerations
 
 As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account.
-
-An ACME server may have multiple `kid` values associated with a given ACME account. In such cases, the server MUST use the `kid` value that was used in the POST request to the challenge URL.
 
 # Security Considerations
 
