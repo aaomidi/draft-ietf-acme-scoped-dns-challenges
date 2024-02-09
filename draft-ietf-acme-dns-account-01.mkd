@@ -67,7 +67,7 @@ ACME clients validate the domain under the `_acme-challenge` label for the
 
 First, the `_acme-challenge` label does not specify if the authorization is
 intended for a specific host, a wildcard domain, or a domain and all of its
-subdomains. Consequently, when validating a specific DNS name with the DNS-01
+subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.
 challenge, the ACME server might be interpreted as validating control over
 that DNS name, and potentially its subdomains. This broad validation scope can
 have security implications, such as erroneously assuming control over the dns
@@ -109,7 +109,7 @@ and all of its subdomains.
 The `dns-account-01` challenge leverages the ACME Account Resource URL to present
 an account-unique stable challenge to an ACME server. This challenge allows any
 domain name to delegate its domain validation to more than one service through
-ACME account-unique DNS records.
+unique per ACME account DNS records.
 
 With this new challenge, domain validation of the same DNS name can be done through
 different authorization labels. Since these authorization labels will depend on the ACME
@@ -265,7 +265,7 @@ On receiving a response, the server constructs and stores the key authorization 
 To validate the `dns-account-01` challenge, the server performs the following steps:
 
 - Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the account URL of the ACME account requesting validation and the associated authorization similar to the client
+- Compute the validation domain name with the account URL of the ACME account requesting validation and the associated authorization, similar to the client logic
 - Query for `TXT` records for the validation domain name
 - Verify that the contents of one of the `TXT` records match the digest value
 
@@ -293,7 +293,7 @@ In both `dns-account-01` and `dns-02`, the same security considerations apply fo
 
 To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.
 
-In terms of the construction of the label prepended to the domain name, there is no need for a cryptographic hash. The purpose of that is to create a long-lived and statistically distinctive record of minimal size. SHA-256 was picked due to it already being used for existing `dns-01` challenges ({{!RFC8555, Section 8.1}}).
+In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the `dns-01` challenge ({{!RFC8555, Section 8.1}}).
 
 The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
 
