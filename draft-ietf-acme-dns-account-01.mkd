@@ -67,11 +67,9 @@ ACME clients validate the domain under the `_acme-challenge` label for the
 
 First, the `_acme-challenge` label does not specify if the authorization is
 intended for a specific host, a wildcard domain, or a domain and all of its
-subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.
-challenge, the ACME server might be interpreted as validating control over
-that DNS name, and potentially its subdomains. This broad validation scope can
-have security implications, such as erroneously assuming control over the dns
-name and all of its subdomains.
+subdomains. Consequently, domain owners who may be delegating or provisioning
+authorization labels for a domain must concede control over the domain and all
+subdomains, violating the principle of least privilege.
 
 Furthermore, since each domain only has a single authorization label, it creates an impediment
 limiting the number of other entities domain validation can be delegated to.
