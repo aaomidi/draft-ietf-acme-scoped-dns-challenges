@@ -293,7 +293,7 @@ To allow for seamless account key rollover without the label changing, the dynam
 
 In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the `dns-01` challenge ({{!RFC8555, Section 8.1}}).
 
-The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS record and response size, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
+The first 10 bytes were picked as a tradeoff: the value needs to be short enough to not significantly impact DNS label length, long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
 
 # IANA Considerations
 
