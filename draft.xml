@@ -47,7 +47,7 @@
       </address>
     </author>
 
-    <date year="2024" month="February" day="10"/>
+    <date year="2024" month="February" day="12"/>
 
     <area>Security</area>
     <workgroup>Automated Certificate Management Environment</workgroup>
@@ -58,10 +58,7 @@
 
 <?line 53?>
 
-<t>This document outlines a new challenge for the ACME protocol, enabling an ACME
-client to answer a domain control validation challenge from an ACME server
-using a DNS resource linked to the ACME Account ID. This allows multiple
-systems or environments to handle challenge-solving for a single domain.</t>
+<t>This document outlines a new challenge for the ACME protocol, enabling an ACME client to answer a domain control validation challenge from an ACME server using a DNS resource linked to the ACME Account ID. This allows multiple systems or environments to handle challenge-solving for a single domain.</t>
 
 
 
@@ -88,64 +85,35 @@ systems or environments to handle challenge-solving for a single domain.</t>
   <middle>
 
 
-<?line 60?>
+<?line 57?>
 
 <section anchor="introduction"><name>Introduction</name>
 
-<t>The <spanx style="verb">dns-01</spanx> challenge specified in section 8.4 of <xref target="RFC8555"/> requires that
-ACME clients validate the domain under the <spanx style="verb">_acme-challenge</spanx> label for the
-<spanx style="verb">TXT</spanx> record. This label creates several limiations in domain validation.</t>
+<t>The <spanx style="verb">dns-01</spanx> challenge specified in section 8.4 of <xref target="RFC8555"/> requires that ACME clients validate the domain under the <spanx style="verb">_acme-challenge</spanx> label for th <spanx style="verb">TXT</spanx> record. This label creates several limiations in domain validation.</t>
 
-<t>First, the <spanx style="verb">_acme-challenge</spanx> label does not specify if the authorization is
-intended for a specific host, a wildcard domain, or a domain and all of its
-subdomains. Consequently, domain owners who may be delegating or provisioning
-authorization labels for a domain must concede control over the domain and all
-subdomains, violating the principle of least privilege.</t>
+<t>First, the <spanx style="verb">_acme-challenge</spanx> label does not specify if the authorization is intended for a specific host, a wildcard domain, or a domain and all of its subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.</t>
 
-<t>Furthermore, since each domain only has a single authorization label, it creates an impediment
-limiting the number of other entities domain validation can be delegated to.
-Delegating authorization to an entity requires the use of CNAME records, which can only used once
-per DNS name (or in this case, once per authorization label). This limitation requires that
-operators to pick a single ACME challenge solver for their domain name.</t>
+<t>Furthermore, since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires that operators to pick a single ACME challenge solver for their domain name.</t>
 
-<t>In multi-region deployments, where separate availability zones
-serve the same content, and dependencies across them are avoided, operators need
-a way to obtain a separate certificate per zone, for the same domain name.
-Similarly, in cases of zero-downtime migration, two different setups of the
-infrastructure may coexist for a long period of time, and both need access to valid
-certificates.</t>
+<t>In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.</t>
 
 <t>This document specifies two new challenge types. <spanx style="verb">dns-02</spanx> and <spanx style="verb">dns-account-01</spanx>, which aim to address these deficiencies.</t>
 
-<t>This work follows all recommendations set forth in "Domain Control
-Validation using DNS" <xref target="I-D.draft-ietf-dnsop-domain-verification-techniques"></xref>.</t>
+<t>This work follows all recommendations set forth in "Domain Control Validation using DNS" <xref target="I-D.draft-ietf-dnsop-domain-verification-techniques"></xref>.</t>
 
-<t>This RFC does not intend to deprecate the <spanx style="verb">dns-01</spanx> challenge specified in
-<xref target="RFC8555"/>. Since these new challenges do not modify any pre-existing challenges,
-the ability to complete the <spanx style="verb">dns-02</spanx> or <spanx style="verb">dns-account-01</spanx> challenge requires ACME server
-operators to deploy new changes to their codebase. This makes adopting and using these
-challenges an opt-in process.</t>
+<t>This RFC does not intend to deprecate the <spanx style="verb">dns-01</spanx> challenge specified in <xref target="RFC8555"/>. Since these new challenges do not modify any pre-existing challenges, the ability to complete the <spanx style="verb">dns-02</spanx> or <spanx style="verb">dns-account-01</spanx> challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.</t>
 
 <section anchor="dns-02"><name>DNS-02</name>
 
-<t>The <spanx style="verb">dns-02</spanx> challenge adds onto <spanx style="verb">dns-01</spanx> by introducing a scoping mechanism
-to the domain authorization label. This allows for the client to specify if the
-intended domain validation is for a specific host, a wildcard domain, or a domain
-and all of its subdomains.</t>
+<t>The <spanx style="verb">dns-02</spanx> challenge adds onto <spanx style="verb">dns-01</spanx> by introducing a scoping mechanism to the domain authorization label. This allows for the client to specify if the intended domain validation is for a specific host, a wildcard domain, or a domain and all of its subdomains.</t>
 
 </section>
 <section anchor="dns-account-01"><name>DNS-ACCOUNT-01</name>
 
-<t>The <spanx style="verb">dns-account-01</spanx> challenge leverages the ACME Account Resource URL to present
-an account-unique stable challenge to an ACME server. This challenge allows any
-domain name to delegate its domain validation to more than one service through
+<t>The <spanx style="verb">dns-account-01</spanx> challenge leverages the ACME Account Resource URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through
 unique per ACME account DNS records.</t>
 
-<t>With this new challenge, domain validation of the same DNS name can be done through
-different authorization labels. Since these authorization labels will depend on the ACME
-account KID (<xref section="6.2" sectionFormat="comma" target="RFC8555"/>), any number of them can be generated in advance.
-This allows all required <spanx style="verb">CNAME</spanx> records for domain validation delegation to be constructed
-statically.</t>
+<t>With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID (<xref section="6.2" sectionFormat="comma" target="RFC8555"/>), any number of them can be generated in advance. This allows all required <spanx style="verb">CNAME</spanx> records for domain validation delegation to be constructed statically.</t>
 
 </section>
 </section>
@@ -580,7 +548,7 @@ Reference: This document
     </references>
 
 
-<?line 335?>
+<?line 303?>
 
 <section numbered="false" anchor="acknowledgments"><name>Acknowledgments</name>
 
@@ -590,118 +558,117 @@ Reference: This document
   </back>
 
 <!-- ##markdown-source:
-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
-7qLDPgAA
+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
+C5RWJIPCPgAA
 
 -->
 
