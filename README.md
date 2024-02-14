@@ -2,7 +2,7 @@
 
 This is the working area for the individual Internet-Draft, "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge".
 
-* [Editor's Copy](https://daknob.github.io/draft-todo-chariton-dns-account-01/)
+* [Editor's Copy](https://aaomidi.github.io/draft-ietf-acme-scoped-dns-challenges/)
 <!-- * [Datatracker Page](https://datatracker.ietf.org/doc/draft-todo-chariton-dns-account01) -->
 <!-- * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-todo-chariton-dns-account01) -->
 <!-- * [Compare Editor's Copy to Individual Draft](https://daknob.github.io/draft-todo-chariton-dns-account-01/#go.draft-todo-chariton-dns-account.diff) -->
