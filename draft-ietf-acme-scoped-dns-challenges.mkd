@@ -58,11 +58,11 @@ This document outlines a new challenge for the ACME protocol, enabling an ACME c
 
 # Introduction
 
-The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for th `TXT` record. This label creates several limiations in domain validation.
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This label creates several limitations in domain validation.
 
 First, the `_acme-challenge` label does not specify if the authorization is intended for a specific host, a wildcard domain, or a domain and all of its subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.
 
-Furthermore, since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires that operators to pick a single ACME challenge solver for their domain name.
+Furthermore, since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires operators to pick a single ACME challenge solver for their domain name.
 
 In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.
 
@@ -109,7 +109,7 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by specifying the scope for the domain name being validated:
 
-      "_acme-" || <SCOPE> ||"-challenge"
+      "_acme-" || <SCOPE> || "-challenge"
 
    - SCOPE is
      - "host" if the associated authorization applies only to the specific host name and no labels beneath it
@@ -185,7 +185,7 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following two labels to the domain name being validated:
 
-      "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:10]) || "._acme-" || <SCOPE> ||"-challenge"
+      "_" || base32(SHA-256(<ACCOUNT_RESOURCE_URL>)[0:10]) || "._acme-" || <SCOPE> || "-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
    - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
@@ -251,7 +251,7 @@ As this challenge creates strong dependency on the `kid` account identifier, the
 
 # Security Considerations
 
-These challenges follows the recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}.
+These challenges follow the recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}.
 
 In both `dns-account-01` and `dns-02`, the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`. They both differ from `dns-01` in that the challenges are scoped to the particular name being validated without relying upon CAA ({{!RFC8659}}).
 
