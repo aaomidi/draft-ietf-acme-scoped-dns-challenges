@@ -1609,12 +1609,12 @@ Content-Type: application/jose+json
 </div>
 </li>
       </ul>
-<p id="section-4-6">On receiving a response, the server constructs and stores the key authorization from the challenge <code>token</code> value and the current client account key.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-6">On receiving this response, the server validates the message and constructs and stores the key authorization from the challenge <code>token</code> value and the current client account key.<a href="#section-4-6" class="pilcrow">¶</a></p>
 <p id="section-4-7">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-4-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-8.1">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<a href="#section-4-8.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-4-8.2">Compute the validation domain name with the account URL of the ACME account requesting validation and the associated authorization, similar to the client logic<a href="#section-4-8.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-4-8.2">Compute the validation domain name with the KID value in the JWS message<a href="#section-4-8.2" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-4-8.3">Query for <code>TXT</code> records for the validation domain name<a href="#section-4-8.3" class="pilcrow">¶</a>
 </li>
