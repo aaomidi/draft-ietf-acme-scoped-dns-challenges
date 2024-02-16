@@ -226,12 +226,12 @@ A client can fulfill this challenge by performing the following steps:
   }
   ~~~
 
-On receiving a response, the server constructs and stores the key authorization from the challenge `token` value and the current client account key.
+On receiving this response, the server validates the message and constructs and stores the key authorization from the challenge `token` value and the current client account key.
 
 To validate the `dns-account-01` challenge, the server performs the following steps:
 
 - Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the account URL of the ACME account requesting validation and the associated authorization, similar to the client logic
+- Compute the validation domain name with the KID value in the JWS message
 - Query for `TXT` records for the validation domain name
 - Verify that the contents of one of the `TXT` records match the digest value
 
