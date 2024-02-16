@@ -1,6 +1,6 @@
-# Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge
+# Automated Certificate Management Environment (ACME) Scoped DNS Challenges
 
-This is the working area for the individual Internet-Draft, "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge".
+This is the working area for the individual Internet-Draft, "Automated Certificate Management Environment (ACME) Scoped DNS Challenges".
 
 * [Editor's Copy](https://aaomidi.github.io/draft-ietf-acme-scoped-dns-challenges/)
 <!-- * [Datatracker Page](https://datatracker.ietf.org/doc/draft-todo-chariton-dns-account01) -->
