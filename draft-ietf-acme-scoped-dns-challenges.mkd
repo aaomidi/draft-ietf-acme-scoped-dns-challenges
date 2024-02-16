@@ -226,7 +226,7 @@ A client can fulfill this challenge by performing the following steps:
   }
   ~~~
 
-On receiving this response, the server validates the JWS and constructs and stores the key authorization from the challenge `token` value and the current client account key.
+On receiving this response, the server validates the message and constructs and stores the key authorization from the challenge `token` value and the current client account key.
 
 To validate the `dns-account-01` challenge, the server performs the following steps:
 
