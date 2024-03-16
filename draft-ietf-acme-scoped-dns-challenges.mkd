@@ -217,7 +217,7 @@ A client can fulfill this challenge by performing the following steps:
   {
     "protected": base64url({
       "alg": "ES256",
-      "kid": "https://example.com/acme/acct/evOfKhNU60wg",
+      "kid": "https://example.com/acme/acct/ExampleAccount",
       "nonce": "SS2sSl1PtspvFZ08kNtzKd",
       "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
     }),
