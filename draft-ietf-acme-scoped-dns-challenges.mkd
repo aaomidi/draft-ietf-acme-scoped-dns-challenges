@@ -151,7 +151,7 @@ On receiving a response, the server constructs and stores the key authorization 
 To validate the `dns-02` challenge, the server performs the following steps:
 
 - Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the scope of the associated authorization similiar to the client
+- Compute the validation domain name with the scope of the associated authorization similar to the client
 - Query for `TXT` records for the validation domain name
 - Verify that the contents of one of the `TXT` records match the digest value
 
