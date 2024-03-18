@@ -72,6 +72,10 @@ This work follows all recommendations set forth in "Domain Control Validation us
 
 This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges, the ability to complete the `dns-02` or `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.
 
+## Terminology
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{!BCP14}} {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as shown here.
+
 ## DNS-02
 
 The `dns-02` challenge adds onto `dns-01` by introducing a scoping mechanism to the domain authorization label. This allows for the client to specify if the intended domain validation is for a specific host, a wildcard domain, or a domain and all of its subdomains.
