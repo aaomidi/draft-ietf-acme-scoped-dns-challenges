@@ -12,6 +12,9 @@ jobs:
     - name: Checkout 📋
       uses: actions/checkout@v2
 
+    - name: Run spellchecker
+      uses: crate-ci/typos@v1.19.0
+
     - name: Setup 🏗️
       run: |
         sudo apt-get install --yes xml2rfc ruby

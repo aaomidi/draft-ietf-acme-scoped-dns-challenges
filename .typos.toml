@@ -1,0 +1,13 @@
+[files]
+extend-exclude = [
+    ".devcontainer/",
+    ".git/",
+    ".github/",
+    "vendor/",
+]
+ignore-hidden = false
+
+
+[default.extend-words]
+# Secure Hash Standard
+"SHS" = "SHS"
