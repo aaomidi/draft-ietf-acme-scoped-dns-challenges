@@ -1180,7 +1180,7 @@ li > p:last-of-type {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Chariton, et al.</td>
-<td class="center">Expires 19 September 2024</td>
+<td class="center">Expires 20 September 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1193,12 +1193,12 @@ li > p:last-of-type {
 <dd class="internet-draft">draft-ietf-acme-scoped-dns-challenges-00</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-03-18" class="published">18 March 2024</time>
+<time datetime="2024-03-19" class="published">19 March 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-09-19">19 September 2024</time></dd>
+<dd class="expires"><time datetime="2024-09-20">20 September 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1264,7 +1264,7 @@ li > p:last-of-type {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 19 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1388,7 +1388,7 @@ li > p:last-of-type {
         <h3 id="name-dns-account-01-3">
 <a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-dns-account-01-3" class="section-name selfRef">DNS-ACCOUNT-01</a>
         </h3>
-<p id="section-1.2-1">The <code>dns-account-01</code> challenge leverages the ACME Account Resource URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through
+<p id="section-1.2-1">The <code>dns-account-01</code> challenge leverages the ACME account URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through
 unique per ACME account DNS records.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
 <p id="section-1.2-2">With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.2" class="relref">Section 6.2</a></span>), any number of them can be generated in advance. This allows all required <code>CNAME</code> records for domain validation delegation to be constructed statically.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 </section>
@@ -1547,7 +1547,7 @@ Content-Type: application/jose+json
           <p id="section-4-5.3.1">Construct the validation domain name by prepending the following two labels to the domain name being validated:<a href="#section-4-5.3.1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4-5.3.2">
 <pre>
-"_" || base32(SHA-256(&lt;ACCOUNT_RESOURCE_URL&gt;)[0:10]) || "._acme-" || &lt;SCOPE&gt; || "-challenge"
+"_" || base32(SHA-256(&lt;ACCOUNT_URL&gt;)[0:10]) || "._acme-" || &lt;SCOPE&gt; || "-challenge"
 </pre><a href="#section-4-5.3.2" class="pilcrow">¶</a>
 </div>
 <ul class="normal">
@@ -1558,7 +1558,7 @@ Content-Type: application/jose+json
 </li>
             <li class="normal" id="section-4-5.3.3.3">base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span><a href="#section-4-5.3.3.3" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4-5.3.3.4">ACCOUNT_RESOURCE_URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span> as the value in the <code>Location</code> header field<a href="#section-4-5.3.3.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-4-5.3.3.4">ACCOUNT_URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span> as the value in the <code>Location</code> header field<a href="#section-4-5.3.3.4" class="pilcrow">¶</a>
 </li>
             <li class="normal" id="section-4-5.3.3.5">
               <p id="section-4-5.3.3.5.1">SCOPE is<a href="#section-4-5.3.3.5.1" class="pilcrow">¶</a></p>
