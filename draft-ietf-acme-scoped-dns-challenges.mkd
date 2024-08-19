@@ -247,7 +247,7 @@ If the server is unable to find a `TXT` record for the validation domain name, i
 
 ## Implementation Considerations
 
-As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account.
+As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, and full HTTP path.
 
 # Security Considerations
 
