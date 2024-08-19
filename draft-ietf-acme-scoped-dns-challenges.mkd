@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) Scoped DNS Challenge
 abbrev: "ACME-SCOPED-DNS-CHALLENGES"
 category: std
 
-docname: draft-ietf-acme-scoped-dns-challenges-00
+docname: draft-ietf-acme-scoped-dns-challenges-01
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
