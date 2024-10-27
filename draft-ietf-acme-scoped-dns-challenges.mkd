@@ -110,7 +110,7 @@ A client can fulfill this challenge by performing the following steps:
 
 - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
 
-  For example, if the domain name being validated is `*.example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
+  For example, if the domain name being validated is `example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
 
   ~~~
   _ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
