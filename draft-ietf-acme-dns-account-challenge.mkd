@@ -80,10 +80,15 @@ With this new challenge, domain validation of the same DNS name can be done thro
 
 # DNS-ACCOUNT-01 Challenge
 
-When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a `TXT` resource record containing a designated value for a specific validation domain name.
+When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a TXT resource record containing a designated value for a specific validation domain name.
+
+## Challenge Definition
+The challenge object contains the following fields:
 
 * type (required, string): The string "dns-account-01".
 * token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC4086}} for additional information on additional requirements for secure randomness.
+
+Example challenge object:
 
 ~~~
 {
@@ -94,59 +99,69 @@ When the identifier being validated is a domain name, the client can prove contr
 }
 ~~~
 
-A client can fulfill this challenge by performing the following steps:
+## Challenge Fulfillment
 
-- Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
-- Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
-- Construct the validation domain name by prepending the following two labels to the domain name being validated:
+A client can To fulfill this challenge, a client performs the following steps: this challenge by performing the following steps:
 
-      "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
+1. Construct Key Authorization
+  - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
+  - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 
-   - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
-   - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
-   - base32 is the operation defined in {{!RFC4648}}
-   - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
-   - The `"||"` operator indicates concatenation of strings
+2. DNS Record Creation
+  - Construct the validation domain name by prepending the following two labels to the domain name being validated:
 
-- Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
+        "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
 
-  For example, if the domain name being validated is `example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
+    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
+    - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
+    - base32 is the operation defined in {{!RFC4648}}
+    - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
+    - The `"||"` operator indicates concatenation of strings
 
-  ~~~
-  _ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-  ~~~
+  - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
 
-  (In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
+3. Challenge Response
+  - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
 
-- Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
+Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
 
-  ~~~
-  POST /acme/chall/Rg5dV14Gh1Q
-  Host: example.com
-  Content-Type: application/jose+json
+~~~
+_ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+~~~
 
-  {
-    "protected": base64url({
-      "alg": "ES256",
-      "kid": "https://example.com/acme/acct/ExampleAccount",
-      "nonce": "SS2sSl1PtspvFZ08kNtzKd",
-      "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
-    }),
-    "payload": base64url({}),
-    "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
-  }
-  ~~~
+Example response to server:
+
+~~~
+POST /acme/chall/Rg5dV14Gh1Q
+Host: example.com
+Content-Type: application/jose+json
+
+{
+  "protected": base64url({
+    "alg": "ES256",
+    "kid": "https://example.com/acme/acct/ExampleAccount",
+    "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+    "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+  }),
+  "payload": base64url({}),
+  "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+}
+~~~
+
+## Server Validation
+
+Upon receiving the challenge response, the server:
+
+1. Performs the typical JWS validation.
+2. Constructs and stores the key authorization
+3. Computes the SHA-256 digest {{FIPS180-4}} of the stored key authorization
+4. Computes the validation domain name using the KID value from the JWS message
+5. Queries for TXT records at the validation domain name
+6. Verifies that one TXT record matches the computed digest value
+
+The validation succeeds only if all verifications pass. The server MUST mark the challenge as invalid if any verification fails.
 
 On receiving this response, the server validates the message and constructs and stores the key authorization from the challenge `token` value and the current client account key.
-
-To validate the `dns-account-01` challenge, the server performs the following steps:
-
-- Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the KID value in the JWS message
-- Query for `TXT` records for the validation domain name
-- Verify that the contents of one of the `TXT` records match the digest value
-
-If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server MUST fail the validation and mark the challenge as invalid.
 
 The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
 
