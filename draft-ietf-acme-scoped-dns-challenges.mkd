@@ -52,7 +52,7 @@ informative:
 
 --- abstract
 
-This document outlines a new challenge for the ACME protocol, enabling an ACME client to answer a domain control validation challenge from an ACME server using a DNS resource linked to the ACME Account ID. This allows multiple systems or environments to handle challenge-solving for a single domain.
+This document outlines a new challenge type for the ACME protocol that enables multiple independent systems to handle domain validation for a single domain. By incorporating the ACME Account ID into the DNS validation record name, the dns-account-01 challenge allows concurrent domain validation across different environments. This is particularly valuable for multi-region deployments where multiple systems need to independently obtain certificates for the same domain.
 
 --- middle
 
