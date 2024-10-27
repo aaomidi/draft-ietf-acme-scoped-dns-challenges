@@ -27,7 +27,7 @@ author:
     organization: Spirl
     email: amir@aaomidi.com
  -
-    fullname: James Kasten
+    fullname: James KastenT
     organization: Google
     email: jdkasten@google.com
  -
@@ -165,7 +165,7 @@ As this challenge creates strong dependency on the `kid` account identifier, the
 
 # Security Considerations
 
-Tthe same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
+The same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
 
 To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.
 
