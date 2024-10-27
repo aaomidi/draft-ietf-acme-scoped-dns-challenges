@@ -1,9 +1,9 @@
 ---
-title: "Automated Certificate Management Environment (ACME) Scoped DNS Challenges"
-abbrev: "ACME-SCOPED-DNS-CHALLENGES"
+title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge"
+abbrev: "ACME-DNS-CHALLENGE"
 category: std
 
-docname: draft-ietf-acme-scoped-dns-challenges-01
+docname: draft-ietf-acme-dns-account-challenge-02
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
@@ -14,8 +14,8 @@ venue:
   type: Working Group
   mail: acme@ietf.org
   arch: https://datatracker.ietf.org/wg/acme/about/
-  github: aaomidi/draft-ietf-acme-scoped-dns-challenges
-  latest: https://aaomidi.github.io/draft-ietf-acme-scoped-dns-challenges
+  github: aaomidi/draft-ietf-acme-dns-account-challenge
+  latest: https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge
 
 author:
  -
@@ -58,23 +58,17 @@ This document outlines a new challenge for the ACME protocol, enabling an ACME c
 
 # Introduction
 
-The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This label creates several limitations in domain validation.
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This label creates a limitation in domain validation.
 
-First, the `_acme-challenge` label does not specify if the authorization is intended for a specific host, a wildcard domain, or a domain and all of its subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.
 
-Furthermore, since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires operators to pick a single ACME challenge solver for their domain name.
+Since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires operators to pick a single ACME challenge solver for their domain name.
 
 In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.
 
-This document specifies two new challenge types. `dns-02` and `dns-account-01`, which aim to address these deficiencies.
+This document specifies a new challenge type: `dns-account-01`, which aims to address these deficiencies.
 
-This work follows all recommendations set forth in "Domain Control Validation using DNS" [I-D.draft-ietf-dnsop-domain-verification-techniques].
+This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges, the ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.
 
-This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges, the ability to complete the `dns-02` or `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.
-
-## DNS-02
-
-The `dns-02` challenge adds onto `dns-01` by introducing a scoping mechanism to the domain authorization label. This allows for the client to specify if the intended domain validation is for a specific host, a wildcard domain, or a domain and all of its subdomains.
 
 ## DNS-ACCOUNT-01
 
@@ -86,82 +80,6 @@ With this new challenge, domain validation of the same DNS name can be done thro
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
-
-# DNS-02 Challenge
-
-When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a `TXT` resource record containing a designated value for a specific validation domain name.
-
-* type (required, string): The string "dns-02".
-* token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC4086}} for additional information on additional requirements for secure randomness.
-
-~~~
-{
-    "type": "dns-02",
-    "url": "https://example.com/acme/chall/i00MGYwLWIx",
-    "status": "pending",
-    "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
-}
-~~~
-
-A client can fulfill this challenge by performing the following steps:
-
-- Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
-- Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
-- Construct the validation domain name by specifying the scope for the domain name being validated:
-
-      "_acme-" || <SCOPE> || "-challenge"
-
-   - SCOPE is
-     - "host" if the associated authorization applies only to the specific host name and no labels beneath it
-     - "wildcard" if the associated authorization is for a wildcard domain and contains the `wildcard` field set to true ({{?RFC8555, Section 7.1.4}})
-     - "domain" if the authorization is for both the host and all subdomains by containing the `subdomainAuthAllowed` field set to true ({{?RFC9444, Section 4.1}}).
-   - The `"||"` operator indicates concatenation of strings
-
-- Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
-
-  For example, if the domain name being validated is the wildcard of `*.example.org` then the client would provision the following DNS record:
-
-  ~~~
-  _acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-  ~~~
-
-  (In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
-
-- Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
-
-  ~~~
-  POST /acme/chall/Rg5dV14Gh1Q
-  Host: example.com
-  Content-Type: application/jose+json
-
-  {
-    "protected": base64url({
-      "alg": "ES256",
-      "kid": "https://example.com/acme/acct/evOfKhNU60wg",
-      "nonce": "SS2sSl1PtspvFZ08kNtzKd",
-      "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
-    }),
-    "payload": base64url({}),
-    "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
-  }
-  ~~~
-
-On receiving a response, the server constructs and stores the key authorization from the challenge `token` value.
-
-To validate the `dns-02` challenge, the server performs the following steps:
-
-- Compute the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-- Compute the validation domain name with the scope of the associated authorization similar to the client
-- Query for `TXT` records for the validation domain name
-- Verify that the contents of one of the `TXT` records match the digest value
-
-If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server MUST fail the validation and mark the challenge as invalid.
-
-The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
-
-## Errors
-
-The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
 
 # DNS-ACCOUNT-01 Challenge
 
@@ -185,16 +103,12 @@ A client can fulfill this challenge by performing the following steps:
 - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 - Construct the validation domain name by prepending the following two labels to the domain name being validated:
 
-      "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-" || <SCOPE> || "-challenge"
+      "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
 
    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
    - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
    - base32 is the operation defined in {{!RFC4648}}
    - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
-   - SCOPE is
-     - "host" if the associated authorization applies only to the specific host name and no labels beneath it
-     - "wildcard" if the associated authorization is for a wildcard domain and contains the `wildcard` field set to true ({{?RFC8555, Section 7.1.4}})
-     - "domain" if the authorization is for both the host and all subdomains by containing the `subdomainAuthAllowed` field set to true ({{?RFC9444, Section 4.1}}).
    - The `"||"` operator indicates concatenation of strings
 
 - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
@@ -202,7 +116,7 @@ A client can fulfill this challenge by performing the following steps:
   For example, if the domain name being validated is `*.example.org`, and the account URL of `https://example.com/acme/acct/ExampleAccount` then the client would provision the following DNS record:
 
   ~~~
-  _ujmmovf2vn55tgye._acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+  _ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
   ~~~
 
   (In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)
@@ -251,11 +165,7 @@ As this challenge creates strong dependency on the `kid` account identifier, the
 
 # Security Considerations
 
-These challenges follow the recommendations set out in "Domain Control Validation using DNS" {{I-D.draft-ietf-dnsop-domain-verification-techniques}} for supporting multiple intermediates within the context of {{!RFC8555}}.
-
-In both `dns-account-01` and `dns-02`, the same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`. They both differ from `dns-01` in that the challenges are scoped to the particular name being validated without relying upon CAA ({{!RFC8659}}).
-
-## DNS-ACCOUNT-01
+Tthe same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
 
 To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.
 
@@ -270,11 +180,6 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 The "ACME Validation Methods" registry is to be updated to include the following entries:
 
 ~~~
-label: dns-02
-identifier-type: dns
-ACME: Y
-Reference: This document
-
 label: dns-account-01
 identifier-type: dns
 ACME: Y
