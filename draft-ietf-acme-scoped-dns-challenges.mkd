@@ -58,16 +58,13 @@ This document outlines a new challenge type for the ACME protocol that enables m
 
 # Introduction
 
-The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} requires that ACME clients validate the domain under the `_acme-challenge` label for the `TXT` record. This label creates a limitation in domain validation.
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} uses a single DNS authorization label (`_acme-challenge`) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, which can only be used once per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.
 
+This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates.
 
-Since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires operators to pick a single ACME challenge solver for their domain name.
+This document specifies a new challenge type: `dns-account-01`, which addresses these operational needs. The `dns-account-01` challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID ({{!RFC8555, Section 7.3}}), operators can generate and configure the necessary DNS records in advance.
 
-In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.
-
-This document specifies a new challenge type: `dns-account-01`, which aims to address these deficiencies.
-
-This RFC does not intend to deprecate the `dns-01` challenge specified in {{!RFC8555}}. Since these new challenges do not modify any pre-existing challenges, the ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.
+This RFC does not deprecate the `dns-01` challenge specified in {{!RFC8555}}. The ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.
 
 
 ## DNS-ACCOUNT-01
