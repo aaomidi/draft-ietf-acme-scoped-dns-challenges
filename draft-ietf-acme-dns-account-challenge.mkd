@@ -27,7 +27,7 @@ author:
     organization: Spirl
     email: amir@aaomidi.com
  -
-    fullname: James KastenT
+    fullname: James Kasten
     organization: Google
     email: jdkasten@google.com
  -
