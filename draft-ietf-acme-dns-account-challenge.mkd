@@ -67,19 +67,15 @@ This document specifies a new challenge type: `dns-account-01`, which addresses 
 This RFC does not deprecate the `dns-01` challenge specified in {{!RFC8555}}. The ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.
 
 
-## DNS-ACCOUNT-01
-
-The `dns-account-01` challenge allows a client to prove control of a domain by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to determine a unique but stable validation domain name. This challenge allows any domain name to delegate its domain validation to more than one service through unique per ACME account DNS records.
-
-With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID ({{!RFC8555, Section 7.3}}), any number of them can be generated in advance. This allows all required `CNAME` records for domain validation delegation to be constructed statically.
-
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
 # DNS-ACCOUNT-01 Challenge
 
-When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a TXT resource record containing a designated value for a specific validation domain name.
+The `dns-account-01` challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to determine a unique but stable validation domain name. This challenge allows any domain name to delegate its domain validation to more than one service through unique per ACME account DNS records.
+
+With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID ({{!RFC8555, Section 7.3}}), any number of them can be generated in advance. This allows all required `CNAME` records for domain validation delegation to be constructed statically.
 
 ## Challenge Definition
 The challenge object contains the following fields:
