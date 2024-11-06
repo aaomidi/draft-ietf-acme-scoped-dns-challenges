@@ -27,7 +27,7 @@ author:
     organization: Spirl
     email: amir@aaomidi.com
  -
-    fullname: James KastenT
+    fullname: James Kasten
     organization: Google
     email: jdkasten@google.com
  -
@@ -52,27 +52,20 @@ informative:
 
 --- abstract
 
-This document outlines a new challenge type for the ACME protocol that enables multiple independent systems to handle domain validation for a single domain. By incorporating the ACME Account ID into the DNS validation record name, the dns-account-01 challenge allows concurrent domain validation across different environments. This is particularly valuable for multi-region deployments where multiple systems need to independently obtain certificates for the same domain.
+This document outlines a new DNS-based challenge type for the ACME protocol that enables multiple independent systems to authorize a single domain name concurrently. By adding a unique label to the DNS validation record name, the dns-account-01 challenge avoids CNAME delegation conflicts inherent to the dns-01 challenge type. This is particularly valuable for multi-region or multi-cloud deployments that wish to rely upon DNS-based domain control validation and need to independently obtain certificates for the same domain.
 
 --- middle
 
 # Introduction
 
-The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} uses a single DNS authorization label (`_acme-challenge`) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, which can only be used once per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} uses a single DNS authorization label (`_acme-challenge`) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, of which only one can exist per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.
 
-This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates.
+This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates. Other use cases include multi-CDN deployments and the provision of backup certificates for use when an active certificate must be quickly revoked.
 
 This document specifies a new challenge type: `dns-account-01`, which addresses these operational needs. The `dns-account-01` challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID ({{!RFC8555, Section 7.3}}), operators can generate and configure the necessary DNS records in advance.
 
 This RFC does not deprecate the `dns-01` challenge specified in {{!RFC8555}}. The ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.
 
-
-## DNS-ACCOUNT-01
-
-The `dns-account-01` challenge leverages the ACME account URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through
-unique per ACME account DNS records.
-
-With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID ({{!RFC8555, Section 7.3}}), any number of them can be generated in advance. This allows all required `CNAME` records for domain validation delegation to be constructed statically.
 
 # Conventions and Definitions
 
@@ -80,7 +73,8 @@ With this new challenge, domain validation of the same DNS name can be done thro
 
 # DNS-ACCOUNT-01 Challenge
 
-When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a TXT resource record containing a designated value for a specific validation domain name.
+The `dns-account-01` challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource record. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.
+
 
 ## Challenge Definition
 The challenge object contains the following fields:
