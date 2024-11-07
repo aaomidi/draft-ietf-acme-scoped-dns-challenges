@@ -6,6 +6,9 @@
       "VARIANT": "ubuntu-22.04"
     }
   },
+  "runArgs": [
+    "--userns=keep-id"
+  ],
   "remoteUser": "vscode",
   "customizations": {
     "vscode": {

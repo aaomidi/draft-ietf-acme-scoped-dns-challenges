@@ -1,0 +1,197 @@
+---
+title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge"
+abbrev: "ACME-DNS-CHALLENGE"
+category: std
+
+docname: draft-ietf-acme-dns-account-challenge-02
+v: 3
+area: Security
+workgroup: Automated Certificate Management Environment
+keyword: acme
+ipr: full3978trust200902
+venue:
+  group: WG
+  type: Working Group
+  mail: acme@ietf.org
+  arch: https://datatracker.ietf.org/wg/acme/about/
+  github: aaomidi/draft-ietf-acme-dns-account-challenge
+  latest: https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge
+
+author:
+ -
+    fullname: Antonios A. Chariton
+    organization: Independent Contributor
+    email: daknob@daknob.net
+ -
+    fullname: Amir A. Omidi
+    organization: Spirl
+    email: amir@aaomidi.com
+ -
+    fullname: James Kasten
+    organization: Google
+    email: jdkasten@google.com
+ -
+    fullname: Fotis Loukos
+    organization: Google
+    email: fotisl@google.com
+ -
+    fullname: Stanislaw A. Janikowski
+    organization: Google
+    email: stanwise@google.com
+
+normative:
+  FIPS180-4:
+    title: "Secure Hash Standard (SHS)"
+    date: 2015-08
+    target: https://csrc.nist.gov/publications/detail/fips/180/4/final
+    author:
+      org: National Institute of Standards and Technology
+
+informative:
+  I-D.draft-ietf-dnsop-domain-verification-techniques:
+
+--- abstract
+
+This document outlines a new DNS-based challenge type for the ACME protocol that enables multiple independent systems to authorize a single domain name concurrently. By adding a unique label to the DNS validation record name, the dns-account-01 challenge avoids CNAME delegation conflicts inherent to the dns-01 challenge type. This is particularly valuable for multi-region or multi-cloud deployments that wish to rely upon DNS-based domain control validation and need to independently obtain certificates for the same domain.
+
+--- middle
+
+# Introduction
+
+The `dns-01` challenge specified in section 8.4 of {{!RFC8555}} uses a single DNS authorization label (`_acme-challenge`) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, of which only one can exist per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.
+
+This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates. Other use cases include multi-CDN deployments and the provision of backup certificates for use when an active certificate must be quickly revoked.
+
+This document specifies a new challenge type: `dns-account-01`, which addresses these operational needs. The `dns-account-01` challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID ({{!RFC8555, Section 7.3}}), operators can generate and configure the necessary DNS records in advance.
+
+This RFC does not deprecate the `dns-01` challenge specified in {{!RFC8555}}. The ability to complete the `dns-account-01` challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.
+
+
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+# DNS-ACCOUNT-01 Challenge
+
+The `dns-account-01` challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource record. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.
+
+
+## Challenge Definition
+The challenge object contains the following fields:
+
+* type (required, string): The string "dns-account-01".
+* token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC4086}} for additional information on additional requirements for secure randomness.
+
+Example challenge object:
+
+~~~
+{
+    "type": "dns-account-01",
+    "url": "https://example.com/acme/chall/i00MGYwLWIx",
+    "status": "pending",
+    "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
+}
+~~~
+
+## Challenge Fulfillment
+
+To fulfill this challenge, a client performs the following steps:
+
+1. Construct Key Authorization
+  - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
+  - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
+
+2. DNS Record Creation
+  - Construct the validation domain name by prepending the following two labels to the domain name being validated:
+
+        "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
+
+    - SHA-256 is the SHA hashing operation defined in {{!RFC6234}}
+    - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
+    - base32 is the operation defined in {{!RFC4648}}
+    - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
+    - The `||` operator indicates concatenation of strings
+
+  - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
+
+3. Challenge Response
+  - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
+
+Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
+
+~~~
+_ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+~~~
+
+Example response to server:
+
+~~~
+POST /acme/chall/Rg5dV14Gh1Q
+Host: example.com
+Content-Type: application/jose+json
+
+{
+  "protected": base64url({
+    "alg": "ES256",
+    "kid": "https://example.com/acme/acct/ExampleAccount",
+    "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+    "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+  }),
+  "payload": base64url({}),
+  "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+}
+~~~
+
+## Server Validation
+
+Upon receiving the challenge response, the server:
+
+1. Performs the typical JWS validation.
+2. Constructs and stores the key authorization
+3. Computes the SHA-256 digest {{FIPS180-4}} of the stored key authorization
+4. Computes the validation domain name using the KID value from the JWS message
+5. Queries for TXT records at the validation domain name
+6. Verifies that one TXT record matches the computed digest value
+
+The validation succeeds only if all verifications pass. The server MUST mark the challenge as invalid if any verification fails.
+
+The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
+
+## Errors
+
+The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
+
+If the server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
+
+## Implementation Considerations
+
+As this challenge creates strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, and full HTTP path.
+
+# Security Considerations
+
+The same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
+
+To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.
+
+In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the `dns-01` challenge ({{!RFC8555, Section 8.1}}).
+
+The first 10 bytes were picked as a tradeoff: the value needs to be short enough to stay lower than the size limits for DNS ({{!RFC1035, Section 2.3.4}}), long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
+
+# IANA Considerations
+
+## ACME Validation Method
+
+The "ACME Validation Methods" registry is to be updated to include the following entries:
+
+~~~
+label: dns-account-01
+identifier-type: dns
+ACME: Y
+Reference: This document
+~~~
+
+
+--- back
+
+# Acknowledgments
+{:numbered="false"}
