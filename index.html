@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Automated Certificate Management Environment (ACME) Scoped DNS Challenges</title>
+<title>Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge</title>
 <meta content="Antonios A. Chariton" name="author">
 <meta content="Amir A. Omidi" name="author">
 <meta content="James Kasten" name="author">
 <meta content="Fotis Loukos" name="author">
 <meta content="Stanislaw A. Janikowski" name="author">
 <meta content="
-       This document outlines a new challenge for the ACME protocol, enabling an ACME client to answer a domain control validation challenge from an ACME server using a DNS resource linked to the ACME Account ID. This allows multiple systems or environments to handle challenge-solving for a single domain. 
+       This document outlines a new DNS-based challenge type for the ACME protocol that enables multiple independent systems to authorize a single domain name concurrently. By adding a unique label to the DNS validation record name, the dns-account-01 challenge avoids CNAME delegation conflicts inherent to the dns-01 challenge type. This is particularly valuable for multi-region or multi-cloud deployments that wish to rely upon DNS-based domain control validation and need to independently obtain certificates for the same domain. 
     " name="description">
 <meta content="xml2rfc 3.12.2" name="generator">
 <meta content="acme" name="keyword">
-<meta content="draft-ietf-acme-scoped-dns-challenges-01" name="ietf.draft">
+<meta content="draft-ietf-acme-dns-account-challenge-02" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.12.2
     Python 3.10.12
@@ -1175,12 +1175,12 @@ li > p:last-of-type {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">ACME-SCOPED-DNS-CHALLENGES</td>
-<td class="right">August 2024</td>
+<td class="center">ACME-DNS-CHALLENGE</td>
+<td class="right">November 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Chariton, et al.</td>
-<td class="center">Expires 20 February 2025</td>
+<td class="center">Expires 11 May 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1190,15 +1190,15 @@ li > p:last-of-type {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Automated Certificate Management Environment</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-ietf-acme-scoped-dns-challenges-01</dd>
+<dd class="internet-draft">draft-ietf-acme-dns-account-challenge-02</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-08-19" class="published">19 August 2024</time>
+<time datetime="2024-11-07" class="published">7 November 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-02-20">20 February 2025</time></dd>
+<dd class="expires"><time datetime="2025-05-11">11 May 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1224,10 +1224,10 @@ li > p:last-of-type {
 </dd>
 </dl>
 </div>
-<h1 id="title">Automated Certificate Management Environment (ACME) Scoped DNS Challenges</h1>
+<h1 id="title">Automated Certificate Management Environment (ACME) DNS Labeled With ACME Account ID Challenge</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document outlines a new challenge for the ACME protocol, enabling an ACME client to answer a domain control validation challenge from an ACME server using a DNS resource linked to the ACME Account ID. This allows multiple systems or environments to handle challenge-solving for a single domain.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document outlines a new DNS-based challenge type for the ACME protocol that enables multiple independent systems to authorize a single domain name concurrently. By adding a unique label to the DNS validation record name, the dns-account-01 challenge avoids CNAME delegation conflicts inherent to the dns-01 challenge type. This is particularly valuable for multi-region or multi-cloud deployments that wish to rely upon DNS-based domain control validation and need to independently obtain certificates for the same domain.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document-2">
@@ -1235,15 +1235,15 @@ li > p:last-of-type {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://aaomidi.github.io/draft-ietf-acme-scoped-dns-challenges">https://aaomidi.github.io/draft-ietf-acme-scoped-dns-challenges</a></span>.
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-acme-scoped-dns-challenges/">https://datatracker.ietf.org/doc/draft-ietf-acme-scoped-dns-challenges/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        The latest revision of this draft can be found at <span><a href="https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge">https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-challenge/">https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-challenge/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
         WG Working Group mailing list (<span><a href="mailto:acme@ietf.org">mailto:acme@ietf.org</a></span>),
         which is archived at <span><a href="https://datatracker.ietf.org/wg/acme/about/">https://datatracker.ietf.org/wg/acme/about/</a></span>.
         Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/acme/">https://www.ietf.org/mailman/listinfo/acme/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/aaomidi/draft-ietf-acme-scoped-dns-challenges">https://github.com/aaomidi/draft-ietf-acme-scoped-dns-challenges</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge">https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1264,7 +1264,7 @@ li > p:last-of-type {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 February 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 11 May 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1295,69 +1295,57 @@ li > p:last-of-type {
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction-2" class="xref">Introduction</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
-                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-dns-02-2" class="xref">DNS-02</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
-                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="xref">1.2</a>.  <a href="#name-dns-account-01-3" class="xref">DNS-ACCOUNT-01</a></p>
-</li>
-            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-conventions-and-definitions-2" class="xref">Conventions and Definitions</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-conventions-and-definitions-2" class="xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-dns-02-challenge-2" class="xref">DNS-02 Challenge</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-dns-account-01-challenge-2" class="xref">DNS-ACCOUNT-01 Challenge</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-errors-3" class="xref">Errors</a></p>
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-challenge-definition-2" class="xref">Challenge Definition</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="xref">3.2</a>.  <a href="#name-challenge-fulfillment-2" class="xref">Challenge Fulfillment</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="xref">3.3</a>.  <a href="#name-server-validation-2" class="xref">Server Validation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="xref">3.4</a>.  <a href="#name-errors-2" class="xref">Errors</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="xref">3.5</a>.  <a href="#name-implementation-consideration" class="xref">Implementation Considerations</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-dns-account-01-challenge-2" class="xref">DNS-ACCOUNT-01 Challenge</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-errors-4" class="xref">Errors</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-implementation-consideration" class="xref">Implementation Considerations</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-security-considerations-2" class="xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-security-considerations-2" class="xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-iana-considerations-2" class="xref">IANA Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="xref">5.1</a>.  <a href="#name-dns-account-01-4" class="xref">DNS-ACCOUNT-01</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="xref">5.1</a>.  <a href="#name-acme-validation-method-2" class="xref">ACME Validation Method</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-iana-considerations-2" class="xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-references-2" class="xref">References</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-acme-validation-method-2" class="xref">ACME Validation Method</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-normative-references-2" class="xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="xref">6.2</a>.  <a href="#name-informative-references-2" class="xref">Informative References</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-references-2" class="xref">References</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="xref">7.1</a>.  <a href="#name-normative-references-2" class="xref">Normative References</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="xref">7.2</a>.  <a href="#name-informative-references-2" class="xref">Informative References</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="xref"></a><a href="#name-acknowledgments-2" class="xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="xref"></a><a href="#name-acknowledgments-2" class="xref">Acknowledgments</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-addresses-2" class="xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-addresses-2" class="xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1368,31 +1356,10 @@ li > p:last-of-type {
       <h2 id="name-introduction-2">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction-2" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The <code>dns-01</code> challenge specified in section 8.4 of <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span> requires that ACME clients validate the domain under the <code>_acme-challenge</code> label for the <code>TXT</code> record. This label creates several limitations in domain validation.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">First, the <code>_acme-challenge</code> label does not specify if the authorization is intended for a specific host, a wildcard domain, or a domain and all of its subdomains. Consequently, domain owners who may be delegating or provisioning authorization labels for a domain must concede control over the domain and all subdomains, violating the principle of least privilege.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">Furthermore, since each domain only has a single authorization label, it creates an impediment limiting the number of other entities domain validation can be delegated to. Delegating authorization to an entity requires the use of CNAME records, which can only used once per DNS name (or in this case, once per authorization label). This limitation requires operators to pick a single ACME challenge solver for their domain name.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">In multi-region deployments, where separate availability zones serve the same content, and dependencies across them are avoided, operators need a way to obtain a separate certificate per zone, for the same domain name. Similarly, in cases of zero-downtime migration, two different setups of the infrastructure may coexist for a long period of time, and both need access to valid certificates.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">This document specifies two new challenge types. <code>dns-02</code> and <code>dns-account-01</code>, which aim to address these deficiencies.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">This work follows all recommendations set forth in "Domain Control Validation using DNS" <span>[<a href="#I-D.draft-ietf-dnsop-domain-verification-techniques" class="xref">I-D.draft-ietf-dnsop-domain-verification-techniques</a>]</span>.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">This RFC does not intend to deprecate the <code>dns-01</code> challenge specified in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span>. Since these new challenges do not modify any pre-existing challenges, the ability to complete the <code>dns-02</code> or <code>dns-account-01</code> challenge requires ACME server operators to deploy new changes to their codebase. This makes adopting and using these challenges an opt-in process.<a href="#section-1-7" class="pilcrow">¶</a></p>
-<div id="dns-02">
-<section id="section-1.1">
-        <h3 id="name-dns-02-2">
-<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-dns-02-2" class="section-name selfRef">DNS-02</a>
-        </h3>
-<p id="section-1.1-1">The <code>dns-02</code> challenge adds onto <code>dns-01</code> by introducing a scoping mechanism to the domain authorization label. This allows for the client to specify if the intended domain validation is for a specific host, a wildcard domain, or a domain and all of its subdomains.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="dns-account-01">
-<section id="section-1.2">
-        <h3 id="name-dns-account-01-3">
-<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-dns-account-01-3" class="section-name selfRef">DNS-ACCOUNT-01</a>
-        </h3>
-<p id="section-1.2-1">The <code>dns-account-01</code> challenge leverages the ACME account URL to present an account-unique stable challenge to an ACME server. This challenge allows any domain name to delegate its domain validation to more than one service through
-unique per ACME account DNS records.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
-<p id="section-1.2-2">With this new challenge, domain validation of the same DNS name can be done through different authorization labels. Since these authorization labels will depend on the ACME account KID (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.2" class="relref">Section 6.2</a></span>), any number of them can be generated in advance. This allows all required <code>CNAME</code> records for domain validation delegation to be constructed statically.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-1-1">The <code>dns-01</code> challenge specified in section 8.4 of <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span> uses a single DNS authorization label (<code>_acme-challenge</code>) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, of which only one can exist per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates. Other use cases include multi-CDN deployments and the provision of backup certificates for use when an active certificate must be quickly revoked.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document specifies a new challenge type: <code>dns-account-01</code>, which addresses these operational needs. The <code>dns-account-01</code> challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span>), operators can generate and configure the necessary DNS records in advance.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This RFC does not deprecate the <code>dns-01</code> challenge specified in <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span>. The ability to complete the <code>dns-account-01</code> challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1406,128 +1373,26 @@ described in BCP 14 <span>[<a href="#RFC2119" class="xref">RFC2119</a>]</span> 
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="dns-02-challenge">
-<section id="section-3">
-      <h2 id="name-dns-02-challenge-2">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dns-02-challenge-2" class="section-name selfRef">DNS-02 Challenge</a>
-      </h2>
-<p id="section-3-1">When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a <code>TXT</code> resource record containing a designated value for a specific validation domain name.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-2.1">type (required, string): The string "dns-02".<a href="#section-3-2.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-2.2">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="xref">RFC4086</a>]</span> for additional information on additional requirements for secure randomness.<a href="#section-3-2.2" class="pilcrow">¶</a>
-</li>
-      </ul>
-<div class="alignLeft art-text artwork" id="section-3-3">
-<pre>
-{
-    "type": "dns-02",
-    "url": "https://example.com/acme/chall/i00MGYwLWIx",
-    "status": "pending",
-    "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
-}
-</pre><a href="#section-3-3" class="pilcrow">¶</a>
-</div>
-<p id="section-3-4">A client can fulfill this challenge by performing the following steps:<a href="#section-3-4" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-5.1">Construct a key authorization <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span> from the <code>token</code> value provided in the challenge and the client's account key<a href="#section-3-5.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-5.2">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<a href="#section-3-5.2" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-5.3">
-          <p id="section-3-5.3.1">Construct the validation domain name by specifying the scope for the domain name being validated:<a href="#section-3-5.3.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3-5.3.2">
-<pre>
-"_acme-" || &lt;SCOPE&gt; || "-challenge"
-</pre><a href="#section-3-5.3.2" class="pilcrow">¶</a>
-</div>
-<ul class="normal">
-<li class="normal" id="section-3-5.3.3.1">
-              <p id="section-3-5.3.3.1.1">SCOPE is<a href="#section-3-5.3.3.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-5.3.3.1.2.1">"host" if the associated authorization applies only to the specific host name and no labels beneath it<a href="#section-3-5.3.3.1.2.1" class="pilcrow">¶</a>
-</li>
-                <li class="normal" id="section-3-5.3.3.1.2.2">"wildcard" if the associated authorization is for a wildcard domain and contains the <code>wildcard</code> field set to true (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.4" class="relref">Section 7.1.4</a></span>)<a href="#section-3-5.3.3.1.2.2" class="pilcrow">¶</a>
-</li>
-                <li class="normal" id="section-3-5.3.3.1.2.3">"domain" if the authorization is for both the host and all subdomains by containing the <code>subdomainAuthAllowed</code> field set to true (<span>[<a href="#RFC9444" class="xref">RFC9444</a>], <a href="https://rfc-editor.org/rfc/rfc9444#section-4.1" class="relref">Section 4.1</a></span>).<a href="#section-3-5.3.3.1.2.3" class="pilcrow">¶</a>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-3-5.3.3.2">The <code>"||"</code> operator indicates concatenation of strings<a href="#section-3-5.3.3.2" class="pilcrow">¶</a>
-</li>
-          </ul>
-</li>
-        <li class="normal" id="section-3-5.4">
-          <p id="section-3-5.4.1">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-3-5.4.1" class="pilcrow">¶</a></p>
-<p id="section-3-5.4.2">
-For example, if the domain name being validated is the wildcard of <code>*.example.org</code> then the client would provision the following DNS record:<a href="#section-3-5.4.2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3-5.4.3">
-<pre>
-_acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-</pre><a href="#section-3-5.4.3" class="pilcrow">¶</a>
-</div>
-<p id="section-3-5.4.4">
-(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)<a href="#section-3-5.4.4" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-3-5.5">
-          <p id="section-3-5.5.1">Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-3-5.5.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3-5.5.2">
-<pre>
-POST /acme/chall/Rg5dV14Gh1Q
-Host: example.com
-Content-Type: application/jose+json
-
-{
-  "protected": base64url({
-    "alg": "ES256",
-    "kid": "https://example.com/acme/acct/evOfKhNU60wg",
-    "nonce": "SS2sSl1PtspvFZ08kNtzKd",
-    "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
-  }),
-  "payload": base64url({}),
-  "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
-}
-</pre><a href="#section-3-5.5.2" class="pilcrow">¶</a>
-</div>
-</li>
-      </ul>
-<p id="section-3-6">On receiving a response, the server constructs and stores the key authorization from the challenge <code>token</code> value.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">To validate the <code>dns-02</code> challenge, the server performs the following steps:<a href="#section-3-7" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-8.1">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<a href="#section-3-8.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-8.2">Compute the validation domain name with the scope of the associated authorization similar to the client<a href="#section-3-8.2" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-8.3">Query for <code>TXT</code> records for the validation domain name<a href="#section-3-8.3" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-8.4">Verify that the contents of one of the <code>TXT</code> records match the digest value<a href="#section-3-8.4" class="pilcrow">¶</a>
-</li>
-      </ul>
-<p id="section-3-9">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-3-9" class="pilcrow">¶</a></p>
-<p id="section-3-10">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3-10" class="pilcrow">¶</a></p>
-<div id="errors">
-<section id="section-3.1">
-        <h3 id="name-errors-3">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-errors-3" class="section-name selfRef">Errors</a>
-        </h3>
-<p id="section-3.1-1">The server <span class="bcp14">SHOULD</span> follow the guidelines set in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a></span> for error conditions that occur during challenge validation.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
 <div id="dns-account-01-challenge">
-<section id="section-4">
+<section id="section-3">
       <h2 id="name-dns-account-01-challenge-2">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-dns-account-01-challenge-2" class="section-name selfRef">DNS-ACCOUNT-01 Challenge</a>
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dns-account-01-challenge-2" class="section-name selfRef">DNS-ACCOUNT-01 Challenge</a>
       </h2>
-<p id="section-4-1">When the identifier being validated is a domain name, the client can prove control of that domain by provisioning a <code>TXT</code> resource record containing a designated value for a specific validation domain name.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">The <code>dns-account-01</code> challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource record. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="challenge-definition">
+<section id="section-3.1">
+        <h3 id="name-challenge-definition-2">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-challenge-definition-2" class="section-name selfRef">Challenge Definition</a>
+        </h3>
+<p id="section-3.1-1">The challenge object contains the following fields:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4-2.1">type (required, string): The string "dns-account-01".<a href="#section-4-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3.1-2.1">type (required, string): The string "dns-account-01".<a href="#section-3.1-2.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-4-2.2">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="xref">RFC4086</a>]</span> for additional information on additional requirements for secure randomness.<a href="#section-4-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-3.1-2.2">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="xref">RFC4086</a>]</span> for additional information on additional requirements for secure randomness.<a href="#section-3.1-2.2" class="pilcrow">¶</a>
 </li>
-      </ul>
-<div class="alignLeft art-text artwork" id="section-4-3">
+        </ul>
+<p id="section-3.1-3">Example challenge object:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-4">
 <pre>
 {
     "type": "dns-account-01",
@@ -1535,61 +1400,61 @@ Content-Type: application/jose+json
     "status": "pending",
     "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
 }
-</pre><a href="#section-4-3" class="pilcrow">¶</a>
+</pre><a href="#section-3.1-4" class="pilcrow">¶</a>
 </div>
-<p id="section-4-4">A client can fulfill this challenge by performing the following steps:<a href="#section-4-4" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-5.1">Construct a key authorization <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span> from the <code>token</code> value provided in the challenge and the client's account key<a href="#section-4-5.1" class="pilcrow">¶</a>
+</section>
+</div>
+<div id="challenge-fulfillment">
+<section id="section-3.2">
+        <h3 id="name-challenge-fulfillment-2">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-challenge-fulfillment-2" class="section-name selfRef">Challenge Fulfillment</a>
+        </h3>
+<p id="section-3.2-1">To fulfill this challenge, a client performs the following steps:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.2-2">
+<li id="section-3.2-2.1">Construct Key Authorization
+  - Construct a key authorization <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span> from the <code>token</code> value provided in the challenge and the client's account key
+  - Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<a href="#section-3.2-2.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-4-5.2">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the key authorization<a href="#section-4-5.2" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-4-5.3">
-          <p id="section-4-5.3.1">Construct the validation domain name by prepending the following two labels to the domain name being validated:<a href="#section-4-5.3.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-5.3.2">
+          <li id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">DNS Record Creation
+  - Construct the validation domain name by prepending the following two labels to the domain name being validated:<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2-2.2.2">
 <pre>
-"_" || base32(SHA-256(&lt;ACCOUNT_URL&gt;)[0:10]) || "._acme-" || &lt;SCOPE&gt; || "-challenge"
-</pre><a href="#section-4-5.3.2" class="pilcrow">¶</a>
+ "_" || base32(SHA-256(&lt;ACCOUNT_URL&gt;)[0:10]) || "._acme-challenge"
+</pre><a href="#section-3.2-2.2.2" class="pilcrow">¶</a>
 </div>
 <ul class="normal">
-<li class="normal" id="section-4-5.3.3.1">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span><a href="#section-4-5.3.3.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3.2-2.2.3.1">SHA-256 is the SHA hashing operation defined in <span>[<a href="#RFC6234" class="xref">RFC6234</a>]</span><a href="#section-3.2-2.2.3.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4-5.3.3.2">
-              <code>[0:10]</code> is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation<a href="#section-4-5.3.3.2" class="pilcrow">¶</a>
+              <li class="normal" id="section-3.2-2.2.3.2">
+                <code>[0:10]</code> is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation<a href="#section-3.2-2.2.3.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4-5.3.3.3">base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span><a href="#section-4-5.3.3.3" class="pilcrow">¶</a>
+              <li class="normal" id="section-3.2-2.2.3.3">base32 is the operation defined in <span>[<a href="#RFC4648" class="xref">RFC4648</a>]</span><a href="#section-3.2-2.2.3.3" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4-5.3.3.4">ACCOUNT_URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span> as the value in the <code>Location</code> header field<a href="#section-4-5.3.3.4" class="pilcrow">¶</a>
+              <li class="normal" id="section-3.2-2.2.3.4">ACCOUNT_URL is defined in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span> as the value in the <code>Location</code> header field<a href="#section-3.2-2.2.3.4" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4-5.3.3.5">
-              <p id="section-4-5.3.3.5.1">SCOPE is<a href="#section-4-5.3.3.5.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-3.2-2.2.3.5">The <code>||</code> operator indicates concatenation of strings<a href="#section-3.2-2.2.3.5" class="pilcrow">¶</a>
+</li>
+            </ul>
+</li>
+        </ol>
 <ul class="normal">
-<li class="normal" id="section-4-5.3.3.5.2.1">"host" if the associated authorization applies only to the specific host name and no labels beneath it<a href="#section-4-5.3.3.5.2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3.2-3.1">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-3.2-3.1" class="pilcrow">¶</a>
 </li>
-                <li class="normal" id="section-4-5.3.3.5.2.2">"wildcard" if the associated authorization is for a wildcard domain and contains the <code>wildcard</code> field set to true (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.4" class="relref">Section 7.1.4</a></span>)<a href="#section-4-5.3.3.5.2.2" class="pilcrow">¶</a>
+        </ul>
+<ol start="1" type="1" class="normal type-1" id="section-3.2-4">
+<li id="section-3.2-4.1">Challenge Response
+  - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-3.2-4.1" class="pilcrow">¶</a>
 </li>
-                <li class="normal" id="section-4-5.3.3.5.2.3">"domain" if the authorization is for both the host and all subdomains by containing the <code>subdomainAuthAllowed</code> field set to true (<span>[<a href="#RFC9444" class="xref">RFC9444</a>], <a href="https://rfc-editor.org/rfc/rfc9444#section-4.1" class="relref">Section 4.1</a></span>).<a href="#section-4-5.3.3.5.2.3" class="pilcrow">¶</a>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-4-5.3.3.6">The <code>"||"</code> operator indicates concatenation of strings<a href="#section-4-5.3.3.6" class="pilcrow">¶</a>
-</li>
-          </ul>
-</li>
-        <li class="normal" id="section-4-5.4">
-          <p id="section-4-5.4.1">Provision a DNS <code>TXT</code> record with the base64url digest value under the constructed domain validation name<a href="#section-4-5.4.1" class="pilcrow">¶</a></p>
-<p id="section-4-5.4.2">
-For example, if the domain name being validated is <code>*.example.org</code>, and the account URL of <code>https://example.com/acme/acct/ExampleAccount</code> then the client would provision the following DNS record:<a href="#section-4-5.4.2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-5.4.3">
+        </ol>
+<p id="section-3.2-5">Example DNS record for domain <code>example.org</code> with account URL <code>https://example.com/acme/acct/ExampleAccount</code>:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2-6">
 <pre>
-_ujmmovf2vn55tgye._acme-wildcard-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
-</pre><a href="#section-4-5.4.3" class="pilcrow">¶</a>
+_ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+</pre><a href="#section-3.2-6" class="pilcrow">¶</a>
 </div>
-<p id="section-4-5.4.4">
-(In the above, "..." indicates that the token and the JWK thumbprint in the key authorization have been truncated to fit on the page.)<a href="#section-4-5.4.4" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-4-5.5">
-          <p id="section-4-5.5.1">Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server<a href="#section-4-5.5.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-5.5.2">
+<p id="section-3.2-7">Example response to server:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2-8">
 <pre>
 POST /acme/chall/Rg5dV14Gh1Q
 Host: example.com
@@ -1605,99 +1470,96 @@ Content-Type: application/jose+json
   "payload": base64url({}),
   "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
 }
-</pre><a href="#section-4-5.5.2" class="pilcrow">¶</a>
+</pre><a href="#section-3.2-8" class="pilcrow">¶</a>
 </div>
-</li>
-      </ul>
-<p id="section-4-6">On receiving this response, the server validates the message and constructs and stores the key authorization from the challenge <code>token</code> value and the current client account key.<a href="#section-4-6" class="pilcrow">¶</a></p>
-<p id="section-4-7">To validate the <code>dns-account-01</code> challenge, the server performs the following steps:<a href="#section-4-7" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-8.1">Compute the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<a href="#section-4-8.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-4-8.2">Compute the validation domain name with the KID value in the JWS message<a href="#section-4-8.2" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-4-8.3">Query for <code>TXT</code> records for the validation domain name<a href="#section-4-8.3" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-4-8.4">Verify that the contents of one of the <code>TXT</code> records match the digest value<a href="#section-4-8.4" class="pilcrow">¶</a>
-</li>
-      </ul>
-<p id="section-4-9">If all the above verifications succeed, then the validation is successful. If no DNS record is found, or DNS record and response payload do not pass these checks, then the server <span class="bcp14">MUST</span> fail the validation and mark the challenge as invalid.<a href="#section-4-9" class="pilcrow">¶</a></p>
-<p id="section-4-10">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-4-10" class="pilcrow">¶</a></p>
-<div id="errors-1">
-<section id="section-4.1">
-        <h3 id="name-errors-4">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-errors-4" class="section-name selfRef">Errors</a>
+</section>
+</div>
+<div id="server-validation">
+<section id="section-3.3">
+        <h3 id="name-server-validation-2">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-server-validation-2" class="section-name selfRef">Server Validation</a>
         </h3>
-<p id="section-4.1-1">The server <span class="bcp14">SHOULD</span> follow the guidelines set in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a></span> for error conditions that occur during challenge validation.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">If the server is unable to find a <code>TXT</code> record for the validation domain name, it <span class="bcp14">SHOULD</span> include the account URL it used to construct the validation domain name in the problem document. Clients <span class="bcp14">MUST NOT</span> use or rely on the presence of this field to construct the validation domain name.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-1">Upon receiving the challenge response, the server:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.3-2">
+<li id="section-3.3-2.1">Performs the typical JWS validation.<a href="#section-3.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.2">Constructs and stores the key authorization<a href="#section-3.3-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.3">Computes the SHA-256 digest <span>[<a href="#FIPS180-4" class="xref">FIPS180-4</a>]</span> of the stored key authorization<a href="#section-3.3-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.4">Computes the validation domain name using the KID value from the JWS message<a href="#section-3.3-2.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.5">Queries for TXT records at the validation domain name<a href="#section-3.3-2.5" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.6">Verifies that one TXT record matches the computed digest value<a href="#section-3.3-2.6" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-3.3-3">The validation succeeds only if all verifications pass. The server <span class="bcp14">MUST</span> mark the challenge as invalid if any verification fails.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3-4">The client <span class="bcp14">SHOULD</span> de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="errors">
+<section id="section-3.4">
+        <h3 id="name-errors-2">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-errors-2" class="section-name selfRef">Errors</a>
+        </h3>
+<p id="section-3.4-1">The server <span class="bcp14">SHOULD</span> follow the guidelines set in <span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a></span> for error conditions that occur during challenge validation.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">If the server is unable to find a <code>TXT</code> record for the validation domain name, it <span class="bcp14">SHOULD</span> include the account URL it used to construct the validation domain name in the problem document. Clients <span class="bcp14">MUST NOT</span> use or rely on the presence of this field to construct the validation domain name.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="implementation-considerations">
-<section id="section-4.2">
+<section id="section-3.5">
         <h3 id="name-implementation-consideration">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-implementation-consideration" class="section-name selfRef">Implementation Considerations</a>
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-implementation-consideration" class="section-name selfRef">Implementation Considerations</a>
         </h3>
-<p id="section-4.2-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, and full HTTP path.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, and full HTTP path.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-5">
+<section id="section-4">
       <h2 id="name-security-considerations-2">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations-2" class="section-name selfRef">Security Considerations</a>
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations-2" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-5-1">These challenges follow the recommendations set out in "Domain Control Validation using DNS" <span>[<a href="#I-D.draft-ietf-dnsop-domain-verification-techniques" class="xref">I-D.draft-ietf-dnsop-domain-verification-techniques</a>]</span> for supporting multiple intermediates within the context of <span>[<a href="#RFC8555" class="xref">RFC8555</a>]</span>.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">In both <code>dns-account-01</code> and <code>dns-02</code>, the same security considerations apply for the integrity of authorizations (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-10.2" class="relref">Section 10.2</a></span>) and DNS security (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-11.2" class="relref">Section 11.2</a></span>) as in the original specification for <code>dns-01</code>. They both differ from <code>dns-01</code> in that the challenges are scoped to the particular name being validated without relying upon CAA (<span>[<a href="#RFC8659" class="xref">RFC8659</a>]</span>).<a href="#section-5-2" class="pilcrow">¶</a></p>
-<div id="dns-account-01-1">
-<section id="section-5.1">
-        <h3 id="name-dns-account-01-4">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-dns-account-01-4" class="section-name selfRef">DNS-ACCOUNT-01</a>
-        </h3>
-<p id="section-5.1-1">To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1-2">In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the <code>dns-01</code> challenge (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span>).<a href="#section-5.1-2" class="pilcrow">¶</a></p>
-<p id="section-5.1-3">The first 10 bytes were picked as a tradeoff: the value needs to be short enough to stay lower than the size limits for DNS (<span>[<a href="#RFC1035" class="xref">RFC1035</a>], <a href="https://rfc-editor.org/rfc/rfc1035#section-2.3.4" class="relref">Section 2.3.4</a></span>), long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-4-1">The same security considerations apply for the integrity of authorizations (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-10.2" class="relref">Section 10.2</a></span>) and DNS security (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-11.2" class="relref">Section 11.2</a></span>) as in the original specification for <code>dns-01</code>.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">To allow for seamless account key rollover without the label changing, the dynamic part of the label depends on the ACME account and not the account key. This allows for long-lived labels, without the security considerations of keeping the account key static.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the <code>dns-01</code> challenge (<span>[<a href="#RFC8555" class="xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8.1" class="relref">Section 8.1</a></span>).<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">The first 10 bytes were picked as a tradeoff: the value needs to be short enough to stay lower than the size limits for DNS (<span>[<a href="#RFC1035" class="xref">RFC1035</a>], <a href="https://rfc-editor.org/rfc/rfc1035#section-2.3.4" class="relref">Section 2.3.4</a></span>), long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.<a href="#section-4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-6">
+<section id="section-5">
       <h2 id="name-iana-considerations-2">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations-2" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-iana-considerations-2" class="section-name selfRef">IANA Considerations</a>
       </h2>
 <div id="acme-validation-method">
-<section id="section-6.1">
+<section id="section-5.1">
         <h3 id="name-acme-validation-method-2">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-acme-validation-method-2" class="section-name selfRef">ACME Validation Method</a>
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-acme-validation-method-2" class="section-name selfRef">ACME Validation Method</a>
         </h3>
-<p id="section-6.1-1">The "ACME Validation Methods" registry is to be updated to include the following entries:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.1-2">
+<p id="section-5.1-1">The "ACME Validation Methods" registry is to be updated to include the following entries:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-2">
 <pre>
-label: dns-02
-identifier-type: dns
-ACME: Y
-Reference: This document
-
 label: dns-account-01
 identifier-type: dns
 ACME: Y
 Reference: This document
-</pre><a href="#section-6.1-2" class="pilcrow">¶</a>
+</pre><a href="#section-5.1-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 </section>
 </div>
 <div id="sec-combined-references">
-<section id="section-7">
+<section id="section-6">
       <h2 id="name-references-2">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-references-2" class="section-name selfRef">References</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-references-2" class="section-name selfRef">References</a>
       </h2>
 <div id="sec-normative-references">
-<section id="section-7.1">
+<section id="section-6.1">
         <h3 id="name-normative-references-2">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-normative-references-2" class="section-name selfRef">Normative References</a>
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-normative-references-2" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
 <dt id="FIPS180-4">[FIPS180-4]</dt>
@@ -1729,29 +1591,21 @@ Reference: This document
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8555">[RFC8555]</dt>
-        <dd>
-<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hoffman-Andrews, J.</span>, <span class="refAuthor">McCarney, D.</span>, and <span class="refAuthor">J. Kasten</span>, <span class="refTitle">"Automatic Certificate Management Environment (ACME)"</span>, <span class="seriesInfo">RFC 8555</span>, <span class="seriesInfo">DOI 10.17487/RFC8555</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8555">https://www.rfc-editor.org/rfc/rfc8555</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC8659">[RFC8659]</dt>
       <dd>
-<span class="refAuthor">Hallam-Baker, P.</span>, <span class="refAuthor">Stradling, R.</span>, and <span class="refAuthor">J. Hoffman-Andrews</span>, <span class="refTitle">"DNS Certification Authority Authorization (CAA) Resource Record"</span>, <span class="seriesInfo">RFC 8659</span>, <span class="seriesInfo">DOI 10.17487/RFC8659</span>, <time datetime="2019-11" class="refDate">November 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8659">https://www.rfc-editor.org/rfc/rfc8659</a>&gt;</span>. </dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hoffman-Andrews, J.</span>, <span class="refAuthor">McCarney, D.</span>, and <span class="refAuthor">J. Kasten</span>, <span class="refTitle">"Automatic Certificate Management Environment (ACME)"</span>, <span class="seriesInfo">RFC 8555</span>, <span class="seriesInfo">DOI 10.17487/RFC8555</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8555">https://www.rfc-editor.org/rfc/rfc8555</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
 <div id="sec-informative-references">
-<section id="section-7.2">
+<section id="section-6.2">
         <h3 id="name-informative-references-2">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-informative-references-2" class="section-name selfRef">Informative References</a>
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-informative-references-2" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
 <dt id="I-D.draft-ietf-dnsop-domain-verification-techniques">[I-D.draft-ietf-dnsop-domain-verification-techniques]</dt>
-        <dd>
-<span class="refAuthor">Sahib, S. K.</span>, <span class="refAuthor">Huque, S.</span>, <span class="refAuthor">Wouters, P.</span>, and <span class="refAuthor">E. Nygren</span>, <span class="refTitle">"Domain Control Validation using DNS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-domain-verification-techniques-05</span>, <time datetime="2024-07-08" class="refDate">8 July 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-05">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-05</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC9444">[RFC9444]</dt>
       <dd>
-<span class="refAuthor">Friel, O.</span>, <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hollebeek, T.</span>, and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"Automated Certificate Management Environment (ACME) for Subdomains"</span>, <span class="seriesInfo">RFC 9444</span>, <span class="seriesInfo">DOI 10.17487/RFC9444</span>, <time datetime="2023-08" class="refDate">August 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9444">https://www.rfc-editor.org/rfc/rfc9444</a>&gt;</span>. </dd>
+<span class="refAuthor">Sahib, S. K.</span>, <span class="refAuthor">Huque, S.</span>, <span class="refAuthor">Wouters, P.</span>, and <span class="refAuthor">E. Nygren</span>, <span class="refTitle">"Domain Control Validation using DNS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-domain-verification-techniques-06</span>, <time datetime="2024-10-21" class="refDate">21 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-06">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-06</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
