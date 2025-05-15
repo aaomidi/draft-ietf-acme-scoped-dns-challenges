@@ -24,7 +24,7 @@ author:
     email: daknob@daknob.net
  -
     fullname: Amir A. Omidi
-    organization: Spirl
+    organization: Independent Contributor
     email: amir@aaomidi.com
  -
     fullname: James Kasten
