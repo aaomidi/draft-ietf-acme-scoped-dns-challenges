@@ -120,13 +120,13 @@ To fulfill this challenge, a client performs the following steps:
 Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
 
 ~~~
-_ujmmovf2vn55tgye._acme-challenge.example.org 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
 ~~~
 
 Example response to server:
 
 ~~~
-POST /acme/chall/Rg5dV14Gh1Q
+POST /acme/chall/Rg5dV14Gh1Q HTTP/1.1
 Host: example.com
 Content-Type: application/jose+json
 
