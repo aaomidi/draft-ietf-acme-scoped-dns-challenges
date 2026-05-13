@@ -4,6 +4,9 @@ on:
   pull_request:
     types: ['opened', 'edited', 'synchronize']
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     name: Build the preview
@@ -13,6 +16,8 @@ jobs:
     needs: 'build'
     name: 'Deploy'
     runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Download Built Draft
@@ -21,12 +26,44 @@ jobs:
           name: draft
           path: docs
 
-      - uses: nwtgck/actions-netlify@v3.0
+      - name: Deploy preview to Netlify
+        id: netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          output=$(npx --yes netlify-cli@latest deploy \
+            --dir=docs \
+            --alias=deploy-preview-${{ github.event.number }} \
+            --json)
+          echo "$output"
+          echo "deploy_url=$(echo "$output" | jq -r '.deploy_url')" >> "$GITHUB_OUTPUT"
+        timeout-minutes: 2
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
         with:
-          publish-dir: 'docs'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          alias: deploy-preview-${{ github.event.number }}
-        timeout-minutes: 1
+          script: |
+            const marker = '<!-- netlify-preview -->';
+            const body = `${marker}\n📄 Draft preview: ${{ steps.netlify.outputs.deploy_url }}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
