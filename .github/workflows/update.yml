@@ -23,20 +23,20 @@ jobs:
   deploy:
     needs: 'build'
     name: Deploy to gh-pages
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout 📋
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Download Built Draft
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: draft
         path: docs
 
     - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      uses: JamesIves/github-pages-deploy-action@v4.6.8
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: docs # The folder the action should deploy.
