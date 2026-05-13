@@ -12,16 +12,16 @@ jobs:
   deploy:
     needs: 'build'
     name: 'Deploy'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Download Built Draft
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: draft
           path: docs
 
-      - uses: nwtgck/actions-netlify@v2.0
+      - uses: nwtgck/actions-netlify@v3.0
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
