@@ -3,7 +3,7 @@ title: "Automated Certificate Management Environment (ACME) DNS Labeled With ACM
 abbrev: "ACME-DNS-CHALLENGE"
 category: std
 
-docname: draft-ietf-acme-dns-account-challenge-02
+docname: draft-ietf-acme-dns-account-label-03
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
@@ -19,17 +19,17 @@ venue:
 
 author:
  -
-    fullname: Antonios A. Chariton
+    fullname: Antonis Chariton
     organization: Independent Contributor
     email: daknob@daknob.net
  -
     fullname: Amir A. Omidi
-    organization: Spirl
+    organization: Independent Contributor
     email: amir@aaomidi.com
  -
     fullname: James Kasten
-    organization: Google
-    email: jdkasten@google.com
+    organization: Snowflake
+    email: james.kasten@snowflake.com
  -
     fullname: Fotis Loukos
     organization: Google
