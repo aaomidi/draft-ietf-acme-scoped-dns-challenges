@@ -150,7 +150,7 @@ Content-Type: application/jose+json
 
 Upon receiving the challenge response, the server:
 
-1. Performs the typical JWS validation.
+1. Performs the typical JWS validation according to {{!RFC8555, Section 6.2}}
 2. Constructs and stores the key authorization
 3. Computes the SHA-256 digest {{FIPS180-4}} of the stored key authorization
 4. Computes the validation domain name using the KID value from the JWS message
