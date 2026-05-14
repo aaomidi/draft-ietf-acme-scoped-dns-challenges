@@ -95,7 +95,7 @@
 
 <t>This document specifies a new challenge type: <spanx style="verb">dns-account-01</spanx>, which addresses these operational needs. The <spanx style="verb">dns-account-01</spanx> challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID (<xref section="7.3" sectionFormat="comma" target="RFC8555"/>), operators can generate and configure the necessary DNS records in advance.</t>
 
-<t>This RFC does not deprecate the <spanx style="verb">dns-01</spanx> challenge specified in <xref target="RFC8555"/>. The ability to complete the <spanx style="verb">dns-account-01</spanx> challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.</t>
+<t>This document does not deprecate the <spanx style="verb">dns-01</spanx> challenge specified in <xref target="RFC8555"/>. The ability to complete the <spanx style="verb">dns-account-01</spanx> challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.</t>
 
 </section>
 <section anchor="conventions-and-definitions"><name>Conventions and Definitions</name>
@@ -111,14 +111,14 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="dns-account-01-challenge"><name>DNS-ACCOUNT-01 Challenge</name>
 
-<t>The <spanx style="verb">dns-account-01</spanx> challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource record. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.</t>
+<t>The <spanx style="verb">dns-account-01</spanx> challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource records. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.</t>
 
 <section anchor="challenge-definition"><name>Challenge Definition</name>
 <t>The challenge object contains the following fields:</t>
 
 <t><list style="symbols">
   <t>type (required, string): The string "dns-account-01".</t>
-  <t>token (required, string): A random value that uniquely identifies the challenge. This value <bcp14>MUST</bcp14> have at least 128 bits of entropy. It <bcp14>MUST NOT</bcp14> contain any characters outside the base64url alphabet, including padding characters ("="). See <xref target="RFC4086"/> for additional information on additional requirements for secure randomness.</t>
+  <t>token (required, string): A random value that uniquely identifies the challenge. This value <bcp14>MUST</bcp14> have at least 128 bits of entropy. It <bcp14>MUST NOT</bcp14> contain any characters outside the base64url alphabet, including padding characters ("="). See <xref target="RFC4086"/> for information on additional requirements for secure randomness.</t>
 </list></t>
 
 <t>Example challenge object:</t>
@@ -197,7 +197,7 @@ Content-Type: application/jose+json
   <t>Computes the SHA-256 digest <xref target="FIPS180-4"/> of the stored key authorization</t>
   <t>Computes the validation domain name using the KID value from the JWS message</t>
   <t>Queries for TXT records at the validation domain name</t>
-  <t>Verifies that one TXT record matches the computed digest value</t>
+  <t>Verifies that at least one TXT record matches the computed digest value</t>
 </list></t>
 
 <t>The validation succeeds only if all verifications pass. The server <bcp14>MUST</bcp14> mark the challenge as invalid if any verification fails.</t>
@@ -214,7 +214,7 @@ Content-Type: application/jose+json
 </section>
 <section anchor="implementation-considerations"><name>Implementation Considerations</name>
 
-<t>As this challenge creates strong dependency on the <spanx style="verb">kid</spanx> account identifier, the server <bcp14>SHOULD</bcp14> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <bcp14>MUST NOT</bcp14> be used differently by the server in the <spanx style="verb">Location</spanx> header and while validating challenges.</t>
+<t>As this challenge creates a strong dependency on the <spanx style="verb">kid</spanx> account identifier, the server <bcp14>SHOULD</bcp14> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <bcp14>MUST NOT</bcp14> be used differently by the server in the <spanx style="verb">Location</spanx> header and while validating challenges.</t>
 
 </section>
 </section>
@@ -448,69 +448,69 @@ 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
-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
+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
 
 -->
 

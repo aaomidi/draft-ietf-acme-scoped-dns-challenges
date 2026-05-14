@@ -1396,7 +1396,7 @@ li > p:last-of-type:only-child {
 <p id="section-1-1">The <code>dns-01</code> challenge specified in section 8.4 of <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span> uses a single DNS authorization label (<code>_acme-challenge</code>) for domain validation. This single-label approach creates a limitation in domain validation: each domain can only delegate its validation to one ACME client at a time. Since delegation requires the use of CNAME records, of which only one can exist per DNS name, operators are forced to choose a single ACME challenge solver for their domain name.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">This limitation becomes particularly problematic in modern deployment architectures. In multi-region deployments, separate availability zones serve the same content while avoiding cross-zone dependencies. These zones need to independently obtain and manage certificates for the same domain name. Similarly, during zero-downtime migrations, two different infrastructure setups may coexist for extended periods, with both requiring access to valid certificates. Other use cases include multi-CDN deployments and the provision of backup certificates for use when an active certificate must be quickly revoked.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">This document specifies a new challenge type: <code>dns-account-01</code>, which addresses these operational needs. The <code>dns-account-01</code> challenge incorporates the ACME account URL into the DNS validation record name, allowing multiple independent ACME clients to perform domain validation concurrently. Since these authorization labels depend on the ACME account KID (<span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.3" class="relref">Section 7.3</a></span>), operators can generate and configure the necessary DNS records in advance.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">This RFC does not deprecate the <code>dns-01</code> challenge specified in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>. The ability to complete the <code>dns-account-01</code> challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-4">This document does not deprecate the <code>dns-01</code> challenge specified in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>]</span>. The ability to complete the <code>dns-account-01</code> challenge requires ACME server operators to deploy new code, making adoption of this challenge an opt-in process.<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1415,7 +1415,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-dns-account-01-challenge">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dns-account-01-challenge" class="section-name selfRef">DNS-ACCOUNT-01 Challenge</a>
       </h2>
-<p id="section-3-1">The <code>dns-account-01</code> challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource record. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">The <code>dns-account-01</code> challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource records. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <div id="challenge-definition">
 <section id="section-3.1">
         <h3 id="name-challenge-definition">
@@ -1427,7 +1427,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-3.1-2.1.1">type (required, string): The string "dns-account-01".<a href="#section-3.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-2.2">
-            <p id="section-3.1-2.2.1">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="cite xref">RFC4086</a>]</span> for additional information on additional requirements for secure randomness.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-2.2.1">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="cite xref">RFC4086</a>]</span> for information on additional requirements for secure randomness.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.1-3">Example challenge object:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
@@ -1553,7 +1553,7 @@ Content-Type: application/jose+json
             <p id="section-3.3-2.5.1">Queries for TXT records at the validation domain name<a href="#section-3.3-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-3.3-2.6">
-            <p id="section-3.3-2.6.1">Verifies that one TXT record matches the computed digest value<a href="#section-3.3-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-3.3-2.6.1">Verifies that at least one TXT record matches the computed digest value<a href="#section-3.3-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-3.3-3">The validation succeeds only if all verifications pass. The server <span class="bcp14">MUST</span> mark the challenge as invalid if any verification fails.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
@@ -1574,7 +1574,7 @@ Content-Type: application/jose+json
         <h3 id="name-implementation-consideratio">
 <a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
         </h3>
-<p id="section-3.5-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <span class="bcp14">MUST NOT</span> be used differently by the server in the <code>Location</code> header and while validating challenges.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-1">As this challenge creates a strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <span class="bcp14">MUST NOT</span> be used differently by the server in the <code>Location</code> header and while validating challenges.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
