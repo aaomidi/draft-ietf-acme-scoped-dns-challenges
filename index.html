@@ -1578,7 +1578,7 @@ Content-Type: application/jose+json
         <h3 id="name-implementation-consideratio">
 <a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
         </h3>
-<p id="section-3.5-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, and full HTTP path.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-1">As this challenge creates strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <span class="bcp14">MUST NOT</span> be used differently by the server in the <code>Location</code> header and while validating challenges.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
