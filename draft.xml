@@ -158,7 +158,7 @@ appear in all capitals, as shown here.</t>
   <list style="symbols">
       <t>SHA-256 is the SHA hashing operation defined in <xref target="FIPS180-4"/></t>
       <t><spanx style="verb">[0:10]</spanx> is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation</t>
-      <t>base32 is the operation defined in <xref target="RFC4648"/></t>
+      <t>base32 is the operation defined in <xref target="RFC4648"/> and its use throughout this document is case-insensitive</t>
       <t>ACCOUNT_URL is defined in <xref section="7.3" sectionFormat="comma" target="RFC8555"/> as the value in the <spanx style="verb">Location</spanx> header field</t>
       <t>The <spanx style="verb">||</spanx> operator indicates concatenation of strings</t>
     </list></t>
@@ -486,42 +486,42 @@ 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
-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
-Fq0v0f8BZsO7h5ApAAA=
+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
 
 -->
 
