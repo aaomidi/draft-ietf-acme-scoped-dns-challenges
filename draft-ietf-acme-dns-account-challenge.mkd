@@ -8,7 +8,7 @@ v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
 keyword: acme
-ipr: full3978trust200902
+ipr: trust200902
 venue:
   group: WG
   type: Working Group
