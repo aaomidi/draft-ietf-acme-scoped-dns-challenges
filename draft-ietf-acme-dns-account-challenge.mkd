@@ -98,10 +98,12 @@ Example challenge object:
 To fulfill this challenge, a client performs the following steps:
 
 1. Construct Key Authorization
+
   - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
   - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 
 2. DNS Record Creation
+
   - Construct the validation domain name by prepending the following two labels to the domain name being validated:
 
         "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
@@ -115,6 +117,7 @@ To fulfill this challenge, a client performs the following steps:
   - Provision a DNS `TXT` record with the base64url digest value under the constructed domain validation name
 
 3. Challenge Response
+
   - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
 
 Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
