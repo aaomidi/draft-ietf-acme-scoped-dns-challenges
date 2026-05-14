@@ -115,7 +115,7 @@ To fulfill this challenge, a client performs the following steps:
      - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
      - The `||` operator indicates concatenation of strings
 
-   - Provision a DNS `TXT` record under the constructed validation domain name, containing the base64url encoding (per Section 5 of {{!RFC4648}}, without padding) of the value computed in step 1.
+   - Provision a DNS `TXT` record under the constructed validation domain name, containing the base64url encoding (per Section 5 of {{!RFC4648}}, without padding) of the SHA-256 digest computed in step 1.
 
 3. Challenge Response
 
@@ -124,7 +124,7 @@ To fulfill this challenge, a client performs the following steps:
 Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
 
 ~~~
-_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...fm21mqTI"
 ~~~
 
 Example response to server:
