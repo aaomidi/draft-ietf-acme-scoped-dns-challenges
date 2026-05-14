@@ -1490,7 +1490,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
                 </ul>
 </li>
               <li class="normal" id="section-3.2-2.2.2.2">
-                <p id="section-3.2-2.2.2.2.1">Provision a DNS <code>TXT</code> record under the constructed validation domain name, containing the base64url encoding (per Section 5 of <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, without padding) of the value computed in step 1.<a href="#section-3.2-2.2.2.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.2-2.2.2.2.1">Provision a DNS <code>TXT</code> record under the constructed validation domain name, containing the base64url encoding (per Section 5 of <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, without padding) of the SHA-256 digest computed in step 1.<a href="#section-3.2-2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
@@ -1506,7 +1506,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-3.2-3">Example DNS record for domain <code>example.org</code> with account URL <code>https://example.com/acme/acct/ExampleAccount</code>:<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.2-4">
 <pre>
-_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...jxAjEuX0.9jg46WB3...fm21mqTI"
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...fm21mqTI"
 </pre><a href="#section-3.2-4" class="pilcrow">¶</a>
 </div>
 <p id="section-3.2-5">Example response to server:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
