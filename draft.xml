@@ -138,39 +138,27 @@ appear in all capitals, as shown here.</t>
 <t>To fulfill this challenge, a client performs the following steps:</t>
 
 <t><list style="numbers" type="1">
-  <t>Construct Key Authorization</t>
-</list></t>
-
-<t><list style="symbols">
-  <t>Construct a key authorization <xref section="8.1" sectionFormat="comma" target="RFC8555"/> from the <spanx style="verb">token</spanx> value provided in the challenge and the client's account key</t>
-  <t>Compute the SHA-256 digest <xref target="FIPS180-4"/> of the key authorization</t>
-</list></t>
-
-<t><list style="numbers" type="1">
-  <t>DNS Record Creation</t>
-</list></t>
-
-<t><list style="symbols">
-  <t>Construct the validation domain name by prepending the following two labels to the domain name being validated:  <vspace blankLines='1'/>
-    <figure><artwork><![CDATA[
+  <t>Construct Key Authorization  <list style="symbols">
+      <t>Construct a key authorization <xref section="8.1" sectionFormat="comma" target="RFC8555"/> from the <spanx style="verb">token</spanx> value provided in the challenge and the client's account key</t>
+      <t>Compute the SHA-256 digest <xref target="FIPS180-4"/> of the key authorization</t>
+    </list></t>
+  <t>DNS Record Creation  <list style="symbols">
+      <t>Construct the validation domain name by prepending the following two labels to the domain name being validated:      <vspace blankLines='1'/>
+        <figure><artwork><![CDATA[
 "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
 ]]></artwork></figure>
-  <list style="symbols">
-      <t>SHA-256 is the SHA hashing operation defined in <xref target="FIPS180-4"/></t>
-      <t><spanx style="verb">[0:10]</spanx> is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation</t>
-      <t>base32 is the operation defined in <xref target="RFC4648"/> and its use throughout this document is case-insensitive</t>
-      <t>ACCOUNT_URL is defined in <xref section="7.3" sectionFormat="comma" target="RFC8555"/> as the value in the <spanx style="verb">Location</spanx> header field</t>
-      <t>The <spanx style="verb">||</spanx> operator indicates concatenation of strings</t>
+      <list style="symbols">
+          <t>SHA-256 is the SHA hashing operation defined in <xref target="FIPS180-4"/></t>
+          <t><spanx style="verb">[0:10]</spanx> is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation</t>
+          <t>base32 is the operation defined in <xref target="RFC4648"/> and its use throughout this document is case-insensitive</t>
+          <t>ACCOUNT_URL is defined in <xref section="7.3" sectionFormat="comma" target="RFC8555"/> as the value in the <spanx style="verb">Location</spanx> header field</t>
+          <t>The <spanx style="verb">||</spanx> operator indicates concatenation of strings</t>
+        </list></t>
+      <t>Provision a DNS <spanx style="verb">TXT</spanx> record under the constructed validation domain name, containing the base64url encoding (per Section 5 of <xref target="RFC4648"/>, without padding) of the value computed in step 1.</t>
     </list></t>
-  <t>Provision a DNS <spanx style="verb">TXT</spanx> record under the constructed validation domain name, containing the base64url encoding (per Section 5 of <xref target="RFC4648"/>, without padding) of the value computed in step 1.</t>
-</list></t>
-
-<t><list style="numbers" type="1">
-  <t>Challenge Response</t>
-</list></t>
-
-<t><list style="symbols">
-  <t>Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server</t>
+  <t>Challenge Response  <list style="symbols">
+      <t>Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server</t>
+    </list></t>
 </list></t>
 
 <t>Example DNS record for domain <spanx style="verb">example.org</spanx> with account URL <spanx style="verb">https://example.com/acme/acct/ExampleAccount</spanx>:</t>
@@ -480,49 +468,49 @@ IyEL3842Nm+1/tHaRiEghEfdg87RM6CujUas9rVOPQOgHJY333jtuNKOdhk3
 6nAKyl1CO33PKcU+Mh7M89tvv0Uf7XiiRXZq9R6ZYse9hVD0MsxDhCPphnM0
 /bO0d2Wnc/HydnH+7ux92IioLytDe6mWgfzhhbUvPb86OT24end7cDmYlbd3
 0/ntTadzO7/tng9mhxcnk/KnwYu728FP88u7n7Lbwdv3reiT5XvdUV9U2Vhm
-mZ2KRgNFIyf6/iDh76xw1ePGQ881pSjIcbsxVQEex75HqPWboRZBhnZjAd8Q
-jZuqs6O4S+YNMTm0Shj+XlTWRbtj/a+mRlyc6jmZF5WvoZAh23uHzwJmfPxY
-T8Vw9FPYEUV7scXMa5ctjqmV3iAobd4Moy4NCW/lB1ql3sgXtWGm0twpaE0A
-/LQX+YEZvOTnFvv1VxtY+3tbXrKtr31i/RkJ55vtf3V63c6/t2ldK34wRmg5
-Uu1aKdIEHSH+zdRmjdBVICsC7ELJ2tCapzF0Jw0DkdVGC0FGZCIpvT9JDdUD
-66EVSmFb7k8HL7WqJlP2lQMGg9yyvfIH6O9eqsrU7NZHeBacIh4zsMa5BZJn
-B0cwNzkOgRo1cv5oANaDWpECBHRRBRuRG0ltnj+uoWda9eiUDa0H1X/eSSoR
-PHl4rtxYcoiqkKc0mKAE4U+xBdGvvw7rap66K9+FUseEDzkPBbzLAsb55eu6
-ieXWeYfIn8NQ8FQ5HeTTbp0Pn6oBGuXROpQLtJDWo7doMBNkPVwNupyqXedO
-yvU4vx1izWkicRHq5mXAGNYFMu/HDQS7FqYAo8KJ5r6lIVyadYUdEdC4aF6U
-y5CItz5+2rb1SjLL1SIT6UQ06o76EGoGR2IVaxS1dvRhSa9yxaoXbM7hhgH3
-lZ4MPR+N2m/4ZHrAqnLX0/b3bUOffn6u7uZzdT/eu88PD8vJUjyM4bhxaMz2
-Ox12dmkLpda5+uXH5PaHoziO7973706rHzvxV3eTg2fvvt3Hs/F8rzv/ZXDW
-cukiiKa9nklbTmzPyesrpPpmOrueHKY/dA9eTrtv2KvB4PVuN+5GrxRdUjUk
-jI5dVdce2GEG+qJwObB7p4z4+50hGKUs26KxuSA3RN6rPWzLJ2CeTSgdnt4g
-8EOSnMn0s2l3g17D1hyRYxP6zc2eucm6r0tT3L/4qXM0uyw/fJ/+ucTe0ARd
-mXza3rHi8GWm+ANh/DvXX6AWIepvuqO315Pv1KnJRifd5BDG2S9u05uLc6kO
-v5y/ubw8aGb1G+fnP9ShGkVvCzeTEfI+hGhzNOAsutNwZZfCXzeTPCocGCZj
-371rTnpiynx1gnP9vgEI+QLycaakoHXBbP5wvrUE0w3EDh4QeyK3ViZITYMf
-37KFrEHyzGmGg+7yMGZvfNdDcbvqJwzjn8ve0bOY/bDWr1B/struepFQVAcs
-a7YlrrFtUDdVktCQzk0O5NjOCZp3VDRuNn6G56HNVttzrmcPCyCaSLnhJxFC
-Cd4kxMZcZiZ2HPjyzrf/qWivJp1E80HXRm1WvUCkfhS8NiNSfkrXHCuaemyF
-Cj8W8c5qVah4XYoLDrDaO11LkC0rVIs6wZaXEN0PBcGp1kr7cZPXjpfJlVWW
-yKRCweiu74won0rMz+IvfVMhiCjlOtdBBFMnaBrCgHvFaTNGorNxI7hIAZW9
-9CMQRVGQIgGvJd8wUn8q3craQmFcTavXBrMlVS3p+kDhMyHiSw1/aVFXN4gv
-P5mtOzl7JaPdPZsKu9B9kwXDiNAZ7w+e7Qx2Rg5BR7r3BCkwjr8eiKK+eehY
-4boK9BUUX19q1FwNAf/DWil1Z6ubOBfUiMrNTXR9mD/eRUaj2S0YwOlpsDct
-zuRY2PsM761+s++Z13p8ooZz3l6fNXvbukSBBIWSOHfN2oXSaIUNAMRO0+Eu
-9IsAm1OBAeU0tha3V/lZaJ9qc42Ec4T6bgVmW6tanq4y6SR3ixQM13RwQowv
-6t/gPDLYINwImbAiWVthM/2y9nSas07sMhrQNUHebJ7Udzvx3icUbXbAjHKr
-Pmbz6q5fbYK4oD+hXxrUUzuPheAnDORj2wrbiaKfDvB5RldJjf6RaYKTUFe6
-7iBctVtXgc78jfoS1pSJvSQMnuLWOdc1G28q7AW1WndKHOt9y087ibkMQdDO
-0HykvlXcWePoKSuAkZkQRfDCpmSExDIh8AJfgsqAgMYhqOtbgdVGJ5HvZEW6
-oV+12tDCxZO7cXTj00Qvi1JNNC+mUBP1ly65TRQNcWzra+ScnMaFPl1Ur4R2
-hQc4NiWVKXQfTR/zJPAERufoUOZkcvmBbid95bHgBCuoNYFKlYVk6vnsLSOp
-hfAuhMjjm5qN3mbnFNs+o7pmttvxveyCZEclNbMXCnQNrhFsajzuNfKavZ7z
-NxAGoUA/ErGNL+mg5EsIvrDdGXeMkUDuQto5AwWE56zb2W9wthfvxwf2hotU
-16DqpycoO8aIBTfiQS4IN01QXgJH990i3SnT5RasTrfKax5rHELd0eWmrRjk
-ZFo6BnGMnRp+69pwP30jL/BNX8z6DiZRzCM+y+ncpkpTu0iVS3c3KI370Zf3
-QJmjovInU7SMbRfsEQWBQA7o0Nt7v6totZzP3US/Dg9pTGUzEjvrX/YfoRoS
-lRV2VVyzC4EoS52tW5tfopyhS33wvPSOTKhcuBbSXrevkvhq6kNzVGl/gESV
-vXXi3oPf5USr/NR2l8F4HxETPXYbXQuL+InosbUbZdcp2N+t0NU1Cduv+147
-DI0+9vJqPsLu9B+tMc+MaH2K/gc81ZpVQCoAAA==
+mZ2KRgNFIyf6/iDh76xw1ePGQ881pSjIcbsxVQEex75HqPWboRaRDO3GCr4h
+HDeVZ0dxl+wbgnJotTD8vbCsq3bH+19NDbk4NbAyLypfRSFHtvcOnwXU+Pix
+novh7KfQI4r2Youa1y5fHFMzvUlU2r0ZSV0mEt7QDxRL7ZGva8NYpblT0JqA
++Wkv8jMz8pSfW+zXX21w7e9tedm2vvbJ9WcknW+2/9XpdTv/3qZ1rfjBKKHl
+abVrvUgT1AQQMFObOkJrgdQIxAt1a0NxgcjQnTUMVFY7LRAZkYmk9F4lNdQP
+xIdiKJFtuT8dvNSqmkzZVw4eDDLM9sopoMJ7qSpT81sfEXhwunjMwRrvFk+e
+HRzB5uQ+hG3Uz/mzgVsPSkaKE9BFMWxEbiR1e+G8hq5p2aNjNrQgVAd6T6lE
+cOjhuXLjySGqQ57SgIISRTjGVka//jqsy3pqs3w7Sq0TPuQ8VPIuHRjvnq/r
+dpZbJx4ikw5D6VPldJRPwHVmfKoaaBRK66Au0Exax96iEU2Q9nA18nLadj08
+6dcj/naIOaeLxEWqm5wBbVgXGL0fN7DsWpgCjAovm/uahrBplhh2WkCTo3lR
+LkNO3vr4aduWLsksV4tMpBPRKEHqU6gvHIlVzFH02imIJb1KG6u2sDmSG4YU
+oPRk6PlolIHDJzMFVpW7nra/ehv6TPRzdTefq/vx3n1+eFhOluJhKMeNQ2O2
+3+mws0tbM7XO1S8/Jrc/HMVxfPe+f3da/diJv7qbHDx79+0+no3ne935L4Oz
+lsscQTTtFU3acmJ7Tl5fIes3M9v15DD9oXvwctp9w14NBq93u3E3eqXovqoh
+YXTsCrz2wM410CKFe4LdO2XE3+8M4Skl3BZN0AX5IVJg7WJbPhfzbEKZ8fQG
+0R/y5Uymn83AG/QatuaIHZvbb272zE3WfV2a4v7FT52j2WX54fv0z+X4hibo
+9uTT9o4Vhy8zxR8I49+5VgNlCVF/0x29vZ58p05NNjrpJocwzn5xm95cnEt1
++OX8zeXlQTPB3zg//6GO1Sh6W7jxjJD3IUabUwJn0Z2GK7ts/rqZ71HswDAZ
+++5dc+gTUwqsE51r/Q1gyNeSj1MmRa2LZvOHE68lmG4gdvCA2BM5tjJBapoB
++e4tpA6SZ07jHDSahzF74xsgittVa2EY/1wWj57F7Ie11oValdV215aE+jqA
+WbNDcT1ug7qpkoTmdW6IIMd2ZNC8rqLJs/HjPA9ttvCecz17WArRcMrNQYkQ
+qvEmITbmMjOx48BXen4SkIr2auhJNB80cNRx1QtE6qfCa+Mi5Qd2zQmjqSdY
+KPZjEe+sVoXi12W54ACrvdO1HNmyQrWoKWx5CdEIURCcaq20nzx57XiZXHll
+iUwqlI7uJs+I8qnc/Cz+0vcXgohSsnPNRDB1gv4hzLpXnDZjJDobN4KLFFDZ
++z8CUdQFKTLwWvYN0/Wn8q2sLRQm17R6bUZbUuWSrs8WPhMivtrw9xd1hYP4
+8kPauqmztzPaXbmpsAuNOFkwTAud8f7g2c5gZ+QQdKR7T5AC4/ibgijqm4eO
+FW6uQF9B8fX9Rs3VEPA/rJVSN7m6iXNBjaje3HDXh/njXWQ0GuOCAZyeBnvT
+4kyOhb3a8N7qN/v2ea3dJ2o45+31WbPNrUsUSFAoiXPXrF0oja7YAEDsYB3u
+Qj8OsDkVGFBOY2txe6ufhUaqNtdIOEeor1lgtrWq5elCk05yF0rBcE0HJ8T4
+ov45ziODDcLlkAkrkrUVNtMva0+nkevELqNZXRPkzeahfbcT731C0WZnzSi3
+6mM2r+761SaIC/oT+tFBPcDzWAh+wmw+tl2xHS76QQGfZ3Sr1OgkmSY4CXWl
+6xDCrbt1FejMX64vYU2Z2PvC4ClunXNds/HSwt5Vq3WnxLHet/zgk5jLEATt
+DA1I6lvGnTWOnrICGJkJUQQvbEpGSCwTAi/wJagMCGgcgrq+IFhtdBL5jlak
+G/pWqw0tXDy5y0c3SU30sijVRPNiCjVRl+mS20TRPMe2wEbOyWlc6NOd9Upo
+V3iAY1NSmUJX0/QxTwJPYHSOFmVOJpcf6KLSVx4LTrCCWhOoVFlIpr7PXjiS
+WgjvQog8vrTZ6G12YrHtM6rraLsd39AuSHZUUjN7t0A34hrBpsbjXiOv2Zs6
+fxlhEAr0exHb/ZIOSr6E4AvbnnHHGAnk7qadM1BAeM66nf0GZ3vxfnxgL7tI
+dQ2qfo6CsmOMWHDTHuSCcOkE5SVwdN8u0vUy3XPB6nTBvOaxxiHUHd1z2opB
+TqalYxDH2AHit64V94M48gLf9cWs72ASxTzis5zObao0tYtUuXTXhNK43395
+D5Q5Kip/MkXL2PbBHlEQCOSADr2997uKVsv53A336/CQxlQ2I7Gz/mX/Eaoh
+UVlhV8U1uxCIstTZurX5JcoZut8Hz0vvyITKhWsh7c37Komvpj80UpX2t0hU
+2Vsn7j34iU60yk9tdy+M9xEx0WO30bWwiJ+IHlu7XHadgv0JC91ik7D9uu+1
+c9HoYy+v5iPsTv/RGvPMiNan6H/I8jqESyoAAA==
 
 -->
 
