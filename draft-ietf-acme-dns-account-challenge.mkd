@@ -177,7 +177,7 @@ Including the account URL is intended solely to assist operators in troubleshoot
 
 As this challenge creates a strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization MUST NOT be used differently by the server in the `Location` header and while validating challenges.
 
-If any such change happens, e.g. on the server hostname due to a service migration, all existing client DNS records would be invalidated and would need to be re-calculated and re-provisioned by the clients. However, in some cases, it may be required operationally.
+Such a change, e.g., to the server hostname due to a service migration, may sometimes be operationally necessary. However, it invalidates all validation domain names previously provisioned by clients, which would then need to be recomputed and re-provisioned. A server making such a change SHOULD continue to accept requests whose `kid` contains previously issued account URLs, so that existing DNS records remain valid.
 
 # Security Considerations
 
