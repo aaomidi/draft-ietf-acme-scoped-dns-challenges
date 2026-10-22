@@ -50,6 +50,11 @@ normative:
 
 informative:
   I-D.draft-ietf-dnsop-domain-verification-techniques:
+  IANA-ACME-VALIDATION-METHODS:
+    title: "ACME Validation Methods"
+    target: https://www.iana.org/assignments/acme#acme-validation-methods
+    author:
+      org: IANA
 
 --- abstract
 
@@ -193,7 +198,7 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 
 ## ACME Validation Method
 
-The "ACME Validation Methods" registry is to be updated to include the following entries:
+The "ACME Validation Methods" registry {{IANA-ACME-VALIDATION-METHODS}} is to be updated to include the following entries:
 
 ~~~
 label: dns-account-01
