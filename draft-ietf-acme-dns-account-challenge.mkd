@@ -82,8 +82,8 @@ The challenge object contains the following fields:
 
 * type (required, string): The string "dns-account-01".
 * token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC9846, Appendix C.1}} for information on additional requirements for secure randomness.
-* url (required, string): The challenge url to which a response can be posted, similar to {{!RFC8555, Section 8.4}}.
-* status (required, string): The challenge status, similar to {{!RFC8555, Section 8.4}}. Possible values are "pending", "processing", "valid", and "invalid" (see {{!RFC8555, Section 7.1.6}}).
+* url (required, string): The URL to which a response can be posted, as defined in {{!RFC8555, Section 8}}.
+* status (required, string): The status of this challenge, as defined in {{!RFC8555, Section 8}}. Possible values are "pending", "processing", "valid", and "invalid" (see {{!RFC8555, Section 7.1.6}}).
 * validated (optional, string): The time at which the server validated this challenge, as defined in {{!RFC8555, Section 8}}.
 * error (optional, object): Error that occurred while the server was validating the challenge, as defined in {{!RFC8555, Section 8}}.
 
