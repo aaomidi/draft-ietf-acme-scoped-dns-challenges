@@ -171,7 +171,7 @@ Errors encountered during challenge validation are reported as described in {{!R
 
 If the server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
 
-This is intended solely for assisting operators in troubleshooting when they miscalculate the account URL. As it is not required for validation, it can be ommitted by the server to avoid client reliance on its presence and prevent ossification.
+Including the account URL is intended solely to assist operators in troubleshooting when the validation domain name they provisioned does not match the one computed by the server. As it is not required for validation, a server can omit it, e.g., to avoid client reliance on its presence and prevent ossification.
 
 ## Implementation Considerations
 
