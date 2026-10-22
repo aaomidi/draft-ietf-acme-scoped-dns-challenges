@@ -177,6 +177,8 @@ This is intended solely for assisting operators in troubleshooting when they mis
 
 As this challenge creates a strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization MUST NOT be used differently by the server in the `Location` header and while validating challenges.
 
+If any such change happens, e.g. on the server hostname due to a service migration, all existing client DNS records would be invalidated and would need to be re-calculated and re-provisioned by the clients. However, in some cases, it may be required operationally.
+
 # Security Considerations
 
 The same security considerations apply for the integrity of authorizations ({{!RFC8555, Section 10.2}}) and DNS security ({{!RFC8555, Section 11.2}}) as in the original specification for `dns-01`.
