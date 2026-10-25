@@ -4,7 +4,7 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "/usr/local/bin/kramdown-rfc2629 --v3 draft-ietf-acme-dns-account-challenge.mkd > docs/draft.xml && xml2rfc --text --html --v3 docs/draft.xml",
+      "command": "mkdir -p docs && go run ./cmd/mkd2xml -o docs/draft.xml draft-ietf-acme-dns-account-challenge.mkd && go run ./cmd/xml2txt -o docs/draft.txt docs/draft.xml && go run ./cmd/xml2html -o docs/index.html docs/draft.xml",
       "group": {
         "kind": "build",
         "isDefault": true
