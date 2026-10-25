@@ -1,0 +1,59 @@
+name: Build the draft
+
+# Builds the draft from its Markdown source with the Go tools in this
+# repository, and stores the result as the "draft" artifact:
+#
+#   index.html  the draft as a web page
+#   draft.txt   the draft as paginated text
+#   draft.xml   the draft as RFCXML, the form submitted to the datatracker
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout 📋
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: Run spellchecker
+      uses: crate-ci/typos@v1.29.4
+
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+
+    - name: Test
+      run: |
+        go vet ./...
+        go test ./...
+
+    - name: Generate 🔨
+      run: |
+        mkdir -p docs
+        go run ./cmd/mkd2xml -o docs/draft.xml draft-ietf-acme-dns-account-challenge.mkd
+        go run ./cmd/xml2txt -o docs/draft.txt docs/draft.xml
+        go run ./cmd/xml2html -o docs/index.html docs/draft.xml
+
+    - name: Store Output
+      uses: actions/upload-artifact@v4
+      with:
+        name: draft
+        path: |
+          docs/index.html
+          docs/draft.txt
+          docs/draft.xml
+        retention-days: 2

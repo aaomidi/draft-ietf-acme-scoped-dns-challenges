@@ -2,7 +2,16 @@ name: 'Netlify Preview Deploy'
 
 on:
   pull_request:
-    types: ['opened', 'edited', 'synchronize']
+    types: ['opened', 'reopened', 'synchronize']
+
+# A newer push replaces the build of an older one, so that a slow old run can
+# never overwrite a newer preview.
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -10,74 +19,15 @@ env:
 jobs:
   build:
     name: Build the preview
-    uses: ./.github/workflows/common.yml
-
-  # Builds the draft with the Go tools and checks that the result is the same
-  # text as the kramdown-rfc and xml2rfc build above. It does not affect the
-  # preview.
-  go-tools:
-    needs: 'build'
-    name: 'Go tools match kramdown-rfc and xml2rfc'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout 📋
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-
-      - name: Test
-        run: |
-          go vet ./...
-          go test ./...
-
-      - name: Download kramdown-rfc Draft
-        uses: actions/download-artifact@v4
-        with:
-          name: draft
-          path: kramdown
-
-      - name: Generate 🔨
-        run: |
-          mkdir go
-          go run ./cmd/mkd2xml -o go/draft.xml draft-ietf-acme-dns-account-challenge.mkd
-          go run ./cmd/xml2txt -o go/draft.txt go/draft.xml
-
-      - name: Render with xml2rfc
-        run: |
-          pipx install xml2rfc==3.34.1
-          xml2rfc --text --v3 kramdown/draft.xml -o kramdown/draft.txt
-          xml2rfc --text --v3 go/draft.xml -o go/draft.xml2rfc.txt
-          xml2rfc --html --v3 go/draft.xml -o go/draft.html
-
-      # The XML differs between the two converters, so compare what it
-      # renders to.
-      - name: Compare mkd2xml with kramdown-rfc
-        run: diff -u kramdown/draft.txt go/draft.xml2rfc.txt
-
-      - name: Compare xml2txt with xml2rfc
-        run: diff -u go/draft.xml2rfc.txt go/draft.txt
-
-      - name: Store Output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: draft-go
-          path: |
-            go/
-            kramdown/draft.txt
-          retention-days: 2
+    uses: ./.github/workflows/build.yml
 
   deploy:
     needs: 'build'
     name: 'Deploy'
+    # A pull request from a fork has no access to the Netlify secrets.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     permissions:
       pull-requests: write
 
@@ -93,21 +43,37 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          ALIAS: deploy-preview-${{ github.event.number }}
         run: |
-          output=$(npx --yes netlify-cli@latest deploy \
+          output=$(npx --yes netlify-cli@27.12.0 deploy \
             --dir=docs \
-            --alias=deploy-preview-${{ github.event.number }} \
+            --alias="$ALIAS" \
             --json)
           echo "$output"
-          echo "deploy_url=$(echo "$output" | jq -r '.deploy_url')" >> "$GITHUB_OUTPUT"
-        timeout-minutes: 2
+          url=$(echo "$output" | jq -r '.deploy_url')
+          if [ -z "$url" ] || [ "$url" = "null" ]; then
+            echo "Netlify did not return a deploy URL" >&2
+            exit 1
+          fi
+          echo "deploy_url=$url" >> "$GITHUB_OUTPUT"
+        timeout-minutes: 3
 
       - name: Comment PR with preview URL
         uses: actions/github-script@v7
+        env:
+          DEPLOY_URL: ${{ steps.netlify.outputs.deploy_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         with:
           script: |
             const marker = '<!-- netlify-preview -->';
-            const body = `${marker}\n📄 Draft preview: ${{ steps.netlify.outputs.deploy_url }}`;
+            const url = process.env.DEPLOY_URL;
+            const sha = process.env.HEAD_SHA.slice(0, 7);
+            const body = [
+              marker,
+              `📄 Draft preview: ${url}`,
+              '',
+              `[Text](${url}/draft.txt) · [XML](${url}/draft.xml) · built from ${sha}`,
+            ].join('\n');
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,

@@ -1,4 +1,4 @@
-package main
+package rfc
 
 import (
 	"fmt"
@@ -274,8 +274,8 @@ func (w *writer) fillTOC(lines []*line) {
 	}
 }
 
-// Render lays out a prepared document as paginated text.
-func (d *document) Render() string {
+// text lays out a prepared document as paginated text.
+func (d *document) text() string {
 	w := &writer{doc: d}
 	lines := w.renderLines(d.root, maxWidth, context{joiners: baseJoiners})
 	findBlocks(lines)

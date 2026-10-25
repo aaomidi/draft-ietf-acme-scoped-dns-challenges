@@ -5,11 +5,11 @@
 Example                                                       A. Example
 Internet-Draft                                              B. B. Sample
 Intended status: Informational                               Example Org
-Expires: 10 September 2026                                         Carol
+Expires: 28 April 2027                                             Carol
                                                                         
                                              D. V. D. Example-Hyphenated
                          A Different Organization With A Long Name, Inc.
-                                                            9 March 2026
+                                                         25 October 2026
 
 
 A Rather Long Title That Needs To Be Wrapped Over More Than One Line On
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 September 2026.
+   This Internet-Draft will expire on 28 April 2027.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Example, et al.         Expires 10 September 2026               [Page 1]
+Example, et al.           Expires 28 April 2027                 [Page 1]
 
-Internet-Draft                    RICH                        March 2026
+Internet-Draft                    RICH                      October 2026
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Example, et al.         Expires 10 September 2026               [Page 2]
+Example, et al.           Expires 28 April 2027                 [Page 2]
 
-Internet-Draft                    RICH                        March 2026
+Internet-Draft                    RICH                      October 2026
 
 
 3.  Requirements and Lists With a Section Title That Is Long Enough to
@@ -165,9 +165,9 @@ Internet-Draft                    RICH                        March 2026
 
 
 
-Example, et al.         Expires 10 September 2026               [Page 3]
+Example, et al.           Expires 28 April 2027                 [Page 3]
 
-Internet-Draft                    RICH                        March 2026
+Internet-Draft                    RICH                      October 2026
 
 
    _label._acme-challenge.example.org. 300 IN TXT (
@@ -221,9 +221,9 @@ Internet-Draft                    RICH                        March 2026
 
 
 
-Example, et al.         Expires 10 September 2026               [Page 4]
+Example, et al.           Expires 28 April 2027                 [Page 4]
 
-Internet-Draft                    RICH                        March 2026
+Internet-Draft                    RICH                      October 2026
 
 
 Appendix A.  An Appendix
@@ -277,4 +277,4 @@ Authors' Addresses
 
 
 
-Example, et al.         Expires 10 September 2026               [Page 5]
+Example, et al.           Expires 28 April 2027                 [Page 5]

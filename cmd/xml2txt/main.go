@@ -16,6 +16,8 @@ import (
 	"io"
 	"os"
 	"time"
+
+	"github.com/aaomidi/draft-ietf-acme-scoped-dns-challenges/internal/rfc"
 )
 
 func main() {
@@ -52,7 +54,7 @@ func run(in, out, date string, warnings io.Writer) error {
 	}
 	defer f.Close()
 
-	text, warns, err := Render(f, today)
+	text, warns, err := rfc.Text(f, today)
 	if err != nil {
 		return fmt.Errorf("%s: %v", in, err)
 	}
@@ -64,25 +66,4 @@ func run(in, out, date string, warnings io.Writer) error {
 		return err
 	}
 	return os.WriteFile(out, []byte(text), 0o644)
-}
-
-// Render reads an RFCXML document and returns it as text, with any warnings
-// about the result.
-func Render(r io.Reader, today time.Time) (text string, warnings []string, err error) {
-	// The renderer panics on a combination of elements it has no rule for;
-	// report that as an error like any other unsupported input.
-	defer func() {
-		if p := recover(); p != nil {
-			text, warnings, err = "", nil, fmt.Errorf("cannot render this document: %v", p)
-		}
-	}()
-	root, err := parse(r)
-	if err != nil {
-		return "", nil, err
-	}
-	doc, err := prepare(root, today)
-	if err != nil {
-		return "", nil, err
-	}
-	return doc.Render(), doc.warnings, nil
 }

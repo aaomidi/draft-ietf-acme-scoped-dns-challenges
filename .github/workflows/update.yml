@@ -9,24 +9,28 @@ on:
     - main
     paths-ignore:
     - README.md
-    - CONTRIBUTING.md
-    - LICENSE.md
+    - LICENSE
     - .gitignore
-    - docs/*
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
-    name: Build the preview
-    uses: ./.github/workflows/common.yml
+    name: Build the editor's copy
+    uses: ./.github/workflows/build.yml
 
   deploy:
     needs: 'build'
     name: Deploy to gh-pages
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout 📋
