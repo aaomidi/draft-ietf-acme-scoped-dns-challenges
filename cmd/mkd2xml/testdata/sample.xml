@@ -10,7 +10,8 @@
         <email>alice@example.com</email>
       </address>
     </author>
-    <author fullname="Bob B. Sample" initials="B. B." surname="Sample">
+    <author initials="B. B." surname="Sample" fullname="Bob B. Sample">
+      <organization></organization>
       <address>
         <email>bob@example.com</email>
       </address>
@@ -185,7 +186,9 @@ _label._acme-challenge.example.org. 300 IN TXT (
         <reference anchor="REGISTRY" target="https://example.com/registry">
           <front>
             <title>Example Registry</title>
-            <author fullname="Carol Sample" initials="C." surname="Sample"/>
+            <author initials="C." surname="Sample" fullname="Carol Sample">
+              <organization></organization>
+            </author>
             <author>
               <organization>Example Authority</organization>
             </author>

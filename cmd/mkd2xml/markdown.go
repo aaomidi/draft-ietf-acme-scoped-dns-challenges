@@ -99,6 +99,9 @@ func (c *converter) renderSections(p part, out *xmlBuf) error {
 			continue
 		}
 
+		if _, ok := n.PreviousSibling().(*ast.Paragraph); ok && !h.HasBlankPreviousLines() {
+			return r.errorf(h, "a heading needs a blank line before it")
+		}
 		closeTo(h.Level)
 		if h.Level != depth+1 {
 			return r.errorf(h, "heading level jumps from %d to %d", depth, h.Level)
@@ -117,11 +120,27 @@ func (c *converter) renderSections(p part, out *xmlBuf) error {
 			}
 		}
 
+		// The anchor is, in this order: the one in the attribute list, the
+		// "{#id}" at the end of the heading, or one made from the title.
+		// kramdown derives it from the heading as written, markup and all.
+		title := strings.TrimSpace(r.rawLines(h))
+		inlineID := headingID.FindStringSubmatch(title)
 		anchor := attrs.anchor
+		switch {
+		case anchor != "" && inlineID != nil:
+			return r.errorf(h, "heading sets its anchor twice")
+		case inlineID != nil:
+			anchor = inlineID[1]
+		}
 		if anchor == "" {
-			anchor = c.uniqueAnchor(autoAnchor(r.plainText(h)))
+			anchor = c.uniqueAnchor(autoAnchor(title))
+			if reservedAnchor(anchor) {
+				return r.errorf(h, "the heading %q gets the anchor %q, and xml2rfc reserves anchors starting that way; give it another with a line {: #some-id} below it", title, anchor)
+			}
 		} else if c.anchors[anchor] {
 			return r.errorf(h, "anchor %q is used twice", anchor)
+		} else if reservedAnchor(anchor) {
+			return r.errorf(h, "xml2rfc reserves anchors that start like %q", anchor)
 		}
 		c.anchors[anchor] = true
 
@@ -133,6 +152,9 @@ func (c *converter) renderSections(p part, out *xmlBuf) error {
 		name, err := r.inline(h, false)
 		if err != nil {
 			return err
+		}
+		if inlineID != nil {
+			name = headingID.ReplaceAllString(name, "")
 		}
 		out.line("<name>" + name + "</name>")
 	}
@@ -256,6 +278,9 @@ func (r *renderer) block(n ast.Node) error {
 		case strings.HasPrefix(raw, "{:") && strings.HasSuffix(raw, "}"):
 			return r.errorf(n, "unsupported kramdown directive %s", raw)
 		}
+		if err := checkParagraph(raw); err != nil {
+			return r.errorf(n, "%v", err)
+		}
 		s, err := r.inline(n, r.c.tagBCP14)
 		if err != nil {
 			return err
@@ -264,11 +289,19 @@ func (r *renderer) block(n ast.Node) error {
 		return nil
 
 	case *ast.List:
+		if err := r.needsBlankLine(n, "a list"); err != nil {
+			return err
+		}
 		tag, end := `<ul spacing="normal">`, "</ul>"
 		if n.IsOrdered() {
 			tag, end = `<ol spacing="normal" type="1">`, "</ol>"
+			// kramdown only knows "1." lists, and numbers them from 1
+			// whatever the source says.
+			if n.Marker != '.' {
+				return r.errorf(n, `a numbered list must be written "1." and not "1%c"`, n.Marker)
+			}
 			if n.Start != 1 {
-				tag = fmt.Sprintf(`<ol spacing="normal" type="1" start="%d">`, n.Start)
+				return r.errorf(n, "a numbered list must start at 1; kramdown-rfc would renumber this one from 1")
 			}
 		}
 		r.out.open(tag)
@@ -285,10 +318,27 @@ func (r *renderer) block(n ast.Node) error {
 		return nil
 
 	case *ast.FencedCodeBlock:
+		if err := r.needsBlankLine(n, "a code block"); err != nil {
+			return err
+		}
+		if n.Lines().Len() == 0 {
+			return r.errorf(n, "empty code block")
+		}
+		// kramdown fences are tildes; it reads backticks as a code span.
+		if start := n.Lines().At(0).Start; start >= 2 {
+			open := r.p.src[:start-1]
+			open = open[bytes.LastIndexByte(open, '\n')+1:]
+			if bytes.HasPrefix(bytes.TrimLeft(open, " "), []byte("`")) {
+				return r.errorf(n, "a code block must be fenced with ~~~ and not with backticks")
+			}
+		}
 		r.code(n, string(n.Language(r.p.src)))
 		return nil
 
 	case *ast.CodeBlock:
+		if err := r.needsBlankLine(n, "a code block"); err != nil {
+			return err
+		}
 		r.code(n, "")
 		return nil
 
@@ -298,10 +348,20 @@ func (r *renderer) block(n ast.Node) error {
 	return r.errorf(n, "unsupported Markdown construct (%s)", n.Kind())
 }
 
+// needsBlankLine reports a block that directly follows a paragraph. kramdown
+// reads it as more of the paragraph; CommonMark reads it as a new block.
+func (r *renderer) needsBlankLine(n ast.Node, what string) error {
+	if _, ok := n.PreviousSibling().(*ast.Paragraph); ok && !n.HasBlankPreviousLines() {
+		return r.errorf(n, "%s needs a blank line before it", what)
+	}
+	return nil
+}
+
 // code renders a code block: <sourcecode> when it names a language, <artwork>
 // otherwise. The content is copied verbatim.
 func (r *renderer) code(n ast.Node, language string) {
-	content := "\n" + r.rawLines(n)
+	// kramdown replaces tabs by spaces up to the next multiple of 8 columns.
+	content := "\n" + expandTabs(r.rawLines(n))
 	if !strings.HasSuffix(content, "\n") {
 		content += "\n"
 	}
@@ -322,12 +382,19 @@ func (r *renderer) inline(n ast.Node, tag bool) (string, error) {
 	// Adjacent text nodes are joined before they are written, so that a
 	// keyword is recognised however the parser happened to split the text.
 	var pending strings.Builder
-	flush := func() {
-		s := pending.String()
+	flush := func() error {
+		raw := pending.String()
 		pending.Reset()
+		if err := checkText(raw); err != nil {
+			return r.errorf(n, "%v", err)
+		}
+		for _, m := range bracketed.FindAllStringSubmatch(raw, -1) {
+			r.c.bracketed = append(r.c.bracketed, xrefUse{m[1], r.lineOf(n)})
+		}
+		s := resolveText(raw)
 		if !tag {
 			out.WriteString(escText(s))
-			return
+			return nil
 		}
 		last := 0
 		for _, m := range bcp14Keyword.FindAllStringIndex(s, -1) {
@@ -336,6 +403,20 @@ func (r *renderer) inline(n ast.Node, tag bool) (string, error) {
 			last = m[1]
 		}
 		out.WriteString(escText(s[last:]))
+		return nil
+	}
+	// edge returns the character of the text next to an inline element, or
+	// a space when there is none.
+	edge := func(sibling ast.Node, last bool) byte {
+		if t, ok := sibling.(*ast.Text); ok {
+			if v := t.Value(r.p.src); len(v) > 0 {
+				if last {
+					return v[len(v)-1]
+				}
+				return v[0]
+			}
+		}
+		return ' '
 	}
 
 	for child := n.FirstChild(); child != nil; child = child.NextSibling() {
@@ -354,37 +435,65 @@ func (r *renderer) inline(n ast.Node, tag bool) (string, error) {
 			continue
 		}
 
-		flush()
+		if err := flush(); err != nil {
+			return "", err
+		}
 		switch child := child.(type) {
 		case *ast.CodeSpan:
-			out.WriteString("<tt>" + escText(r.plainText(child)) + "</tt>")
+			code := r.plainText(child)
+			// The parser has already dropped a space inside the backticks,
+			// so look for one in the source.
+			padded := code == "" || code != strings.TrimSpace(code)
+			if first, ok := child.FirstChild().(*ast.Text); ok && first.Segment.Start > 0 {
+				padded = padded || isBlank(r.p.src[first.Segment.Start-1])
+			}
+			if last, ok := child.LastChild().(*ast.Text); ok && last.Segment.Stop < len(r.p.src) {
+				padded = padded || isBlank(r.p.src[last.Segment.Stop])
+			}
+			if padded {
+				return "", r.errorf(child, "a code span must not start or end with a space; kramdown-rfc and CommonMark read that differently")
+			}
+			out.WriteString("<tt>" + escText(code) + "</tt>")
 		case *ast.Emphasis:
+			// Emphasis inside a word is read differently by the two
+			// parsers.
+			if isAlnum(edge(child.PreviousSibling(), true)) || isAlnum(edge(child.NextSibling(), false)) {
+				return "", r.errorf(child, `emphasis inside a word is not supported; write "\*" or "\_" for the characters themselves`)
+			}
 			inner, err := r.inline(child, tag)
 			if err != nil {
 				return "", err
 			}
-			if child.Level == 2 {
+			// "***text***" is strong emphasis around emphasis in kramdown.
+			if only, ok := child.FirstChild().(*ast.Emphasis); ok && child.ChildCount() == 1 && child.Level == 1 && only.Level == 2 {
+				inner = strings.TrimSuffix(strings.TrimPrefix(inner, "<strong>"), "</strong>")
+				out.WriteString("<strong><em>" + inner + "</em></strong>")
+			} else if child.Level == 2 {
 				out.WriteString("<strong>" + inner + "</strong>")
 			} else {
 				out.WriteString("<em>" + inner + "</em>")
 			}
 		case *ast.Link:
+			if len(child.Title) > 0 {
+				return "", r.errorf(child, "a link with a title is not supported")
+			}
+			for c := child.FirstChild(); c != nil; c = c.NextSibling() {
+				if _, ok := c.(*ast.Text); !ok {
+					return "", r.errorf(child, "the text of a link must be plain text")
+				}
+			}
 			inner, err := r.inline(child, false)
 			if err != nil {
 				return "", err
 			}
-			target := string(child.Destination)
-			if inner == escText(target) {
-				out.WriteString(`<eref target="` + escAttr(target) + `"/>`)
-			} else {
-				out.WriteString(`<eref target="` + escAttr(target) + `">` + inner + "</eref>")
-			}
+			out.WriteString(`<eref target="` + escAttr(string(child.Destination)) + `">` + inner + "</eref>")
 		case *ast.AutoLink:
-			target := string(child.URL(r.p.src))
+			label := string(child.URL(r.p.src))
+			target := label
 			if child.AutoLinkType == ast.AutoLinkEmail {
 				target = "mailto:" + target
 			}
-			out.WriteString(`<eref target="` + escAttr(target) + `"/>`)
+			out.WriteString(`<eref target="` + escAttr(target) + `">` + escText(label) + "</eref>")
 		case *xrefNode:
 			x, err := parseXref(child.Raw)
 			if err != nil {
@@ -402,7 +511,9 @@ func (r *renderer) inline(n ast.Node, tag bool) (string, error) {
 			return "", r.errorf(child, "unsupported Markdown construct (%s)", child.Kind())
 		}
 	}
-	flush()
+	if err := flush(); err != nil {
+		return "", err
+	}
 	return out.String(), nil
 }
 

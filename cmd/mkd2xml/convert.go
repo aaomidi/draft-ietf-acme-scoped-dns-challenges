@@ -34,7 +34,14 @@ var partMarker = regexp.MustCompile(`^---\s*([a-z_]+)\s*$`)
 // splitDocument cuts the source into its YAML front matter and the abstract,
 // middle and back parts.
 func splitDocument(src []byte) (*document, error) {
+	// Line endings are normalized first, so that a file saved on Windows
+	// does not put carriage returns into code blocks.
+	src = bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n"))
 	lines := bytes.SplitAfter(src, []byte("\n"))
+	if len(lines) > 0 {
+		// A byte order mark is not part of the text.
+		lines[0] = bytes.TrimPrefix(lines[0], []byte("\uFEFF"))
+	}
 	if len(lines) == 0 || strings.TrimSpace(string(lines[0])) != "---" {
 		return nil, fmt.Errorf("line 1: expected the front matter to start with ---")
 	}
@@ -90,6 +97,8 @@ type converter struct {
 	tagBCP14 bool
 	anchors  map[string]bool
 	xrefs    []xrefUse
+	// bracketed are the names written in square brackets in plain text.
+	bracketed []xrefUse
 }
 
 // xrefUse is a cross-reference waiting to be checked against the anchors and
@@ -173,6 +182,11 @@ func Convert(src []byte, opts Options) ([]byte, error) {
 			return nil, fmt.Errorf("line %d: {{%s}} refers to nothing: it is neither a section anchor nor a reference (use {{!%s}} or {{?%s}} to cite and fetch a reference)", x.line, x.target, x.target, x.target)
 		}
 	}
+	for _, b := range c.bracketed {
+		if refs.known[b.target] {
+			return nil, fmt.Errorf("line %d: [%s] would be read by kramdown-rfc as a citation of that reference; write {{%s}}, or \\[%s\\] for the text itself", b.line, b.target, b.target, b.target)
+		}
+	}
 	return []byte(out.String()), nil
 }
 
@@ -185,15 +199,23 @@ func (c *converter) rfcElement() string {
 		`category="` + escAttr(fm.Category) + `"`,
 	}
 	// As in kramdown-rfc, standards track and BCP documents carry consensus
-	// unless they say otherwise; other categories only when they ask.
-	switch {
-	case fm.Consensus != nil:
-		attrs = append(attrs, fmt.Sprintf(`consensus="%t"`, *fm.Consensus))
-	case fm.Category == "std" || fm.Category == "bcp":
+	// unless they say otherwise, other categories only when they ask, and
+	// the absence of consensus is expressed by leaving the attribute out.
+	consensus := fm.Category == "std" || fm.Category == "bcp"
+	if fm.Consensus != nil {
+		consensus = *fm.Consensus
+	}
+	if consensus {
 		attrs = append(attrs, `consensus="true"`)
 	}
 	if fm.SubmissionType != "" {
 		attrs = append(attrs, `submissionType="`+escAttr(fm.SubmissionType)+`"`)
+	}
+	if fm.Obsoletes != "" {
+		attrs = append(attrs, `obsoletes="`+escAttr(fm.Obsoletes)+`"`)
+	}
+	if fm.Updates != "" {
+		attrs = append(attrs, `updates="`+escAttr(fm.Updates)+`"`)
 	}
 	attrs = append(attrs, `tocInclude="true"`, `sortRefs="true"`, `symRefs="true"`)
 	return "<rfc " + strings.Join(attrs, " ") + ">"
@@ -209,22 +231,25 @@ func (c *converter) renderFrontMatter(out *xmlBuf, date xmlDate) {
 	out.line(`<seriesInfo name="Internet-Draft" value="` + escAttr(fm.Docname) + `"/>`)
 
 	for _, a := range fm.Author {
-		tag := `<author fullname="` + escAttr(a.Fullname) + `"`
+		tag := "<author"
 		if a.Initials != "" {
 			tag += ` initials="` + escAttr(a.Initials) + `"`
 		}
 		if a.Surname != "" {
 			tag += ` surname="` + escAttr(a.Surname) + `"`
 		}
+		if a.Fullname != "" {
+			tag += ` fullname="` + escAttr(a.Fullname) + `"`
+		}
+		// The organization and address are written even when empty, as
+		// kramdown-rfc writes them.
 		out.open(tag + ">")
-		if a.Organization != "" {
-			out.line("<organization>" + escText(a.Organization) + "</organization>")
-		}
+		out.line("<organization>" + escText(a.Organization) + "</organization>")
+		out.open("<address>")
 		if a.Email != "" {
-			out.open("<address>")
 			out.line("<email>" + escText(a.Email) + "</email>")
-			out.close("</address>")
 		}
+		out.close("</address>")
 		out.close("</author>")
 	}
 
