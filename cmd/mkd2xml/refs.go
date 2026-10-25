@@ -128,10 +128,13 @@ type references struct {
 	normative   []referenceEntry
 	informative []referenceEntry
 	known       map[string]bool
+	// fromFrontMatter marks the keys listed in the front matter, which
+	// stay in the list they were put in.
+	fromFrontMatter map[string]bool
 }
 
 func newReferences(fm *frontMatter) (*references, error) {
-	r := &references{known: map[string]bool{}}
+	r := &references{known: map[string]bool{}, fromFrontMatter: map[string]bool{}}
 	for _, list := range []struct {
 		entries referenceMap
 		dst     *[]referenceEntry
@@ -144,6 +147,7 @@ func newReferences(fm *frontMatter) (*references, error) {
 				return nil, fmt.Errorf("front matter: reference %s is defined twice", e.Key)
 			}
 			r.known[e.Key] = true
+			r.fromFrontMatter[e.Key] = true
 			*list.dst = append(*list.dst, e)
 		}
 	}
@@ -151,9 +155,19 @@ func newReferences(fm *frontMatter) (*references, error) {
 }
 
 // cite records a citation made with {{!KEY}} (normative) or {{?KEY}}
-// (informative). A key that is already listed keeps its place.
+// (informative). A key that is already listed keeps its place, except that
+// a reference cited both ways is normative.
 func (r *references) cite(key string, normative bool) {
 	if r.known[key] {
+		if normative {
+			for i, e := range r.informative {
+				if e.Key == key && !r.fromFrontMatter[key] {
+					r.informative = append(r.informative[:i], r.informative[i+1:]...)
+					r.normative = append(r.normative, e)
+					break
+				}
+			}
+		}
 		return
 	}
 	r.known[key] = true
@@ -229,14 +243,13 @@ func renderReferenceDef(out *xmlBuf, key string, def *referenceDef) error {
 	out.open(tag + ">")
 	out.open("<front>")
 	out.line("<title>" + escText(def.Title) + "</title>")
-	if len(def.Author) == 0 {
-		out.line("<author/>")
+	authors := def.Author
+	if len(authors) == 0 {
+		// A reference always has an author element, if an empty one.
+		authors = []referenceAuthor{{}}
 	}
-	for _, a := range def.Author {
+	for _, a := range authors {
 		tag := "<author"
-		if a.Name != "" {
-			tag += ` fullname="` + escAttr(a.Name) + `"`
-		}
 		if a.Ins != "" {
 			// "ins" is "J. Smith": initials, then the surname.
 			initials, surname, ok := strings.Cut(a.Ins, " ")
@@ -245,9 +258,8 @@ func renderReferenceDef(out *xmlBuf, key string, def *referenceDef) error {
 			}
 			tag += ` initials="` + escAttr(initials) + `" surname="` + escAttr(surname) + `"`
 		}
-		if a.Org == "" {
-			out.line(tag + "/>")
-			continue
+		if a.Name != "" {
+			tag += ` fullname="` + escAttr(a.Name) + `"`
 		}
 		out.open(tag + ">")
 		out.line("<organization>" + escText(a.Org) + "</organization>")
@@ -263,6 +275,9 @@ func renderReferenceDef(out *xmlBuf, key string, def *referenceDef) error {
 		out.line(dateElement(d))
 	}
 	out.close("</front>")
+	for _, s := range def.Series {
+		out.line(`<seriesInfo name="` + escAttr(s.name) + `" value="` + escAttr(s.value) + `"/>`)
+	}
 	out.close("</reference>")
 	return nil
 }
