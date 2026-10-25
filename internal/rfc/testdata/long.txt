@@ -1,0 +1,728 @@
+
+
+
+
+Network Working Group                                               Solo
+Internet-Draft                                           25 October 2026
+Intended status: Best Current Practice                                  
+Expires: 28 April 2027
+
+
+                            A Long Document
+                         draft-example-long-00
+
+Abstract
+
+   Abstract.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 28 April 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+
+
+
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 1]
+
+Internet-Draft               A Long Document                October 2026
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Topic number 1 about a thing  . . . . . . . . . . . . . . . .   3
+   3.  Topic number 2 about a thing  . . . . . . . . . . . . . . . .   3
+   4.  Topic number 3 about a thing  . . . . . . . . . . . . . . . .   3
+   5.  Topic number 4 about a thing  . . . . . . . . . . . . . . . .   3
+     5.1.  Subtopic of 4 . . . . . . . . . . . . . . . . . . . . . .   4
+   6.  Topic number 5 about a thing  . . . . . . . . . . . . . . . .   4
+   7.  Topic number 6 about a thing  . . . . . . . . . . . . . . . .   4
+   8.  Topic number 7 about a thing  . . . . . . . . . . . . . . . .   4
+   9.  Topic number 8 about a thing  . . . . . . . . . . . . . . . .   4
+     9.1.  Subtopic of 8 . . . . . . . . . . . . . . . . . . . . . .   4
+       9.1.1.  Deep one in 8 . . . . . . . . . . . . . . . . . . . .   5
+   10. Topic number 9 about a thing  . . . . . . . . . . . . . . . .   5
+   11. Topic number 10 about a thing . . . . . . . . . . . . . . . .   5
+   12. Topic number 11 about a thing . . . . . . . . . . . . . . . .   5
+   13. Topic number 12 about a thing . . . . . . . . . . . . . . . .   5
+     13.1.  Subtopic of 12 . . . . . . . . . . . . . . . . . . . . .   5
+   14. Topic number 13 about a thing . . . . . . . . . . . . . . . .   5
+   15. Topic number 14 about a thing . . . . . . . . . . . . . . . .   5
+   16. Topic number 15 about a thing . . . . . . . . . . . . . . . .   6
+   17. Topic number 16 about a thing . . . . . . . . . . . . . . . .   6
+     17.1.  Subtopic of 16 . . . . . . . . . . . . . . . . . . . . .   6
+       17.1.1.  Deep one in 16 . . . . . . . . . . . . . . . . . . .   6
+   18. Topic number 17 about a thing . . . . . . . . . . . . . . . .   6
+   19. Topic number 18 about a thing . . . . . . . . . . . . . . . .   6
+   20. Topic number 19 about a thing . . . . . . . . . . . . . . . .   6
+   21. Topic number 20 about a thing . . . . . . . . . . . . . . . .   7
+     21.1.  Subtopic of 20 . . . . . . . . . . . . . . . . . . . . .   7
+   22. Topic number 21 about a thing . . . . . . . . . . . . . . . .   7
+   23. Topic number 22 about a thing . . . . . . . . . . . . . . . .   7
+   24. Topic number 23 about a thing . . . . . . . . . . . . . . . .   7
+   25. Topic number 24 about a thing . . . . . . . . . . . . . . . .   7
+     25.1.  Subtopic of 24 . . . . . . . . . . . . . . . . . . . . .   7
+       25.1.1.  Deep one in 24 . . . . . . . . . . . . . . . . . . .   8
+   26. Topic number 25 about a thing . . . . . . . . . . . . . . . .   8
+   27. Topic number 26 about a thing . . . . . . . . . . . . . . . .   8
+   28. Topic number 27 about a thing . . . . . . . . . . . . . . . .   8
+   29. Topic number 28 about a thing . . . . . . . . . . . . . . . .   8
+     29.1.  Subtopic of 28 . . . . . . . . . . . . . . . . . . . . .   8
+   30. Topic number 29 about a thing . . . . . . . . . . . . . . . .   9
+   31. Topic number 30 about a thing . . . . . . . . . . . . . . . .   9
+   32. Topic number 31 about a thing . . . . . . . . . . . . . . . .   9
+   33. Topic number 32 about a thing . . . . . . . . . . . . . . . .   9
+     33.1.  Subtopic of 32 . . . . . . . . . . . . . . . . . . . . .   9
+       33.1.1.  Deep one in 32 . . . . . . . . . . . . . . . . . . .   9
+   34. Topic number 33 about a thing . . . . . . . . . . . . . . . .   9
+
+
+
+Solo                      Expires 28 April 2027                 [Page 2]
+
+Internet-Draft               A Long Document                October 2026
+
+
+   35. Topic number 34 about a thing . . . . . . . . . . . . . . . .  10
+   36. Topic number 35 about a thing . . . . . . . . . . . . . . . .  10
+   37. Topic number 36 about a thing . . . . . . . . . . . . . . . .  10
+     37.1.  Subtopic of 36 . . . . . . . . . . . . . . . . . . . . .  10
+   38. Topic number 37 about a thing . . . . . . . . . . . . . . . .  10
+   39. Topic number 38 about a thing . . . . . . . . . . . . . . . .  10
+   40. Topic number 39 about a thing . . . . . . . . . . . . . . . .  10
+   41. Topic number 40 about a thing . . . . . . . . . . . . . . . .  10
+     41.1.  Subtopic of 40 . . . . . . . . . . . . . . . . . . . . .  11
+       41.1.1.  Deep one in 40 . . . . . . . . . . . . . . . . . . .  11
+   42. Topic number 41 about a thing . . . . . . . . . . . . . . . .  11
+   43. Topic number 42 about a thing . . . . . . . . . . . . . . . .  11
+   44. Topic number 43 about a thing . . . . . . . . . . . . . . . .  11
+   45. Topic number 44 about a thing . . . . . . . . . . . . . . . .  11
+     45.1.  Subtopic of 44 . . . . . . . . . . . . . . . . . . . . .  11
+   46. Topic number 45 about a thing . . . . . . . . . . . . . . . .  12
+   47. Topic number 46 about a thing . . . . . . . . . . . . . . . .  12
+   48. Topic number 47 about a thing . . . . . . . . . . . . . . . .  12
+   49. Topic number 48 about a thing . . . . . . . . . . . . . . . .  12
+     49.1.  Subtopic of 48 . . . . . . . . . . . . . . . . . . . . .  12
+       49.1.1.  Deep one in 48 . . . . . . . . . . . . . . . . . . .  12
+   50. Normative References  . . . . . . . . . . . . . . . . . . . .  13
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
+
+1.  Introduction
+
+   Intro.
+
+2.  Topic number 1 about a thing
+
+   Paragraph one of topic 1, citing [RFC2119].  More words here.
+
+3.  Topic number 2 about a thing
+
+   Paragraph one of topic 2, citing [RFC8174].  More words here.  More
+   words here.
+
+4.  Topic number 3 about a thing
+
+   Paragraph one of topic 3, citing [RFC2119].  More words here.  More
+   words here.  More words here.
+
+5.  Topic number 4 about a thing
+
+   Paragraph one of topic 4, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.
+
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 3]
+
+Internet-Draft               A Long Document                October 2026
+
+
+5.1.  Subtopic of 4
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+6.  Topic number 5 about a thing
+
+   Paragraph one of topic 5, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+
+7.  Topic number 6 about a thing
+
+   Paragraph one of topic 6, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.
+
+8.  Topic number 7 about a thing
+
+   Paragraph one of topic 7, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.
+
+9.  Topic number 8 about a thing
+
+   Paragraph one of topic 8, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.  More words here.
+
+9.1.  Subtopic of 8
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+
+
+Solo                      Expires 28 April 2027                 [Page 4]
+
+Internet-Draft               A Long Document                October 2026
+
+
+9.1.1.  Deep one in 8
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+10.  Topic number 9 about a thing
+
+   Paragraph one of topic 9, citing [RFC2119].
+
+11.  Topic number 10 about a thing
+
+   Paragraph one of topic 10, citing [RFC8174].  More words here.
+
+12.  Topic number 11 about a thing
+
+   Paragraph one of topic 11, citing [RFC2119].  More words here.  More
+   words here.
+
+13.  Topic number 12 about a thing
+
+   Paragraph one of topic 12, citing [RFC8174].  More words here.  More
+   words here.  More words here.
+
+13.1.  Subtopic of 12
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+14.  Topic number 13 about a thing
+
+   Paragraph one of topic 13, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.
+
+15.  Topic number 14 about a thing
+
+   Paragraph one of topic 14, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+
+
+
+Solo                      Expires 28 April 2027                 [Page 5]
+
+Internet-Draft               A Long Document                October 2026
+
+
+16.  Topic number 15 about a thing
+
+   Paragraph one of topic 15, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.
+
+17.  Topic number 16 about a thing
+
+   Paragraph one of topic 16, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.
+
+17.1.  Subtopic of 16
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+17.1.1.  Deep one in 16
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+18.  Topic number 17 about a thing
+
+   Paragraph one of topic 17, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.  More words here.
+
+19.  Topic number 18 about a thing
+
+   Paragraph one of topic 18, citing [RFC8174].
+
+20.  Topic number 19 about a thing
+
+   Paragraph one of topic 19, citing [RFC2119].  More words here.
+
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 6]
+
+Internet-Draft               A Long Document                October 2026
+
+
+21.  Topic number 20 about a thing
+
+   Paragraph one of topic 20, citing [RFC8174].  More words here.  More
+   words here.
+
+21.1.  Subtopic of 20
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+22.  Topic number 21 about a thing
+
+   Paragraph one of topic 21, citing [RFC2119].  More words here.  More
+   words here.  More words here.
+
+23.  Topic number 22 about a thing
+
+   Paragraph one of topic 22, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.
+
+24.  Topic number 23 about a thing
+
+   Paragraph one of topic 23, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+
+25.  Topic number 24 about a thing
+
+   Paragraph one of topic 24, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.
+
+25.1.  Subtopic of 24
+
+   *  item a
+
+   *  item b
+
+
+
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 7]
+
+Internet-Draft               A Long Document                October 2026
+
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+25.1.1.  Deep one in 24
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+26.  Topic number 25 about a thing
+
+   Paragraph one of topic 25, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.
+
+27.  Topic number 26 about a thing
+
+   Paragraph one of topic 26, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.  More words here.
+
+28.  Topic number 27 about a thing
+
+   Paragraph one of topic 27, citing [RFC2119].
+
+29.  Topic number 28 about a thing
+
+   Paragraph one of topic 28, citing [RFC8174].  More words here.
+
+29.1.  Subtopic of 28
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 8]
+
+Internet-Draft               A Long Document                October 2026
+
+
+30.  Topic number 29 about a thing
+
+   Paragraph one of topic 29, citing [RFC2119].  More words here.  More
+   words here.
+
+31.  Topic number 30 about a thing
+
+   Paragraph one of topic 30, citing [RFC8174].  More words here.  More
+   words here.  More words here.
+
+32.  Topic number 31 about a thing
+
+   Paragraph one of topic 31, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.
+
+33.  Topic number 32 about a thing
+
+   Paragraph one of topic 32, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+
+33.1.  Subtopic of 32
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+33.1.1.  Deep one in 32
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+34.  Topic number 33 about a thing
+
+   Paragraph one of topic 33, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.
+
+
+
+
+
+Solo                      Expires 28 April 2027                 [Page 9]
+
+Internet-Draft               A Long Document                October 2026
+
+
+35.  Topic number 34 about a thing
+
+   Paragraph one of topic 34, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.
+
+36.  Topic number 35 about a thing
+
+   Paragraph one of topic 35, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.  More words here.
+
+37.  Topic number 36 about a thing
+
+   Paragraph one of topic 36, citing [RFC8174].
+
+37.1.  Subtopic of 36
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+38.  Topic number 37 about a thing
+
+   Paragraph one of topic 37, citing [RFC2119].  More words here.
+
+39.  Topic number 38 about a thing
+
+   Paragraph one of topic 38, citing [RFC8174].  More words here.  More
+   words here.
+
+40.  Topic number 39 about a thing
+
+   Paragraph one of topic 39, citing [RFC2119].  More words here.  More
+   words here.  More words here.
+
+41.  Topic number 40 about a thing
+
+   Paragraph one of topic 40, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.
+
+
+
+
+Solo                      Expires 28 April 2027                [Page 10]
+
+Internet-Draft               A Long Document                October 2026
+
+
+41.1.  Subtopic of 40
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+41.1.1.  Deep one in 40
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+42.  Topic number 41 about a thing
+
+   Paragraph one of topic 41, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+
+43.  Topic number 42 about a thing
+
+   Paragraph one of topic 42, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.
+
+44.  Topic number 43 about a thing
+
+   Paragraph one of topic 43, citing [RFC2119].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.
+
+45.  Topic number 44 about a thing
+
+   Paragraph one of topic 44, citing [RFC8174].  More words here.  More
+   words here.  More words here.  More words here.  More words here.
+   More words here.  More words here.  More words here.
+
+45.1.  Subtopic of 44
+
+   *  item a
+
+
+
+
+Solo                      Expires 28 April 2027                [Page 11]
+
+Internet-Draft               A Long Document                October 2026
+
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+46.  Topic number 45 about a thing
+
+   Paragraph one of topic 45, citing [RFC2119].
+
+47.  Topic number 46 about a thing
+
+   Paragraph one of topic 46, citing [RFC8174].  More words here.
+
+48.  Topic number 47 about a thing
+
+   Paragraph one of topic 47, citing [RFC2119].  More words here.  More
+   words here.
+
+49.  Topic number 48 about a thing
+
+   Paragraph one of topic 48, citing [RFC8174].  More words here.  More
+   words here.  More words here.
+
+49.1.  Subtopic of 48
+
+   *  item a
+
+   *  item b
+
+   code line 1
+   code line 2
+   code line 3
+   code line 4
+   code line 5
+   code line 6
+
+49.1.1.  Deep one in 48
+
+   1.  first
+
+   2.  second
+
+   Trailing paragraph.
+
+
+
+
+Solo                      Expires 28 April 2027                [Page 12]
+
+Internet-Draft               A Long Document                October 2026
+
+
+50.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+Author's Address
+
+   Solo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Solo                      Expires 28 April 2027                [Page 13]

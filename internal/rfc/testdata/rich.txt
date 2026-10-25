@@ -1,0 +1,280 @@
+
+
+
+
+Example                                                       A. Example
+Internet-Draft                                              B. B. Sample
+Intended status: Informational                               Example Org
+Expires: 28 April 2027                                             Carol
+                                                                        
+                                             D. V. D. Example-Hyphenated
+                         A Different Organization With A Long Name, Inc.
+                                                         25 October 2026
+
+
+A Rather Long Title That Needs To Be Wrapped Over More Than One Line On
+             The First Page Of The Rendered Draft Document
+                         draft-example-rich-07
+
+Abstract
+
+   This abstract has code, a reference to [RFC8555] and two sentences.
+   Here is the second one, which is long enough to wrap on to another
+   line of the output text.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 28 April 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+
+
+
+
+
+Example, et al.           Expires 28 April 2027                 [Page 1]
+
+Internet-Draft                    RICH                      October 2026
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   2
+   3.  Requirements and Lists With a Section Title That Is Long Enough
+           to Wrap in Both the Body and the Table of Contents  . . .   3
+     3.1.  Nested Lists  . . . . . . . . . . . . . . . . . . . . . .   3
+       3.1.1.  A Third Level . . . . . . . . . . . . . . . . . . . .   4
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   4
+   Appendix A.  An Appendix  . . . . . . . . . . . . . . . . . . . .   5
+     A.1.  A Subsection of the Appendix  . . . . . . . . . . . . . .   5
+   Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .   5
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   5
+
+1.  Introduction
+
+   Plain text with _emphasis_, *strong text* and a link
+   (https://example.com/a?b=1&c=2).  A sentence ending in e.g. an
+   abbreviation.  Dr. Example said so.  See [HANDBOOK], [AVERYLONGLABEL]
+   and [REGISTRY]; also https://example.com/some/path/that-is/long-
+   enough/to/need/a/break/somewhere/in/the/middle/of/it.
+
+   Section references come in three forms: [RFC8555], Section 7.3,
+   Section 8.1 of [RFC8555] and [RFC8555] (Appendix A.1).  See also
+   Section 3.1, Appendix A, Appendix A.1 and Appendix "Acknowledgments".
+   Is this a question?  Yes!  It is -- or is it--really.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+Example, et al.           Expires 28 April 2027                 [Page 2]
+
+Internet-Draft                    RICH                      October 2026
+
+
+3.  Requirements and Lists With a Section Title That Is Long Enough to
+    Wrap in Both the Body and the Table of Contents
+
+   A client MUST do this, SHOULD NOT do that, and MAY do the other.
+
+   *  first item
+
+   *  second item, which MUST NOT be skipped and which is long enough
+      that it has to continue on a second line of text
+
+3.1.  Nested Lists
+
+   1.   Step one
+
+        *  Detail with a formula:
+
+           a < b && b > c
+
+           -  a sub-detail
+
+           -  another, with an empty object ({})
+
+        *  Second detail
+
+   2.   Step two
+
+   3.   Step three
+
+   4.   Step four
+
+   5.   Step five
+
+   6.   Step six
+
+   7.   Step seven
+
+   8.   Step eight
+
+   9.   Step nine
+
+   10.  Step ten, in a list wide enough for two digits, with enough text
+        to wrap around to the following line
+
+   11.  Step eleven
+
+   Example record:
+
+
+
+
+
+Example, et al.           Expires 28 April 2027                 [Page 3]
+
+Internet-Draft                    RICH                      October 2026
+
+
+   _label._acme-challenge.example.org. 300 IN TXT (
+       "value" )
+
+   Example object:
+
+   { "a": [1, 2, 3],
+           "tabbed": true }
+
+3.1.1.  A Third Level
+
+   Text at the third level.
+
+4.  Security Considerations
+
+   Nothing to see here.
+
+5.  References
+
+5.1.  Normative References
+
+   [AVERYLONGLABEL]
+              Sample, C. and E. Example, "A Reference With Two People",
+              2001.
+
+   [HANDBOOK] Example Standards Body, "The Example Handbook", August
+              2015, <https://example.com/handbook>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8555]  Barnes, R., Hoffman-Andrews, J., McCarney, D., and J.
+              Kasten, "Automatic Certificate Management Environment
+              (ACME)", RFC 8555, DOI 10.17487/RFC8555, March 2019,
+              <https://www.rfc-editor.org/rfc/rfc8555>.
+
+5.2.  Informative References
+
+   [REGISTRY] IANA, "Example Registry", n.d.,
+              <https://www.example.org/assignments/a/very/long/path/that/will/not/fit/on/a/single/line/
+              of/the/reference#fragment-part>.
+
+
+
+
+
+Example, et al.           Expires 28 April 2027                 [Page 4]
+
+Internet-Draft                    RICH                      October 2026
+
+
+Appendix A.  An Appendix
+
+   Appendix text.  See Section 1.
+
+A.1.  A Subsection of the Appendix
+
+   More appendix text.
+
+Appendix B.  Change Log
+
+   This section is to be removed before publishing as an RFC.
+
+   See Appendix B.
+
+Acknowledgments
+
+   Thanks to everyone, including the authors of [RFC2119].
+
+Authors' Addresses
+
+   Alice Example
+   Example Org
+   Email: alice@example.com
+
+
+   Bob B. Sample
+   Example Org
+   Email: bob@example.com
+
+
+   Carol
+   Email: carol@example.net
+
+
+   Dana van der Example-Hyphenated
+   A Different Organization With A Long Name, Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Example, et al.           Expires 28 April 2027                 [Page 5]
