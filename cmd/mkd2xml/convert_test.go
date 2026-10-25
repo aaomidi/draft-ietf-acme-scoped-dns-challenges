@@ -84,7 +84,7 @@ func TestConvertErrors(t *testing.T) {
 		{"no front matter", "# Title\n", "line 1: expected the front matter"},
 		{"missing abstract", "---\ntitle: T\n--- middle\n\n# A\n", `missing "--- abstract" part`},
 		{"unknown part", "---\ntitle: T\n--- abstract\n\nA.\n\n--- appendix\n", `line 7: unsupported part "appendix"`},
-		{"unknown front matter key", "---\ntitle: T\ncolour: blue\n--- abstract\n\nA.\n\n--- middle\n", "field colour not found"},
+		{"unknown front matter key", "---\ntitle: T\ncolour: blue\n--- abstract\n\nA.\n\n--- middle\n", `unsupported key "colour"`},
 		{"missing docname", "---\ntitle: T\n--- abstract\n\nA.\n\n--- middle\n", `missing "docname"`},
 		{"content before heading", string(minimal("Text.\n")), "line 15: content before the first heading"},
 		{"heading level jump", string(minimal("# A\n\n### B\n")), "line 17: heading level jumps from 1 to 3"},
@@ -211,7 +211,7 @@ func TestParseDate(t *testing.T) {
 	tests := map[string]xmlDate{
 		"2015":       {Year: "2015"},
 		"2015-08":    {Year: "2015", Month: "August"},
-		"2026-10-05": {Year: "2026", Month: "October", Day: "5"},
+		"2026-10-05": {Year: "2026", Month: "October", Day: "05"},
 	}
 	for in, want := range tests {
 		got, err := parseDate(in)

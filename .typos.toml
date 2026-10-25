@@ -1,5 +1,7 @@
 [files]
 extend-exclude = [
+    # Test input with deliberately odd text
+    "cmd/mkd2xml/testdata/kramdown-compat.txt",
     ".devcontainer/",
     ".git/",
     ".github/",

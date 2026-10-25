@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +19,8 @@ type frontMatter struct {
 	Category       string       `yaml:"category"`
 	SubmissionType string       `yaml:"submissiontype"`
 	Docname        string       `yaml:"docname"`
+	Updates        string       `yaml:"updates"`
+	Obsoletes      string       `yaml:"obsoletes"`
 	Version        int          `yaml:"v"`
 	Date           string       `yaml:"date"`
 	Consensus      *bool        `yaml:"consensus"`
@@ -40,12 +43,46 @@ type venue struct {
 	Latest string `yaml:"latest"`
 }
 
+// author accepts both the long field names and kramdown-rfc's short ones.
 type author struct {
-	Fullname     string `yaml:"fullname"`
-	Initials     string `yaml:"initials"`
-	Surname      string `yaml:"surname"`
+	Fullname string `yaml:"fullname"`
+	Name     string `yaml:"name"`
+	Initials string `yaml:"initials"`
+	Surname  string `yaml:"surname"`
+	// Ins is "J. Smith": the initials, then the surname.
+	Ins          string `yaml:"ins"`
 	Organization string `yaml:"organization"`
+	Org          string `yaml:"org"`
 	Email        string `yaml:"email"`
+}
+
+// normalize folds the short field names into the long ones.
+func (a *author) normalize() error {
+	if a.Name != "" {
+		if a.Fullname != "" {
+			return fmt.Errorf("author has both fullname and name")
+		}
+		a.Fullname = a.Name
+	}
+	if a.Org != "" {
+		if a.Organization != "" {
+			return fmt.Errorf("author has both organization and org")
+		}
+		a.Organization = a.Org
+	}
+	if a.Ins != "" {
+		if a.Initials != "" || a.Surname != "" {
+			return fmt.Errorf("author has both ins and initials or surname")
+		}
+		var ok bool
+		if a.Initials, a.Surname, ok = strings.Cut(a.Ins, " "); !ok {
+			return fmt.Errorf("author ins %q is not of the form %q", a.Ins, "J. Smith")
+		}
+	}
+	if a.Fullname == "" && a.Surname == "" {
+		return fmt.Errorf("author needs a fullname, or a name, or ins")
+	}
+	return nil
 }
 
 // stringList accepts either a single string or a list of strings.
@@ -80,6 +117,8 @@ type referenceDef struct {
 	Date   string
 	Target string
 	Author []referenceAuthor
+	// Series is the series information, such as ISBN or DOI, in order.
+	Series []attr
 }
 
 type referenceAuthor struct {
@@ -133,6 +172,14 @@ func decodeReferenceDef(n *yaml.Node) (*referenceDef, error) {
 				}
 				def.Author = append(def.Author, a)
 			}
+		case "seriesinfo":
+			series, err := mappingFields(f.val)
+			if err != nil {
+				return nil, err
+			}
+			for _, s := range series {
+				def.Series = append(def.Series, attr{s.key, s.val.Value})
+			}
 		default:
 			return nil, fmt.Errorf("line %d: unsupported field %q", f.val.Line, f.key)
 		}
@@ -180,12 +227,19 @@ func mappingFields(n *yaml.Node) ([]yamlField, error) {
 	return fields, nil
 }
 
+var unknownField = regexp.MustCompile(`field (\S+) not found in type \S+`)
+
 func parseFrontMatter(src []byte) (*frontMatter, error) {
+	if len(bytes.TrimSpace(src)) == 0 {
+		return nil, fmt.Errorf("front matter: empty")
+	}
 	dec := yaml.NewDecoder(bytes.NewReader(src))
 	dec.KnownFields(true)
 	fm := &frontMatter{}
 	if err := dec.Decode(fm); err != nil {
-		return nil, fmt.Errorf("front matter: %v", err)
+		// Say "unsupported key" where the YAML library names a Go type.
+		msg := unknownField.ReplaceAllString(err.Error(), `unsupported key "$1"`)
+		return nil, fmt.Errorf("front matter: %s", msg)
 	}
 	for _, required := range []struct{ name, value string }{
 		{"title", fm.Title},
@@ -202,6 +256,11 @@ func parseFrontMatter(src []byte) (*frontMatter, error) {
 	}
 	if len(fm.Author) == 0 {
 		return nil, fmt.Errorf("front matter: missing %q", "author")
+	}
+	for i := range fm.Author {
+		if err := fm.Author[i].normalize(); err != nil {
+			return nil, fmt.Errorf("front matter: %v", err)
+		}
 	}
 	return fm, nil
 }
@@ -245,7 +304,8 @@ func parseDate(s string) (xmlDate, error) {
 		if err != nil || day < 1 || day > 31 {
 			return xmlDate{}, fmt.Errorf("unsupported date %q", s)
 		}
-		d.Day = strconv.Itoa(day)
+		// The day is kept as written, as kramdown-rfc keeps it.
+		d.Day = parts[2]
 	}
 	return d, nil
 }
