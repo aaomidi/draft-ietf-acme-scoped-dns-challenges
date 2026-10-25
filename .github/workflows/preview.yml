@@ -12,6 +12,60 @@ jobs:
     name: Build the preview
     uses: ./.github/workflows/common.yml
 
+  # Builds the draft with the Go converter and checks that it renders to the
+  # same text as the kramdown-rfc build above. It does not affect the preview.
+  mkd2xml:
+    needs: 'build'
+    name: 'Go converter matches kramdown-rfc'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout 📋
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Test
+        run: |
+          go vet ./...
+          go test ./...
+
+      - name: Download kramdown-rfc Draft
+        uses: actions/download-artifact@v4
+        with:
+          name: draft
+          path: kramdown
+
+      - name: Generate 🔨
+        run: |
+          mkdir go
+          go run ./cmd/mkd2xml -o go/draft.xml draft-ietf-acme-dns-account-challenge.mkd
+
+      - name: Render both
+        run: |
+          pipx install xml2rfc==3.34.1
+          xml2rfc --text --v3 kramdown/draft.xml -o kramdown/draft.txt
+          xml2rfc --text --html --v3 go/draft.xml
+
+      - name: Compare
+        run: diff -u kramdown/draft.txt go/draft.txt
+
+      - name: Store Output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: draft-go
+          path: |
+            go/
+            kramdown/draft.txt
+          retention-days: 2
+
   deploy:
     needs: 'build'
     name: 'Deploy'

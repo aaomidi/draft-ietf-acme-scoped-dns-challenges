@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reference anchor="I-D.ietf-example-thing" target="https://datatracker.ietf.org/doc/html/draft-ietf-example-thing-04">
+   <front>
+      <title>An Example Thing</title>
+      <author initials="D." surname="Example" fullname="Dana Example">
+         <organization>Example Org</organization>
+      </author>
+      <date month="June" day="21" year="2026" />
+      <abstract>
+	 <t>   This is a made-up reference used only by the mkd2xml tests.  It
+   says &quot;hello&quot; with an escaped quote.
+
+	 </t>
+      </abstract>
+   </front>
+   <seriesInfo name="Internet-Draft" value="draft-ietf-example-thing-04" />
+
+</reference>
