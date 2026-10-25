@@ -48,13 +48,14 @@ jobs:
           mkdir go
           go run ./cmd/mkd2xml -o go/draft.xml draft-ietf-acme-dns-account-challenge.mkd
           go run ./cmd/xml2txt -o go/draft.txt go/draft.xml
+          go run ./cmd/xml2html -o go/draft.html go/draft.xml
 
       - name: Render with xml2rfc
         run: |
           pipx install xml2rfc==3.34.1
           xml2rfc --text --v3 kramdown/draft.xml -o kramdown/draft.txt
           xml2rfc --text --v3 go/draft.xml -o go/draft.xml2rfc.txt
-          xml2rfc --html --v3 go/draft.xml -o go/draft.html
+          xml2rfc --html --v3 go/draft.xml -o go/draft.xml2rfc.html
 
       # The XML differs between the two converters, so compare what it
       # renders to.
@@ -63,6 +64,15 @@ jobs:
 
       - name: Compare xml2txt with xml2rfc
         run: diff -u go/draft.xml2rfc.txt go/draft.txt
+
+      # The two pages are compared element by element by a test, which
+      # renders with a fixed build date; xml2rfc is given the same one.
+      - name: Compare xml2html with xml2rfc
+        run: |
+          mkdir cmp
+          cp go/draft.xml cmp/draft.xml
+          xml2rfc --date 2026-10-25 --html --v3 cmp/draft.xml -o cmp/draft.html
+          RFC_HTML_EXTRA="$PWD/cmp" go test ./internal/rfc -run TestHTMLMatchesXml2rfc -count=1 -v
 
       - name: Store Output
         if: always()

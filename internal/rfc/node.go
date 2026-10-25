@@ -1,4 +1,4 @@
-package main
+package rfc
 
 import (
 	"encoding/xml"
@@ -139,6 +139,27 @@ func (n *node) allText() string {
 	}
 	walk(n)
 	return b.String()
+}
+
+// textPieces returns the text of n and everything inside it as the separate
+// runs of text between tags.
+func (n *node) textPieces() []string {
+	var out []string
+	var walk func(*node)
+	add := func(s string) {
+		if s != "" {
+			out = append(out, s)
+		}
+	}
+	walk = func(e *node) {
+		add(e.text)
+		for _, c := range e.children {
+			walk(c)
+			add(c.tail)
+		}
+	}
+	walk(n)
+	return out
 }
 
 // copyOf returns a deep copy of n without a parent or tail.

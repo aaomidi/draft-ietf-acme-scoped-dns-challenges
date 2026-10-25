@@ -4,6 +4,9 @@ extend-exclude = [
     ".git/",
     ".github/",
     "vendor/",
+    # Output of xml2rfc and files copied from it
+    "internal/rfc/testdata/",
+    "internal/rfc/assets/",
 ]
 ignore-hidden = false
 

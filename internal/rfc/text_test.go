@@ -1,4 +1,4 @@
-package main
+package rfc
 
 import (
 	"os"
@@ -21,7 +21,7 @@ func TestRenderMatchesXml2rfc(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer f.Close()
-			got, _, err := Render(f, testToday)
+			got, _, err := Text(f, testToday)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -55,7 +55,7 @@ func TestRenderWarnings(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer f.Close()
-	_, warnings, err := Render(f, testToday)
+	_, warnings, err := Text(f, testToday)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,7 +93,7 @@ func TestRenderErrors(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, _, err := Render(strings.NewReader(tt.xml), testToday)
+			_, _, err := Text(strings.NewReader(tt.xml), testToday)
 			if err == nil {
 				t.Fatalf("no error, want one containing %q", tt.want)
 			}

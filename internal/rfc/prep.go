@@ -1,4 +1,4 @@
-package main
+package rfc
 
 import (
 	"fmt"
@@ -28,6 +28,8 @@ type document struct {
 	refNames map[string]string
 	// byID finds elements by anchor, section number id or name slug.
 	byID map[string]*node
+	// slugs are the name slugs in use.
+	slugs map[string]bool
 
 	warnings []string
 }
@@ -124,7 +126,7 @@ var categoryNames = map[string]string{
 
 // prepare turns a parsed document into one that can be rendered.
 func prepare(root *node, today time.Time) (*document, error) {
-	d := &document{root: root, today: today, refNames: map[string]string{}, byID: map[string]*node{}}
+	d := &document{root: root, today: today, refNames: map[string]string{}, byID: map[string]*node{}, slugs: map[string]bool{}}
 
 	front, middle := root.find("front"), root.find("middle")
 	if front == nil || middle == nil {
@@ -166,6 +168,10 @@ func prepare(root *node, today time.Time) (*document, error) {
 		d.refNames[e.get("anchor")] = e.get("anchor")
 	}
 
+	front.find("abstract").attr["pn"] = "section-abstract"
+	for i, n := range front.findAll("note") {
+		n.attr["pn"] = "section-note." + strconv.Itoa(i+1)
+	}
 	d.setDefaults(root)
 	for _, ol := range root.descendants("ol") {
 		if ol.get("type") != "1" {
@@ -187,6 +193,7 @@ func prepare(root *node, today time.Time) (*document, error) {
 	if root.getDefault("tocInclude", "true") == "true" {
 		d.addTOC(front)
 	}
+	numberParagraphs(root, "", nil)
 	return d, nil
 }
 
@@ -307,6 +314,7 @@ func (d *document) addBoilerplate(front *node) {
 				"in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in "+
 				"the Revised BSD License."),
 	)
+	status.attr["pn"], copyright.attr["pn"] = "section-boilerplate.1", "section-boilerplate.2"
 	front.append(newNode("boilerplate").append(status, copyright))
 }
 
@@ -355,6 +363,9 @@ func (d *document) numberSections(middle, back *node) error {
 	for _, r := range back.findAll("references") {
 		// The references are numbered like the last middle section.
 		r.attr["numbered"] = strconv.FormatBool(numbered)
+		for _, sub := range r.descendants("references") {
+			sub.attr["numbered"] = strconv.FormatBool(numbered)
+		}
 		number(r, strconv.Itoa(next))
 		next++
 	}
@@ -477,7 +488,46 @@ func naturalLess(a, b string) bool {
 	}
 }
 
-var nonSlug = regexp.MustCompile(`[^a-z0-9]+`)
+var (
+	slugDrop = regexp.MustCompile(`[^\w\s/-]`)
+	slugJoin = regexp.MustCompile(`[-\s/]+`)
+)
+
+// slugify makes the id of a section title, as xml2rfc does: lower-case words
+// joined by dashes, cut to 32 characters, and made unique.
+func (d *document) slugify(title string) string {
+	ascii := strings.Map(func(r rune) rune {
+		if r > 127 {
+			return -1
+		}
+		return r
+	}, title)
+	slug := strings.ToLower(strings.TrimSpace(slugDrop.ReplaceAllString(ascii, "")))
+	slug = slugJoin.ReplaceAllString(slug, "-")
+
+	cut := func(n int) string { return slug[:min(n, len(slug))] }
+	n := 32
+	for d.slugs[cut(n)] && n < len(slug) && n < 40 {
+		n++
+	}
+	slug = cut(n)
+	if d.slugs[slug] {
+		m := 2
+		for d.slugs[slug+"-"+strconv.Itoa(m)] && m < 99 {
+			m++
+		}
+		slug += "-" + strconv.Itoa(m)
+	}
+	d.slugs[slug] = true
+	return slug
+}
+
+// nameSlug gives the <name> of a section its slug and makes it findable.
+func (d *document) nameSlug(name *node) {
+	slug := d.slugify("name-" + cleanText(name.allText()))
+	name.attr["slugifiedName"] = slug
+	d.byID[slug] = name
+}
 
 // resolveXrefs indexes everything that can be referred to and gives each
 // <xref> its display text.
@@ -497,28 +547,33 @@ func (d *document) resolveXrefs(root *node) error {
 	}
 	index(root)
 
-	// Section titles are addressed by a slug, which the table of contents
-	// uses to find the page a section starts on.
-	for _, tag := range []string{"section", "references", "note"} {
-		for _, e := range root.descendants(tag) {
-			name := e.find("name")
-			if name == nil {
-				continue
+	// Section titles are addressed by a slug. The table of contents links to
+	// it, and uses it to find the page a section starts on.
+	var slugs func(*node)
+	slugs = func(e *node) {
+		switch e.tag {
+		case "section", "references", "note":
+			if name := e.find("name"); name != nil {
+				d.nameSlug(name)
 			}
-			base := "name-" + strings.Trim(nonSlug.ReplaceAllString(strings.ToLower(cleanText(name.allText())), "-"), "-")
-			slug := base
-			for i := 2; d.byID[slug] != nil; i++ {
-				slug = base + "-" + strconv.Itoa(i)
-			}
-			name.attr["slugifiedName"] = slug
-			d.byID[slug] = name
+		}
+		for _, c := range e.children {
+			slugs(c)
 		}
 	}
+	slugs(root)
 
 	for _, x := range root.descendants("xref") {
 		target := x.get("target")
 		if _, ok := d.refNames[target]; ok {
 			x.attr["derivedContent"] = d.refNames[target]
+			if section := x.get("section"); section != "" {
+				link, err := sectionLink(d.byID[target], section)
+				if err != nil {
+					return err
+				}
+				x.attr["derivedLink"] = link
+			}
 			continue
 		}
 		t := d.byID[target]
@@ -545,6 +600,57 @@ func (d *document) resolveXrefs(root *node) error {
 		x.attr["derivedContent"] = kind + " " + label
 	}
 	return nil
+}
+
+// sectionLink is the URL of a section of a cited RFC or Internet-Draft.
+func sectionLink(ref *node, section string) (string, error) {
+	fragment := "#appendix-" + section
+	if isASCIIDigit(rune(section[0])) {
+		fragment = "#section-" + section
+	}
+	for _, s := range ref.descendants("seriesInfo") {
+		switch s.get("name") {
+		case "RFC":
+			return "https://rfc-editor.org/rfc/rfc" + s.get("value") + fragment, nil
+		case "Internet-Draft":
+			return "https://datatracker.ietf.org/doc/html/" + s.get("value") + fragment, nil
+		}
+	}
+	return "", fmt.Errorf("cannot link to section %s of [%s]: only RFCs and Internet-Drafts have section links", section, ref.get("anchor"))
+}
+
+// numberParagraphs gives every block its paragraph number, as the "pn"
+// attribute: the number of its section, then its position in the section,
+// then its position inside each enclosing list, such as "section-3.2-2.1.2".
+func numberParagraphs(e *node, prefix string, num []int) []int {
+	isSection := func(tag string) bool {
+		return tag == "abstract" || tag == "note" || tag == "section" || tag == "references"
+	}
+	if isSection(e.tag) {
+		prefix, num = e.get("pn")+"-", []int{0}
+	}
+	for _, c := range e.children {
+		switch c.tag {
+		case "t", "ul", "ol", "li", "artwork", "sourcecode":
+			if prefix != "" {
+				num[len(num)-1]++
+				parts := make([]string, len(num))
+				for i, n := range num {
+					parts[i] = strconv.Itoa(n)
+				}
+				c.attr["pn"] = prefix + strings.Join(parts, ".")
+			}
+		}
+		switch {
+		case isSection(c.tag):
+			numberParagraphs(c, "", nil)
+		case c.tag == "reference":
+		default:
+			num = numberParagraphs(c, prefix, append(num, 0))
+			num = num[:len(num)-1]
+		}
+	}
+	return num
 }
 
 // cleanText replaces the special spaces and joiners used during rendering
@@ -624,8 +730,10 @@ func (d *document) addTOC(front *node) {
 		return []*node{li}
 	}
 
-	toc := newNode("section", "anchor", "toc", "numbered", "false", "toc", "exclude")
-	toc.append(textNode("name", "Table of Contents"))
+	toc := newNode("section", "anchor", "toc", "numbered", "false", "toc", "exclude", "pn", "section-toc.1")
+	tocName := textNode("name", "Table of Contents")
+	d.nameSlug(tocName)
+	toc.append(tocName)
 	toc.append(newList().append(entries(d.root)...))
 	front.append(newNode("toc").append(toc))
 	d.toc = toc
