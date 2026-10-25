@@ -5,6 +5,9 @@
     <title>A Long Document</title>
     <seriesInfo name="Internet-Draft" value="draft-example-long-00"/>
     <author fullname="Solo">
+      <organization></organization>
+      <address>
+      </address>
     </author>
     <date year="2026" month="October" day="25"/>
     <abstract>

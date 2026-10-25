@@ -10,21 +10,24 @@
         <email>alice@example.com</email>
       </address>
     </author>
-    <author fullname="Bob B. Sample" initials="B. B." surname="Sample">
+    <author initials="B. B." surname="Sample" fullname="Bob B. Sample">
       <organization>Example Org</organization>
       <address>
         <email>bob@example.com</email>
       </address>
     </author>
     <author fullname="Carol">
+      <organization></organization>
       <address>
         <email>carol@example.net</email>
       </address>
     </author>
     <author fullname="Dana van der Example-Hyphenated">
       <organization>A Different Organization With A Long Name, Inc.</organization>
+      <address>
+      </address>
     </author>
-    <date year="2026" month="March" day="9"/>
+    <date year="2026" month="October" day="25"/>
     <area>Security</area>
     <workgroup>Example</workgroup>
     <keyword>a</keyword>
@@ -118,7 +121,7 @@ _label._acme-challenge.example.org. 300 IN TXT (
         <t>Example object:</t>
         <sourcecode type="json"><![CDATA[
 { "a": [1, 2, 3],
-	"tabbed": true }
+        "tabbed": true }
 ]]></sourcecode>
         <section anchor="a-third-level">
           <name>A Third Level</name>
@@ -148,8 +151,12 @@ _label._acme-challenge.example.org. 300 IN TXT (
         <reference anchor="AVERYLONGLABEL">
           <front>
             <title>A Reference With Two People</title>
-            <author fullname="Carol Sample" initials="C." surname="Sample"/>
-            <author fullname="Erin Example" initials="E." surname="Example"/>
+            <author initials="C." surname="Sample" fullname="Carol Sample">
+              <organization></organization>
+            </author>
+            <author initials="E." surname="Example" fullname="Erin Example">
+              <organization></organization>
+            </author>
             <date year="2001"/>
           </front>
         </reference>
