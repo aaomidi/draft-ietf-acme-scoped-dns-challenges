@@ -12,11 +12,12 @@ jobs:
     name: Build the preview
     uses: ./.github/workflows/common.yml
 
-  # Builds the draft with the Go converter and checks that it renders to the
-  # same text as the kramdown-rfc build above. It does not affect the preview.
-  mkd2xml:
+  # Builds the draft with the Go tools and checks that the result is the same
+  # text as the kramdown-rfc and xml2rfc build above. It does not affect the
+  # preview.
+  go-tools:
     needs: 'build'
-    name: 'Go converter matches kramdown-rfc'
+    name: 'Go tools match kramdown-rfc and xml2rfc'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -46,15 +47,22 @@ jobs:
         run: |
           mkdir go
           go run ./cmd/mkd2xml -o go/draft.xml draft-ietf-acme-dns-account-challenge.mkd
+          go run ./cmd/xml2txt -o go/draft.txt go/draft.xml
 
-      - name: Render both
+      - name: Render with xml2rfc
         run: |
           pipx install xml2rfc==3.34.1
           xml2rfc --text --v3 kramdown/draft.xml -o kramdown/draft.txt
-          xml2rfc --text --html --v3 go/draft.xml
+          xml2rfc --text --v3 go/draft.xml -o go/draft.xml2rfc.txt
+          xml2rfc --html --v3 go/draft.xml -o go/draft.html
 
-      - name: Compare
-        run: diff -u kramdown/draft.txt go/draft.txt
+      # The XML differs between the two converters, so compare what it
+      # renders to.
+      - name: Compare mkd2xml with kramdown-rfc
+        run: diff -u kramdown/draft.txt go/draft.xml2rfc.txt
+
+      - name: Compare xml2txt with xml2rfc
+        run: diff -u go/draft.xml2rfc.txt go/draft.txt
 
       - name: Store Output
         if: always()

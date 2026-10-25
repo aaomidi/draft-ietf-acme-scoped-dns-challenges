@@ -1,0 +1,560 @@
+
+
+
+
+Automated Certificate Management Environment                 A. Chariton
+Internet-Draft                                               A. A. Omidi
+Intended status: Standards Track                 Independent Contributor
+Expires: 28 April 2027                                         J. Kasten
+                                                               Snowflake
+                                                               F. Loukos
+                                                        S. A. Janikowski
+                                                                  Google
+                                                         25 October 2026
+
+
+  Automated Certificate Management Environment (ACME) DNS Labeled With
+                       ACME Account ID Challenge
+                  draft-ietf-acme-dns-account-label-03
+
+Abstract
+
+   This document outlines a new DNS-based challenge type for the ACME
+   protocol that enables multiple independent systems to authorize a
+   single domain name concurrently.  By adding a unique label to the DNS
+   validation record name, the dns-account-01 challenge avoids CNAME
+   delegation conflicts inherent to the dns-01 challenge type.  This is
+   particularly valuable for multi-region or multi-cloud deployments
+   that wish to rely upon DNS-based domain control validation and need
+   to independently obtain certificates for the same domain.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   The latest revision of this draft can be found at
+   https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge.
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-ietf-acme-dns-account-label/.
+
+   Discussion of this document takes place on the WG Working Group
+   mailing list (mailto:acme@ietf.org), which is archived at
+   https://datatracker.ietf.org/wg/acme/about/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/acme/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/aaomidi/draft-ietf-acme-dns-account-challenge.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 1]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 28 April 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   3
+   3.  DNS-ACCOUNT-01 Challenge  . . . . . . . . . . . . . . . . . .   4
+     3.1.  Challenge Definition  . . . . . . . . . . . . . . . . . .   4
+     3.2.  Challenge Fulfillment . . . . . . . . . . . . . . . . . .   5
+     3.3.  Server Validation . . . . . . . . . . . . . . . . . . . .   6
+     3.4.  Errors  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     3.5.  Implementation Considerations . . . . . . . . . . . . . .   7
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+     5.1.  ACME Validation Method  . . . . . . . . . . . . . . . . .   8
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .   9
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   9
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
+
+
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 2]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+1.  Introduction
+
+   The dns-01 challenge specified in section 8.4 of [RFC8555] uses a
+   single DNS authorization label (_acme-challenge) for domain
+   validation.  This single-label approach creates a limitation in
+   domain validation: each domain can only delegate its validation to
+   one ACME client at a time.  Since delegation requires the use of
+   CNAME records, of which only one can exist per DNS name, operators
+   are forced to choose a single ACME challenge solver for their domain
+   name.
+
+   This limitation becomes particularly problematic in modern deployment
+   architectures.  In multi-region deployments, separate availability
+   zones serve the same content while avoiding cross-zone dependencies.
+   These zones need to independently obtain and manage certificates for
+   the same domain name.  Similarly, during zero-downtime migrations,
+   two different infrastructure setups may coexist for extended periods,
+   with both requiring access to valid certificates.  Other use cases
+   include multi-CDN deployments and the provision of backup
+   certificates for use when an active certificate must be quickly
+   revoked.
+
+   This document specifies a new challenge type: dns-account-01, which
+   addresses these operational needs.  The dns-account-01 challenge
+   incorporates the ACME account URL into the DNS validation record
+   name, allowing multiple independent ACME clients to perform domain
+   validation concurrently.  Since these authorization labels depend on
+   the ACME account KID ([RFC8555], Section 7.3), operators can generate
+   and configure the necessary DNS records in advance.
+
+   This document does not deprecate the dns-01 challenge specified in
+   [RFC8555].  The ability to complete the dns-account-01 challenge
+   requires ACME server operators to deploy new code, making adoption of
+   this challenge an opt-in process.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 3]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+3.  DNS-ACCOUNT-01 Challenge
+
+   The dns-account-01 challenge allows a client to prove control of a
+   domain name by provisioning a TXT resource record containing a
+   designated value for a specific validation domain name.  It leverages
+   the ACME account URL to construct a unique but stable validation
+   domain name.  The ACME server validates control of the domain name by
+   performing one or more DNS queries to this validation domain name,
+   following CNAME records, to arrive at one or more TXT resource
+   records.  The ACME server verifies that the contents of one or more
+   of these TXT record(s) match the digest value of the key
+   authorization that is constructed from the token value provided in
+   the challenge.
+
+3.1.  Challenge Definition
+
+   The challenge object contains the following fields:
+
+   *  type (required, string): The string "dns-account-01".
+
+   *  token (required, string): A random value that uniquely identifies
+      the challenge.  This value MUST have at least 128 bits of entropy.
+      It MUST NOT contain any characters outside the base64url alphabet,
+      including padding characters ("=").  See [RFC9846], Appendix C.1
+      for information on additional requirements for secure randomness.
+
+   *  url (required, string): The URL to which a response can be posted,
+      as defined in [RFC8555], Section 8.
+
+   *  status (required, string): The status of this challenge, as
+      defined in [RFC8555], Section 8.  Possible values are "pending",
+      "processing", "valid", and "invalid" (see [RFC8555],
+      Section 7.1.6).
+
+   *  validated (optional, string): The time at which the server
+      validated this challenge, as defined in [RFC8555], Section 8.
+
+   *  error (optional, object): Error that occurred while the server was
+      validating the challenge, as defined in [RFC8555], Section 8.
+
+   Example challenge object:
+
+   {
+       "type": "dns-account-01",
+       "url": "https://example.com/acme/chall/i00MGYwLWIx",
+       "status": "pending",
+       "token": "ODE4OWY4NTktYjhmYS00YmY1LTk5MDgtZTFjYTZmNjZlYTUx"
+   }
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 4]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+3.2.  Challenge Fulfillment
+
+   To fulfill this challenge, a client performs the following steps:
+
+   1.  Construct Key Authorization
+
+       *  Construct a key authorization [RFC8555], Section 8.1 from the
+          token value provided in the challenge and the client's account
+          key
+
+       *  Compute the SHA-256 digest [FIPS180-4] of the key
+          authorization
+
+   2.  DNS Record Creation
+
+       *  Construct the validation domain name by prepending the
+          following two labels to the domain name being validated:
+
+       "_" || base32(SHA-256(<ACCOUNT_URL>)[0:10]) || "._acme-challenge"
+
+          -  SHA-256 is the SHA hashing operation defined in [FIPS180-4]
+
+          -  [0:10] is the operation that selects the first ten bytes
+             (bytes 0 through 9 inclusive) from the previous SHA-256
+             operation
+
+          -  base32 is the operation defined in [RFC4648] and its use
+             throughout this document is case-insensitive
+
+          -  ACCOUNT_URL is defined in [RFC8555], Section 7.3 as the
+             value in the Location header field
+
+          -  The || operator indicates concatenation of strings
+
+       *  Provision a DNS TXT record under the constructed validation
+          domain name, containing the base64url encoding (per Section 5
+          of [RFC4648], without padding) of the SHA-256 digest computed
+          in step 1.
+
+   3.  Challenge Response
+
+       *  Respond to the ACME server with an empty object ({}) to
+          acknowledge that the challenge can be validated by the server
+
+   Example DNS record for domain example.org with account URL
+   https://example.com/acme/acct/ExampleAccount:
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 5]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+   _ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT (
+       "LoqXcYV8...fm21mqTI" )
+
+   Example response to server:
+
+   POST /acme/chall/Rg5dV14Gh1Q HTTP/1.1
+   Host: example.com
+   Content-Type: application/jose+json
+
+   {
+     "protected": base64url({
+       "alg": "ES256",
+       "kid": "https://example.com/acme/acct/ExampleAccount",
+       "nonce": "SS2sSl1PtspvFZ08kNtzKd",
+       "url": "https://example.com/acme/chall/Rg5dV14Gh1Q"
+     }),
+     "payload": base64url({}),
+     "signature": "Q1bURgJoEslbD1c5...3pYdSMLio57mQNN4"
+   }
+
+3.3.  Server Validation
+
+   Upon receiving the challenge response, the server:
+
+   1.  Performs the typical JWS validation according to [RFC8555],
+       Section 6.2
+
+   2.  Constructs and stores the key authorization
+
+   3.  Computes the SHA-256 digest [FIPS180-4] of the stored key
+       authorization
+
+   4.  Computes the validation domain name using the KID value from the
+       JWS message
+
+   5.  Queries for TXT records at the validation domain name
+
+   6.  Verifies that at least one TXT record matches the computed digest
+       value
+
+   The validation succeeds only if all verifications pass.  The server
+   MUST mark the challenge as invalid if any verification fails.
+
+   The client SHOULD de-provision the resource record(s) provisioned for
+   this challenge once the challenge is complete, i.e., once the
+   "status" field of the challenge has the value "valid" or "invalid".
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 6]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+3.4.  Errors
+
+   Errors encountered during challenge validation are reported as
+   described in [RFC8555], Section 6.7.
+
+   If the server is unable to find a TXT record for the validation
+   domain name, it SHOULD include the account URL it used to construct
+   the validation domain name in the problem document.  Clients MUST NOT
+   use or rely on the presence of this field to construct the validation
+   domain name.
+
+   Including the account URL is intended solely to assist operators in
+   troubleshooting when the validation domain name they provisioned does
+   not match the one computed by the server.  As it is not required for
+   validation, a server can omit it, e.g., to avoid client reliance on
+   its presence and prevent ossification.
+
+3.5.  Implementation Considerations
+
+   As this challenge creates a strong dependency on the kid account
+   identifier, the server SHOULD ensure that the account identifier is
+   not changed during the lifetime of the account.  This contains the
+   entire URI, including the ACME endpoint domain name, port, scheme,
+   and full HTTP path.  URL normalization MUST NOT be used differently
+   by the server in the Location header and while validating challenges.
+
+   Such a change, e.g., to the server hostname due to a service
+   migration, may sometimes be operationally necessary.  However, it
+   invalidates all validation domain names previously provisioned by
+   clients, which would then need to be recomputed and re-provisioned.
+   A server making such a change SHOULD continue to accept requests
+   whose kid contains previously issued account URLs, so that existing
+   DNS records remain valid.
+
+4.  Security Considerations
+
+   The same security considerations apply for the integrity of
+   authorizations ([RFC8555], Section 10.2) and DNS security ([RFC8555],
+   Section 11.2) as in the original specification for dns-01.
+
+   To allow for seamless account key rollover without the label
+   changing, the dynamic part of the label depends on the ACME account
+   and not the account key.  This allows for long-lived labels, without
+   the security considerations of keeping the account key static.
+
+
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 7]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+   In terms of the construction of the account label prepended to the
+   domain name, there is no need for a cryptographic hash.  The goal is
+   to simply create a long-lived and statistically distinct label of
+   minimal size.  SHA-256 was chosen due to its existing use in the
+   dns-01 challenge ([RFC8555], Section 8.1).
+
+   The first 10 bytes were picked as a tradeoff: the value needs to be
+   short enough to stay lower than the size limits for DNS ([RFC1035],
+   Section 2.3.4), long enough to provide sufficient probability of
+   collision avoidance across ACME accounts, and just the right size to
+   have Base32 require no padding.  As the algorithm is used for a
+   uniform distribution of inputs, and not for integrity, we do not
+   consider the trimming a security issue.
+
+5.  IANA Considerations
+
+5.1.  ACME Validation Method
+
+   The "ACME Validation Methods" registry [IANA-ACME-VALIDATION-METHODS]
+   is to be updated to include the following entries:
+
+   label: dns-account-01
+   identifier-type: dns
+   ACME: Y
+   Reference: This document
+
+6.  References
+
+6.1.  Normative References
+
+   [FIPS180-4]
+              National Institute of Standards and Technology, "Secure
+              Hash Standard (SHS)", August 2015,
+              <https://csrc.nist.gov/publications/detail/fips/180/4/
+              final>.
+
+   [RFC1035]  Mockapetris, P., "Domain names - implementation and
+              specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
+              November 1987, <https://www.rfc-editor.org/rfc/rfc1035>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <https://www.rfc-editor.org/rfc/rfc4648>.
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 8]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8555]  Barnes, R., Hoffman-Andrews, J., McCarney, D., and J.
+              Kasten, "Automatic Certificate Management Environment
+              (ACME)", RFC 8555, DOI 10.17487/RFC8555, March 2019,
+              <https://www.rfc-editor.org/rfc/rfc8555>.
+
+   [RFC9846]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 9846, DOI 10.17487/RFC9846, July 2026,
+              <https://www.rfc-editor.org/rfc/rfc9846>.
+
+6.2.  Informative References
+
+   [I-D.draft-ietf-dnsop-domain-verification-techniques]
+              Sahib, S. K., Huque, S., Wouters, P., Nygren, E., and T.
+              Wicinski, "Domain Control Validation using DNS", Work in
+              Progress, Internet-Draft, draft-ietf-dnsop-domain-
+              verification-techniques-13, 21 June 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-
+              domain-verification-techniques-13>.
+
+   [IANA-ACME-VALIDATION-METHODS]
+              IANA, "ACME Validation Methods", n.d.,
+              <https://www.iana.org/assignments/acme#acme-validation-
+              methods>.
+
+Acknowledgments
+
+Authors' Addresses
+
+   Antonis Chariton
+   Independent Contributor
+   Email: daknob@daknob.net
+
+
+   Amir A. Omidi
+   Independent Contributor
+   Email: amir@aaomidi.com
+
+
+   James Kasten
+   Snowflake
+   Email: james.kasten@snowflake.com
+
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                 [Page 9]
+
+Internet-Draft             ACME-DNS-CHALLENGE               October 2026
+
+
+   Fotis Loukos
+   Google
+   Email: fotisl@google.com
+
+
+   Stanislaw A. Janikowski
+   Google
+   Email: stanwise@google.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chariton, et al.          Expires 28 April 2027                [Page 10]

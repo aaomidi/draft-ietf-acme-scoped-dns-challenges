@@ -11,3 +11,5 @@ ignore-hidden = false
 [default.extend-words]
 # Secure Hash Standard
 "SHS" = "SHS"
+# RFCXML attribute holding a section's number
+"pn" = "pn"
