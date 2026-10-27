@@ -24,7 +24,7 @@
     intervaltree 3.0.2
     Jinja2 3.1.2
     lxml 5.2.1
-    platformdirs 4.9.6
+    platformdirs 4.13.0
     pycountry 23.12.11
     PyYAML 6.0.1
     requests 2.31.0
@@ -1213,11 +1213,11 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ACME-DNS-CHALLENGE</td>
-<td class="right">May 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Chariton, et al.</td>
-<td class="center">Expires 15 November 2026</td>
+<td class="center">Expires 30 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1230,12 +1230,12 @@ li > p:last-of-type:only-child {
 <dd class="internet-draft">draft-ietf-acme-dns-account-label-03</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-14" class="published">14 May 2026</time>
+<time datetime="2026-10-27" class="published">27 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-15">15 November 2026</time></dd>
+<dd class="expires"><time datetime="2027-04-30">30 April 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1301,7 +1301,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 30 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1427,7 +1427,19 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
             <p id="section-3.1-2.1.1">type (required, string): The string "dns-account-01".<a href="#section-3.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-2.2">
-            <p id="section-3.1-2.2.1">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC4086" class="cite xref">RFC4086</a>]</span> for information on additional requirements for secure randomness.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-2.2.1">token (required, string): A random value that uniquely identifies the challenge. This value <span class="bcp14">MUST</span> have at least 128 bits of entropy. It <span class="bcp14">MUST NOT</span> contain any characters outside the base64url alphabet, including padding characters ("="). See <span>[<a href="#RFC9846" class="cite xref">RFC9846</a>], <a href="https://rfc-editor.org/rfc/rfc9846#appendix-C.1" class="relref">Appendix C.1</a></span> for information on additional requirements for secure randomness.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.3">
+            <p id="section-3.1-2.3.1">url (required, string): The URL to which a response can be posted, as defined in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8" class="relref">Section 8</a></span>.<a href="#section-3.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.4">
+            <p id="section-3.1-2.4.1">status (required, string): The status of this challenge, as defined in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8" class="relref">Section 8</a></span>. Possible values are "pending", "processing", "valid", and "invalid" (see <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-7.1.6" class="relref">Section 7.1.6</a></span>).<a href="#section-3.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.5">
+            <p id="section-3.1-2.5.1">validated (optional, string): The time at which the server validated this challenge, as defined in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8" class="relref">Section 8</a></span>.<a href="#section-3.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-2.6">
+            <p id="section-3.1-2.6.1">error (optional, object): Error that occurred while the server was validating the challenge, as defined in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-8" class="relref">Section 8</a></span>.<a href="#section-3.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.1-3">Example challenge object:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
@@ -1506,7 +1518,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-3.2-3">Example DNS record for domain <code>example.org</code> with account URL <code>https://example.com/acme/acct/ExampleAccount</code>:<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.2-4">
 <pre>
-_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...fm21mqTI"
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT (
+    "LoqXcYV8...fm21mqTI" )
 </pre><a href="#section-3.2-4" class="pilcrow">¶</a>
 </div>
 <p id="section-3.2-5">Example response to server:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
@@ -1565,8 +1578,9 @@ Content-Type: application/jose+json
         <h3 id="name-errors">
 <a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-errors" class="section-name selfRef">Errors</a>
         </h3>
-<p id="section-3.4-1">The server <span class="bcp14">SHOULD</span> follow the guidelines set in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a></span> for error conditions that occur during challenge validation.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-1">Errors encountered during challenge validation are reported as described in <span>[<a href="#RFC8555" class="cite xref">RFC8555</a>], <a href="https://rfc-editor.org/rfc/rfc8555#section-6.7" class="relref">Section 6.7</a></span>.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 <p id="section-3.4-2">If the server is unable to find a <code>TXT</code> record for the validation domain name, it <span class="bcp14">SHOULD</span> include the account URL it used to construct the validation domain name in the problem document. Clients <span class="bcp14">MUST NOT</span> use or rely on the presence of this field to construct the validation domain name.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-3">Including the account URL is intended solely to assist operators in troubleshooting when the validation domain name they provisioned does not match the one computed by the server. As it is not required for validation, a server can omit it, e.g., to avoid client reliance on its presence and prevent ossification.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="implementation-considerations">
@@ -1575,6 +1589,7 @@ Content-Type: application/jose+json
 <a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
         </h3>
 <p id="section-3.5-1">As this challenge creates a strong dependency on the <code>kid</code> account identifier, the server <span class="bcp14">SHOULD</span> ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization <span class="bcp14">MUST NOT</span> be used differently by the server in the <code>Location</code> header and while validating challenges.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-2">Such a change, e.g., to the server hostname due to a service migration, may sometimes be operationally necessary. However, it invalidates all validation domain names previously provisioned by clients, which would then need to be recomputed and re-provisioned. A server making such a change <span class="bcp14">SHOULD</span> continue to accept requests whose <code>kid</code> contains previously issued account URLs, so that existing DNS records remain valid.<a href="#section-3.5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1600,7 +1615,7 @@ Content-Type: application/jose+json
         <h3 id="name-acme-validation-method">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-acme-validation-method" class="section-name selfRef">ACME Validation Method</a>
         </h3>
-<p id="section-5.1-1">The "ACME Validation Methods" registry is to be updated to include the following entries:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-1">The "ACME Validation Methods" registry <span>[<a href="#IANA-ACME-VALIDATION-METHODS" class="cite xref">IANA-ACME-VALIDATION-METHODS</a>]</span> is to be updated to include the following entries:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.1-2">
 <pre>
 label: dns-account-01
@@ -1636,10 +1651,6 @@ Reference: This document
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC4086">[RFC4086]</dt>
-        <dd>
-<span class="refAuthor">Eastlake 3rd, D.</span>, <span class="refAuthor">Schiller, J.</span>, and <span class="refAuthor">S. Crocker</span>, <span class="refTitle">"Randomness Requirements for Security"</span>, <span class="seriesInfo">BCP 106</span>, <span class="seriesInfo">RFC 4086</span>, <span class="seriesInfo">DOI 10.17487/RFC4086</span>, <time datetime="2005-06" class="refDate">June 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4086">https://www.rfc-editor.org/rfc/rfc4086</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC4648">[RFC4648]</dt>
         <dd>
 <span class="refAuthor">Josefsson, S.</span>, <span class="refTitle">"The Base16, Base32, and Base64 Data Encodings"</span>, <span class="seriesInfo">RFC 4648</span>, <span class="seriesInfo">DOI 10.17487/RFC4648</span>, <time datetime="2006-10" class="refDate">October 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>&gt;</span>. </dd>
@@ -1649,8 +1660,12 @@ Reference: This document
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8555">[RFC8555]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Hoffman-Andrews, J.</span>, <span class="refAuthor">McCarney, D.</span>, and <span class="refAuthor">J. Kasten</span>, <span class="refTitle">"Automatic Certificate Management Environment (ACME)"</span>, <span class="seriesInfo">RFC 8555</span>, <span class="seriesInfo">DOI 10.17487/RFC8555</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8555">https://www.rfc-editor.org/rfc/rfc8555</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9846">[RFC9846]</dt>
+      <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 9846</span>, <span class="seriesInfo">DOI 10.17487/RFC9846</span>, <time datetime="2026-07" class="refDate">July 2026</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9846">https://www.rfc-editor.org/rfc/rfc9846</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1662,8 +1677,12 @@ Reference: This document
         </h3>
 <dl class="references">
 <dt id="I-D.draft-ietf-dnsop-domain-verification-techniques">[I-D.draft-ietf-dnsop-domain-verification-techniques]</dt>
+        <dd>
+<span class="refAuthor">Sahib, S. K.</span>, <span class="refAuthor">Huque, S.</span>, <span class="refAuthor">Wouters, P.</span>, <span class="refAuthor">Nygren, E.</span>, and <span class="refAuthor">T. Wicinski</span>, <span class="refTitle">"Domain Control Validation using DNS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-domain-verification-techniques-13</span>, <time datetime="2026-06-21" class="refDate">21 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-13">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-13</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IANA-ACME-VALIDATION-METHODS">[IANA-ACME-VALIDATION-METHODS]</dt>
       <dd>
-<span class="refAuthor">Sahib, S. K.</span>, <span class="refAuthor">Huque, S.</span>, <span class="refAuthor">Wouters, P.</span>, <span class="refAuthor">Nygren, E.</span>, and <span class="refAuthor">T. Wicinski</span>, <span class="refTitle">"Domain Control Validation using DNS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-domain-verification-techniques-12</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-12">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-domain-verification-techniques-12</a>&gt;</span>. </dd>
+<span class="refAuthor">IANA</span>, <span class="refTitle">"ACME Validation Methods"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.iana.org/assignments/acme#acme-validation-methods">https://www.iana.org/assignments/acme#acme-validation-methods</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
