@@ -4,7 +4,7 @@ abbrev: "ACME-DNS-CHALLENGE"
 category: std
 submissiontype: IETF
 
-docname: draft-ietf-acme-dns-account-label-03
+docname: draft-ietf-acme-dns-account-label-04
 v: 3
 area: Security
 workgroup: Automated Certificate Management Environment
