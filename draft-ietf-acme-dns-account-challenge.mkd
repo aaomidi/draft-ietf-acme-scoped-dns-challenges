@@ -50,6 +50,11 @@ normative:
 
 informative:
   I-D.draft-ietf-dnsop-domain-verification-techniques:
+  IANA-ACME-VALIDATION-METHODS:
+    title: "ACME Validation Methods"
+    target: https://www.iana.org/assignments/acme#acme-validation-methods
+    author:
+      org: IANA
 
 --- abstract
 
@@ -81,7 +86,11 @@ The `dns-account-01` challenge allows a client to prove control of a domain name
 The challenge object contains the following fields:
 
 * type (required, string): The string "dns-account-01".
-* token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC4086}} for information on additional requirements for secure randomness.
+* token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC9846, Appendix C.1}} for information on additional requirements for secure randomness.
+* url (required, string): The URL to which a response can be posted, as defined in {{!RFC8555, Section 8}}.
+* status (required, string): The status of this challenge, as defined in {{!RFC8555, Section 8}}. Possible values are "pending", "processing", "valid", and "invalid" (see {{!RFC8555, Section 7.1.6}}).
+* validated (optional, string): The time at which the server validated this challenge, as defined in {{!RFC8555, Section 8}}.
+* error (optional, object): Error that occurred while the server was validating the challenge, as defined in {{!RFC8555, Section 8}}.
 
 Example challenge object:
 
@@ -124,7 +133,8 @@ To fulfill this challenge, a client performs the following steps:
 Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
 
 ~~~
-_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT "LoqXcYV8...fm21mqTI"
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT (
+    "LoqXcYV8...fm21mqTI" )
 ~~~
 
 Example response to server:
@@ -163,13 +173,17 @@ The client SHOULD de-provision the resource record(s) provisioned for this chall
 
 ## Errors
 
-The server SHOULD follow the guidelines set in {{!RFC8555, Section 6.7}} for error conditions that occur during challenge validation.
+Errors encountered during challenge validation are reported as described in {{!RFC8555, Section 6.7}}.
 
 If the server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
+
+Including the account URL is intended solely to assist operators in troubleshooting when the validation domain name they provisioned does not match the one computed by the server. As it is not required for validation, a server can omit it, e.g., to avoid client reliance on its presence and prevent ossification.
 
 ## Implementation Considerations
 
 As this challenge creates a strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization MUST NOT be used differently by the server in the `Location` header and while validating challenges.
+
+Such a change, e.g., to the server hostname due to a service migration, may sometimes be operationally necessary. However, it invalidates all validation domain names previously provisioned by clients, which would then need to be recomputed and re-provisioned. A server making such a change SHOULD continue to accept requests whose `kid` contains previously issued account URLs, so that existing DNS records remain valid.
 
 # Security Considerations
 
@@ -185,7 +199,7 @@ The first 10 bytes were picked as a tradeoff: the value needs to be short enough
 
 ## ACME Validation Method
 
-The "ACME Validation Methods" registry is to be updated to include the following entries:
+The "ACME Validation Methods" registry {{IANA-ACME-VALIDATION-METHODS}} is to be updated to include the following entries:
 
 ~~~
 label: dns-account-01
