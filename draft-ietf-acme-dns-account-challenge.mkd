@@ -49,7 +49,6 @@ normative:
       org: National Institute of Standards and Technology
 
 informative:
-  I-D.draft-ietf-dnsop-domain-verification-techniques:
   IANA-ACME-VALIDATION-METHODS:
     title: "ACME Validation Methods"
     target: https://www.iana.org/assignments/acme#acme-validation-methods
@@ -79,7 +78,7 @@ This document does not deprecate the `dns-01` challenge specified in {{!RFC8555}
 
 # DNS-ACCOUNT-01 Challenge
 
-The `dns-account-01` challenge allows a client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource records. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.
+The `dns-account-01` challenge allows an ACME client to prove control of a domain name by provisioning a TXT resource record containing a designated value for a specific validation domain name. It leverages the ACME account URL to construct a unique but stable validation domain name. The ACME server validates control of the domain name by performing one or more DNS queries to this validation domain name, following CNAME records, to arrive at one or more TXT resource records. The ACME server verifies that the contents of one or more of these TXT record(s) match the digest value of the key authorization that is constructed from the token value provided in the challenge.
 
 
 ## Challenge Definition
@@ -89,8 +88,8 @@ The challenge object contains the following fields:
 * token (required, string): A random value that uniquely identifies the challenge. This value MUST have at least 128 bits of entropy. It MUST NOT contain any characters outside the base64url alphabet, including padding characters ("="). See {{!RFC9846, Appendix C.1}} for information on additional requirements for secure randomness.
 * url (required, string): The URL to which a response can be posted, as defined in {{!RFC8555, Section 8}}.
 * status (required, string): The status of this challenge, as defined in {{!RFC8555, Section 8}}. Possible values are "pending", "processing", "valid", and "invalid" (see {{!RFC8555, Section 7.1.6}}).
-* validated (optional, string): The time at which the server validated this challenge, as defined in {{!RFC8555, Section 8}}.
-* error (optional, object): Error that occurred while the server was validating the challenge, as defined in {{!RFC8555, Section 8}}.
+* validated (optional, string): The time at which the ACME server validated this challenge, as defined in {{!RFC8555, Section 8}}.
+* error (optional, object): Error that occurred while the ACME server was validating the challenge, as defined in {{!RFC8555, Section 8}}.
 
 Example challenge object:
 
@@ -105,11 +104,11 @@ Example challenge object:
 
 ## Challenge Fulfillment
 
-To fulfill this challenge, a client performs the following steps:
+To fulfill this challenge, an ACME client performs the following steps:
 
 1. Construct Key Authorization
 
-   - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the client's account key
+   - Construct a key authorization {{!RFC8555, Section 8.1}} from the `token` value provided in the challenge and the ACME client's account key
    - Compute the SHA-256 digest {{FIPS180-4}} of the key authorization
 
 2. DNS Record Creation
@@ -121,14 +120,14 @@ To fulfill this challenge, a client performs the following steps:
      - SHA-256 is the SHA hashing operation defined in {{FIPS180-4}}
      - `[0:10]` is the operation that selects the first ten bytes (bytes 0 through 9 inclusive) from the previous SHA-256 operation
      - base32 is the operation defined in {{!RFC4648}} and its use throughout this document is case-insensitive
-     - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field
+     - ACCOUNT_URL is defined in {{!RFC8555, Section 7.3}} as the value in the `Location` header field. It is used exactly as supplied by the ACME server in the `Location` header field, which is the same string the ACME client carries in the JWS `kid` field. The SHA-256 operation is computed over the octets of this string, without any normalization, decoding, or case folding.
      - The `||` operator indicates concatenation of strings
 
    - Provision a DNS `TXT` record under the constructed validation domain name, containing the base64url encoding (per Section 5 of {{!RFC4648}}, without padding) of the SHA-256 digest computed in step 1.
 
 3. Challenge Response
 
-   - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the server
+   - Respond to the ACME server with an empty object ({}) to acknowledge that the challenge can be validated by the ACME server
 
 Example DNS record for domain `example.org` with account URL `https://example.com/acme/acct/ExampleAccount`:
 
@@ -137,7 +136,18 @@ _ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN TXT (
     "LoqXcYV8...fm21mqTI" )
 ~~~
 
-Example response to server:
+Because the validation domain name differs for each ACME account, an operator can delegate validation of the same domain name to multiple ACME clients, each using its own ACME account, with one CNAME record each. For example, with a second account URL `https://example.com/acme/acct/ExampleAccount2`:
+
+~~~
+_ujmmovf2vn55tgye._acme-challenge.example.org. 300 IN CNAME (
+    example-org.validation.region1.example.net. )
+_irn4jvgahsogihvs._acme-challenge.example.org. 300 IN CNAME (
+    example-org.validation.region2.example.net. )
+~~~
+
+Each ACME client then provisions its `TXT` record at its own CNAME target, independently of the other.
+
+Example response to the ACME server:
 
 ~~~
 POST /acme/chall/Rg5dV14Gh1Q HTTP/1.1
@@ -158,32 +168,34 @@ Content-Type: application/jose+json
 
 ## Server Validation
 
-Upon receiving the challenge response, the server:
+Upon receiving the challenge response, the ACME server:
 
 1. Performs the typical JWS validation according to {{!RFC8555, Section 6.2}}
 2. Constructs and stores the key authorization
 3. Computes the SHA-256 digest {{FIPS180-4}} of the stored key authorization
-4. Computes the validation domain name using the KID value from the JWS message
+4. Computes the validation domain name using the `kid` value exactly as it appears in the JWS protected header, without any normalization
 5. Queries for TXT records at the validation domain name
 6. Verifies that at least one TXT record matches the computed digest value
 
-The validation succeeds only if all verifications pass. The server MUST mark the challenge as invalid if any verification fails.
+The validation succeeds only if all verifications pass. The ACME server MUST mark the challenge as invalid if any verification fails.
 
-The client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
+The ACME client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
 
 ## Errors
 
 Errors encountered during challenge validation are reported as described in {{!RFC8555, Section 6.7}}.
 
-If the server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. Clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
+If the ACME server is unable to find a `TXT` record for the validation domain name, it SHOULD include the account URL it used to construct the validation domain name in the problem document. ACME clients MUST NOT use or rely on the presence of this field to construct the validation domain name.
 
-Including the account URL is intended solely to assist operators in troubleshooting when the validation domain name they provisioned does not match the one computed by the server. As it is not required for validation, a server can omit it, e.g., to avoid client reliance on its presence and prevent ossification.
+Including the account URL is intended solely to assist operators in troubleshooting when the validation domain name they provisioned does not match the one computed by the ACME server. As it is not required for validation, an ACME server can omit it, e.g., to avoid ACME client reliance on its presence and prevent ossification.
 
 ## Implementation Considerations
 
-As this challenge creates a strong dependency on the `kid` account identifier, the server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. URL normalization MUST NOT be used differently by the server in the `Location` header and while validating challenges.
+As this challenge creates a strong dependency on the `kid` account identifier, the ACME server SHOULD ensure that the account identifier is not changed during the lifetime of the account. This contains the entire URI, including the ACME endpoint domain name, port, scheme, and full HTTP path. The ACME client and ACME server MUST compute the validation domain name from the same unmodified account URL string, as supplied in the `Location` header field and carried in the JWS `kid` field. The ACME server MUST NOT apply URL normalization differently in the `Location` header field and while validating challenges.
 
-Such a change, e.g., to the server hostname due to a service migration, may sometimes be operationally necessary. However, it invalidates all validation domain names previously provisioned by clients, which would then need to be recomputed and re-provisioned. A server making such a change SHOULD continue to accept requests whose `kid` contains previously issued account URLs, so that existing DNS records remain valid.
+Such a change, e.g., to the ACME server hostname due to a service migration, may sometimes be operationally necessary. However, it invalidates all validation domain names previously provisioned by ACME clients, which would then need to be recomputed and re-provisioned. An ACME server making such a change SHOULD continue to accept requests whose `kid` contains previously issued account URLs, so that existing DNS records remain valid.
+
+The two labels prepended to the domain name being validated add 34 octets to its length in DNS wire format, including their length octets. The complete validation domain name MUST NOT exceed the 255-octet limit of {{!RFC1035, Section 2.3.4}}. Since this added length does not depend on the account, the ACME server can determine whether the limit would be exceeded when it creates an authorization. The ACME server MUST NOT offer the `dns-account-01` challenge for an identifier whose validation domain name would exceed this limit as the challenge cannot be completed. ACME clients can use a different challenge type for such identifiers.
 
 # Security Considerations
 
@@ -193,7 +205,7 @@ To allow for seamless account key rollover without the label changing, the dynam
 
 In terms of the construction of the account label prepended to the domain name, there is no need for a cryptographic hash. The goal is to simply create a long-lived and statistically distinct label of minimal size. SHA-256 was chosen due to its existing use in the `dns-01` challenge ({{!RFC8555, Section 8.1}}).
 
-The first 10 bytes were picked as a tradeoff: the value needs to be short enough to stay lower than the size limits for DNS ({{!RFC1035, Section 2.3.4}}), long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue.
+The first 10 bytes were picked as a tradeoff: the value needs to be short enough to stay lower than the size limits for DNS ({{!RFC1035, Section 2.3.4}}), long enough to provide sufficient probability of collision avoidance across ACME accounts, and just the right size to have Base32 require no padding. As the algorithm is used for a uniform distribution of inputs, and not for integrity, we do not consider the trimming a security issue. The length of the complete validation domain name is discussed in {{implementation-considerations}}.
 
 # IANA Considerations
 
