@@ -1,10 +1,6 @@
-ARG VARIANT="ubuntu-22.04"
-FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
-
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends xml2rfc ruby
-
-RUN gem install kramdown-rfc
+# The draft is built with the Go tools in this repository; nothing else is
+# needed. The Go version itself is set by go.mod.
+FROM mcr.microsoft.com/devcontainers/go:1
 
 WORKDIR /home/vscode
 USER vscode

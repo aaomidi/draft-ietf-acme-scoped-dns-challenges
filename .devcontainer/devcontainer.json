@@ -1,10 +1,7 @@
 {
-  "name": "Ubuntu",
+  "name": "Go",
   "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      "VARIANT": "ubuntu-22.04"
-    }
+    "dockerfile": "Dockerfile"
   },
   "runArgs": [
     "--userns=keep-id"

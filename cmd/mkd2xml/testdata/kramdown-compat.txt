@@ -1,0 +1,3463 @@
+# Cases comparing mkd2xml with kramdown-rfc.
+#
+# Each case is a small draft, followed by what mkd2xml must make of it:
+# either parts of the XML, or an error.
+#
+# The XML here was not written by hand. For every case that expects XML,
+# mkd2xml's output and that of kramdown-rfc 1.7.43 were both prepared with
+# "xml2rfc --prep" (3.34.1) and compared element by element, and they were
+# the same. So these cases record where the two tools are known to agree,
+# and a change to one of them means that agreement has to be checked again.
+#
+# Two cases are exceptions, "angle_text" and "code_special": kramdown-rfc's
+# own output for them is not valid XML. There the expected XML is what
+# mkd2xml produces, checked only to be accepted by xml2rfc.
+#
+# The cases that expect an error are constructs that kramdown-rfc and a
+# CommonMark parser read differently, or that mkd2xml does not support.
+# Refusing them is what keeps mkd2xml from producing XML that is quietly
+# different from kramdown-rfc's.
+#
+# Format: "%% case NAME KIND" starts a case. KIND is "body" when the text is
+# appended to the standard front matter in the test, "full" when it is the
+# whole file, and "quoted" when the whole file is given as one JSON string
+# because its exact bytes matter. "%% want PART" starts an expectation,
+# where PART is "error" or the XML element to compare.
+
+%% case adj_fence_fence body
+Intro:
+
+~~~
+a
+~~~
+~~~
+b
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+a
+]]></artwork>
+      <artwork><![CDATA[
+b
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_fence_para body
+Intro:
+
+~~~
+code
+~~~
+After.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+code
+]]></artwork>
+      <t>After.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_heading_fence body
+Text.
+
+# Heading
+~~~
+code
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="heading">
+      <name>Heading</name>
+      <artwork><![CDATA[
+code
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_heading_list body
+Text.
+
+# Heading
+* a
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="heading">
+      <name>Heading</name>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_heading_text body
+Text.
+
+# Heading
+Directly after.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="heading">
+      <name>Heading</name>
+      <t>Directly after.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_list_fence body
+Intro:
+
+* a
+
+~~~
+code
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+      </ul>
+      <artwork><![CDATA[
+code
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_list_list body
+Intro:
+
+* a
+* b
+
+1. one
+2. two
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+      <ol spacing="normal" type="1">
+        <li>
+          <t>one</t>
+        </li>
+        <li>
+          <t>two</t>
+        </li>
+      </ol>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_list_para body
+Intro:
+
+* a
+* b
+After.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b
+After.</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_para_fence body
+Intro:
+~~~
+code
+~~~
+%% want error
+a code block needs a blank line before it
+%% case adj_para_indent body
+Intro:
+    not code
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:
+not code</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case adj_text_heading body
+Text.
+# Heading
+
+More.
+%% want error
+a heading needs a blank line before it
+%% case angle_text body
+The <ACCOUNT_URL> placeholder and a < b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>The &lt;ACCOUNT_URL&gt; placeholder and a &lt; b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case at_text body
+Mail user@example.com and @handle.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Mail user@example.com and @handle.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case back_appendix body
+Text.
+
+--- back
+
+# An Appendix
+
+A.
+
+## Sub Appendix
+
+B.
+
+# Acknowledgments
+{:numbered="false"}
+
+Thanks.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <section anchor="an-appendix">
+      <name>An Appendix</name>
+      <t>A.</t>
+      <section anchor="sub-appendix">
+        <name>Sub Appendix</name>
+        <t>B.</t>
+      </section>
+    </section>
+    <section numbered="false" anchor="acknowledgments">
+      <name>Acknowledgments</name>
+      <t>Thanks.</t>
+    </section>
+  </back>
+%% case back_empty body
+Text.
+
+--- back
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case bcp14 body
+{::boilerplate bcp14-tagged}
+
+You MUST, MUST NOT, (SHOULD), MAY. MUSTARD is not; must is not. **MUST** and *SHOULD*. In `MUST` code. NOT RECOMMENDED and RECOMMENDED, SHALL NOT, REQUIRED, OPTIONAL.
+It SHOULD
+NOT break.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as described in BCP&#xA0;14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
+      <t>You <bcp14>MUST</bcp14>, <bcp14>MUST NOT</bcp14>, (<bcp14>SHOULD</bcp14>), <bcp14>MAY</bcp14>. MUSTARD is not; must is not. <strong><bcp14>MUST</bcp14></strong> and <em><bcp14>SHOULD</bcp14></em>. In <tt>MUST</tt> code. <bcp14>NOT RECOMMENDED</bcp14> and <bcp14>RECOMMENDED</bcp14>, <bcp14>SHALL NOT</bcp14>, <bcp14>REQUIRED</bcp14>, <bcp14>OPTIONAL</bcp14>.
+It <bcp14>SHOULD
+NOT</bcp14> break.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC2119"/>
+      <reference anchor="RFC8174"/>
+    </references>
+  </back>
+%% case bcp14_heading body
+{::boilerplate bcp14-tagged}
+
+# What You MUST Do
+
+You MUST.
+
+* item MUST
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as described in BCP&#xA0;14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
+    </section>
+    <section anchor="what-you-must-do">
+      <name>What You MUST Do</name>
+      <t>You <bcp14>MUST</bcp14>.</t>
+      <ul spacing="normal">
+        <li>
+          <t>item <bcp14>MUST</bcp14></t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC2119"/>
+      <reference anchor="RFC8174"/>
+    </references>
+  </back>
+%% case bcp14_lists body
+{::boilerplate bcp14-tagged}
+
+1. Clients MUST do it.
+
+   * Servers SHOULD NOT.
+
+2. It MAY.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as described in BCP&#xA0;14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
+      <ol spacing="normal" type="1">
+        <li>
+          <t>Clients <bcp14>MUST</bcp14> do it.</t>
+          <ul spacing="normal">
+            <li>
+              <t>Servers <bcp14>SHOULD NOT</bcp14>.</t>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <t>It <bcp14>MAY</bcp14>.</t>
+        </li>
+      </ol>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC2119"/>
+      <reference anchor="RFC8174"/>
+    </references>
+  </back>
+%% case bcp14_plain body
+{::boilerplate bcp14}
+
+You MUST and SHOULD NOT.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP&#xA0;14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
+      <t>You MUST and SHOULD NOT.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC2119"/>
+      <reference anchor="RFC8174"/>
+    </references>
+  </back>
+%% case blockquote body
+Intro:
+
+> quoted text
+%% want error
+unsupported Markdown construct (Blockquote)
+%% case braces body
+An object ({}) and {"a": 1} and {single} and {{ unclosed.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>An object ({}) and {"a": 1} and {single} and {{ unclosed.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case bracket_ref_like body
+See [RFC8555] for details {{!RFC8555}}.
+%% want error
+[RFC8555] would be read by kramdown-rfc as a citation of that reference; write {{RFC8555}}, or \[RFC8555\] for the text itself
+%% case bracket_text body
+An [optional] thing and [RFC8555] and array[0] and a [link like] text.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>An [optional] thing and [RFC8555] and array[0] and a [link like] text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case caret_text body
+2^10 and a^b^c.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>2^10 and a^b^c.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_backtick body
+Intro:
+
+```
+line 1
+  line 2
+```
+%% want error
+a code block must be fenced with
+%% case code_blank_lines body
+Intro:
+
+~~~
+line 1
+
+
+line 4   
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+line 1
+
+
+line 4   
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_double body
+Use ``a`b`` and `` `tick` `` done.
+%% want error
+a code span must not start or end with a space; kramdown-rfc and CommonMark read that differently
+%% case code_empty body
+Intro:
+
+~~~
+~~~
+
+After.
+%% want error
+empty code block
+%% case code_indent_in_fence body
+Intro:
+
+~~~
+    four spaces
+	tab
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+    four spaces
+        tab
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_indented body
+Intro:
+
+    line 1
+      line 2
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+line 1
+  line 2
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_lang body
+Intro:
+
+~~~ json
+{"a": 1}
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <sourcecode type="json"><![CDATA[
+{"a": 1}
+]]></sourcecode>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_lang_backtick body
+Intro:
+
+```json
+{"a": 1}
+```
+%% want error
+a code block must be fenced with
+%% case code_long_fence body
+Intro:
+
+~~~~~
+~~~
+inner
+~~~
+~~~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+~~~
+inner
+~~~
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_multiline body
+Use `code that
+wraps` here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Use <tt>code that
+wraps</tt> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_spans body
+Use `a` and ``b ` c`` and `<tag>` and `a & b` and ` padded `.
+%% want error
+a code span must not start or end with a space; kramdown-rfc and CommonMark read that differently
+%% case code_special body
+Intro:
+
+~~~
+a < b && c > d ]]> end
+<xml attr="v"/> &amp;
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+a < b && c > d ]]]]><![CDATA[> end
+<xml attr="v"/> &amp;
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_tilde body
+Intro:
+
+~~~
+line 1
+  line 2
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <artwork><![CDATA[
+line 1
+  line 2
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_tilde_lang_attached body
+Intro:
+
+~~~json
+{}
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <sourcecode type="json"><![CDATA[
+{}
+]]></sourcecode>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case code_title_ial body
+Intro:
+
+~~~
+code
+~~~
+{: title="A Figure"}
+%% want error
+unsupported kramdown directive {: title="A Figure"}
+%% case colon_def body
+Term
+: Not wanted definition
+%% want error
+a line starting with ":" makes this a definition list in kramdown, which is not supported
+%% case colon_start body
+: starts with colon
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>: starts with colon</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case deflist body
+Intro:
+
+term
+: definition
+%% want error
+a line starting with ":" makes this a definition list in kramdown, which is not supported
+%% case emph_code body
+This *`code` in emphasis* and **`x`**.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>This <em><tt>code</tt> in emphasis</em> and <strong><tt>x</tt></strong>.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_edge body
+The _acme-challenge label, a 2*3*4 product, *not closed and _dns-01_ thing.
+%% want error
+'_' here is not clearly emphasis or plain text; write "\_" for the character itself, or put the text in backticks
+%% case emph_multiword body
+This *spans several words* and **so does this** one.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>This <em>spans several words</em> and <strong>so does this</strong> one.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_punct body
+(*a*), "*b*", *c*. and *d*: e.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>(<em>a</em>), "<em>b</em>", <em>c</em>. and <em>d</em>: e.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_spaced body
+A * spaced * star and 2 * 3 and a _ b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A * spaced * star and 2 * 3 and a _ b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_star body
+Some *emphasis* and **strong** and ***both*** here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Some <em>emphasis</em> and <strong>strong</strong> and <strong><em>both</em></strong> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_strong_em body
+Some **strong with *em* inside** and *em with **strong** inside*.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Some <strong>strong with <em>em</em> inside</strong> and <em>em with <strong>strong</strong> inside</em>.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_triple_under body
+Some ___both___ here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Some <strong><em>both</em></strong> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case emph_underscore body
+Some _emphasis_ and __strong__ text, snake_case_word and a_b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Some <em>emphasis</em> and <strong>strong</strong> text, snake_case_word and a_b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case empty_emph body
+Empty ** and __ and `` here.
+%% want error
+'*' here is not clearly emphasis or plain text; write "\*" for the character itself, or put the text in backticks
+%% case ent_numeric body
+A&#160;B and &#x41; and &amp;amp; and AT&amp;T.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A B and A and &amp;amp; and AT&amp;T.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case entities body
+A&nbsp;B &mdash; C &amp; D &lt;x&gt; &#x2014; &#8212; &copy; &bogus; done.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A B — C &amp; D &lt;x&gt; — — © &amp;bogus; done.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case esc_all body
+\~ \& \, \; \/ \? \@ \^ \% \= \: \| \" \' \$ \< \> \( \) \. \! \+ \- end.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>\~ \&amp; \, \; \/ \? \@ \^ \% = : | " ' $ &lt; &gt; ( ) . ! + - end.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case escapes body
+Stars \* and \_ and \` backtick, backslash \\ and \{braces\} and \[brackets\] and \# hash.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Stars * and _ and ` backtick, backslash \ and {braces} and [brackets] and # hash.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case excl_text body
+Wow! And ![not image and a!b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Wow! And ![not image and a!b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case file_bom quoted
+"\ufeff---\ntitle: \"Matrix\"\nabbrev: \"MATRIX\"\ncategory: std\nsubmissiontype: IETF\ndocname: draft-example-matrix-00\nv: 3\nipr: trust200902\ndate: 2026-10-25\nauthor:\n -\n    fullname: Alice Example\n    organization: Example Org\n    email: alice@example.com\n--- abstract\n\nAbstract.\n\n--- middle\n\n# Introduction\n\nText.\n"
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case file_crlf quoted
+"---\r\ntitle: \"Matrix\"\r\nabbrev: \"MATRIX\"\r\ncategory: std\r\nsubmissiontype: IETF\r\ndocname: draft-example-matrix-00\r\nv: 3\r\nipr: trust200902\r\ndate: 2026-10-25\r\nauthor:\r\n -\r\n    fullname: Alice Example\r\n    organization: Example Org\r\n    email: alice@example.com\r\n--- abstract\r\n\r\nAbstract.\r\n\r\n--- middle\r\n\r\n# Introduction\r\n\r\nPara one with *emphasis*.\r\n\r\n* a\r\n* b\r\n\r\n~~~\r\ncode\r\n~~~\r\n\r\n# Next\r\n\r\nText.\r\n"
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Para one with <em>emphasis</em>.</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+      <artwork><![CDATA[
+code
+]]></artwork>
+    </section>
+    <section anchor="next">
+      <name>Next</name>
+      <t>Text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case file_no_final_newline quoted
+"---\ntitle: \"Matrix\"\nabbrev: \"MATRIX\"\ncategory: std\nsubmissiontype: IETF\ndocname: draft-example-matrix-00\nv: 3\nipr: trust200902\ndate: 2026-10-25\nauthor:\n -\n    fullname: Alice Example\n    organization: Example Org\n    email: alice@example.com\n--- abstract\n\nAbstract.\n\n--- middle\n\n# Introduction\n\nLast line without newline."
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Last line without newline.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case fm_author_extra full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+    role: editor
+    country: US
+    city: Somewhere
+    uri: https://example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+unsupported key "role"
+%% case fm_cat_exp full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: exp
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="exp" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_cat_info full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: info
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="info" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_consensus_false full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+consensus: false
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_date_month full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_date_words full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: October 2026
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+front matter: unsupported date "October 2026"
+%% case fm_kw_alias full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+kw: one
+wg: Example WG
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+unsupported key "kw"
+%% case fm_kw_list full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+keyword:
+ - one
+ - two
+area: Security
+workgroup: Example WG
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <area>Security</area>
+    <workgroup>Example WG</workgroup>
+    <keyword>one</keyword>
+    <keyword>two</keyword>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_latest full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-latest
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-latest" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-latest"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_no_abbrev full
+---
+title: "Matrix"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title>Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_pi full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+pi: [toc, sortrefs, symrefs]
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+unsupported key "pi"
+%% case fm_ref_full full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+normative:
+  RFC8555:
+  BOOK:
+    title: "A Book & More"
+    date: 2015-08-17
+    target: https://example.com/book?a=1&b=2
+    author:
+      -
+        name: Carol Sample
+        ins: C. Sample
+        org: Some Org
+      -
+        org: Other Org
+    seriesinfo:
+      ISBN: 123-456
+informative:
+  NODATE:
+    title: No Date
+  YEARONLY:
+    title: Year Only
+    date: 2001
+    author:
+      ins: D. Example
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text citing {{BOOK}}, {{NODATE}} and {{YEARONLY}}.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+    <references anchor="sec-combined-references">
+      <name>References</name>
+      <references anchor="sec-normative-references">
+        <name>Normative References</name>
+        <reference anchor="RFC8555"/>
+        <reference anchor="BOOK" target="https://example.com/book?a=1&amp;b=2">
+          <front>
+            <title>A Book &amp; More</title>
+            <author initials="C." surname="Sample" fullname="Carol Sample">
+              <organization>Some Org</organization>
+            </author>
+            <author>
+              <organization>Other Org</organization>
+            </author>
+            <date year="2015" month="August" day="17"/>
+          </front>
+          <seriesInfo name="ISBN" value="123-456"/>
+        </reference>
+      </references>
+      <references anchor="sec-informative-references">
+        <name>Informative References</name>
+        <reference anchor="NODATE">
+          <front>
+            <title>No Date</title>
+            <author>
+              <organization></organization>
+            </author>
+            <date>n.d.</date>
+          </front>
+        </reference>
+        <reference anchor="YEARONLY">
+          <front>
+            <title>Year Only</title>
+            <author initials="D." surname="Example">
+              <organization></organization>
+            </author>
+            <date year="2001"/>
+          </front>
+        </reference>
+      </references>
+    </references>
+  </back>
+%% case fm_short_author full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    ins: A. Example
+    name: Alice Example
+    org: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author initials="A." surname="Example" fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_stand_alone full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+stand_alone: yes
+smart_quotes: no
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+unsupported key "stand_alone"
+%% case fm_title_special full
+---
+title: "A <Matrix> & 'Quotes' — Title"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">A &lt;Matrix&gt; &amp; 'Quotes' — Title</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_title_unquoted full
+---
+title: Plain Unquoted Title
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Plain Unquoted Title</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_two_emails full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email:
+      - alice@example.com
+      - a@example.org
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+cannot unmarshal !!seq into string
+%% case fm_updates full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+updates: 8555
+obsoletes: 1234, 5678
+v: 3
+ipr: trust200902
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" obsoletes="1234, 5678" updates="8555" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_venue full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+venue:
+  group: ACME
+  type: Working Group
+  mail: acme@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/acme/
+  github: example/repo
+  latest: https://example.github.io/repo/
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+    <note removeInRFC="true">
+      <name>About This Document</name>
+      <t>
+        The latest revision of this draft can be found at <eref target="https://example.github.io/repo/"/>.
+        Status information for this document may be found at <eref target="https://datatracker.ietf.org/doc/draft-example-matrix/"/>.
+      </t>
+      <t>
+        Discussion of this document takes place on the ACME Working Group mailing list (<eref target="mailto:acme@ietf.org"/>), which is archived at <eref target="https://mailarchive.ietf.org/arch/browse/acme/"/>.
+        Subscribe at <eref target="https://www.ietf.org/mailman/listinfo/acme/"/>.
+      </t>
+      <t>
+        Source for this draft and an issue tracker can be found at <eref target="https://github.com/example/repo"/>.
+      </t>
+    </note>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_venue_min full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+venue:
+  mail: acme@ietf.org
+  github: example/repo
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want rfc
+<rfc version="3" ipr="trust200902" docName="draft-example-matrix-00" category="std" consensus="true" submissionType="IETF" tocInclude="true" sortRefs="true" symRefs="true">
+%% want front
+  <front>
+    <title abbrev="MATRIX">Matrix</title>
+    <seriesInfo name="Internet-Draft" value="draft-example-matrix-00"/>
+    <author fullname="Alice Example">
+      <organization>Example Org</organization>
+      <address>
+        <email>alice@example.com</email>
+      </address>
+    </author>
+    <date year="2026" month="October" day="25"/>
+    <abstract>
+      <t>Abstract.</t>
+    </abstract>
+    <note removeInRFC="true">
+      <name>About This Document</name>
+      <t>
+        Status information for this document may be found at <eref target="https://datatracker.ietf.org/doc/draft-example-matrix/"/>.
+      </t>
+      <t>
+        Discussion of this document takes place on the acme Working Group mailing list (<eref target="mailto:acme@ietf.org"/>), which is archived at <eref target="https://mailarchive.ietf.org/arch/browse/acme/"/>.
+        Subscribe at <eref target="https://www.ietf.org/mailman/listinfo/acme/"/>.
+      </t>
+      <t>
+        Source for this draft and an issue tracker can be found at <eref target="https://github.com/example/repo"/>.
+      </t>
+    </note>
+  </front>
+%% want back
+  <back>
+  </back>
+%% case fm_venue_other full
+---
+title: "Matrix"
+abbrev: "MATRIX"
+category: std
+submissiontype: IETF
+docname: draft-example-matrix-00
+v: 3
+ipr: trust200902
+venue:
+  group: Thing
+  mail: thing@example.org
+  home: https://example.org/thing
+  repo: https://git.example.org/thing
+date: 2026-10-25
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+--- abstract
+
+Abstract.
+
+--- middle
+
+# Introduction
+
+Text.
+%% want error
+unsupported key "home"
+%% case footnote body
+Text[^1].
+
+[^1]: The note.
+%% want error
+"[^" would be read by kramdown-rfc as a footnote, which is not supported
+%% case gt_text body
+a > b and a >> b and -> arrow and => arrow.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>a &gt; b and a &gt;&gt; b and -&gt; arrow and =&gt; arrow.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case hard_break_backslash body
+line one\\
+line two
+%% want error
+"\\" at the end of a line is a line break in kramdown, which is not supported
+%% case hard_break_spaces body
+line one  
+line two
+%% want error
+hard line breaks are not supported
+%% case hash_text body
+Issue #13 and C# and a # b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Issue #13 and C# and a # b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_closed body
+Text.
+
+# Closed Heading #
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="closed-heading">
+      <name>Closed Heading</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_code body
+Text.
+
+# Using `code` in a Title
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="using-code-in-a-title">
+      <name>Using <tt>code</tt> in a Title</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_colon body
+Text.
+
+# Title: With Colon - And Dash
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="title-with-colon-and-dash">
+      <name>Title: With Colon - And Dash</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_deep body
+Text.
+
+# L1
+
+a
+
+## L2
+
+b
+
+### L3
+
+c
+
+#### L4
+
+d
+
+##### L5
+
+e
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="l1">
+      <name>L1</name>
+      <t>a</t>
+      <section anchor="l2">
+        <name>L2</name>
+        <t>b</t>
+        <section anchor="l3">
+          <name>L3</name>
+          <t>c</t>
+          <section anchor="l4">
+            <name>L4</name>
+            <t>d</t>
+            <section anchor="l5">
+              <name>L5</name>
+              <t>e</t>
+            </section>
+          </section>
+        </section>
+      </section>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_digits body
+Text.
+
+# 2024 Review
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="review">
+      <name>2024 Review</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_duplicate body
+Text.
+
+# Overview
+
+A.
+
+# Overview
+
+B.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="overview">
+      <name>Overview</name>
+      <t>A.</t>
+    </section>
+    <section anchor="overview-1">
+      <name>Overview</name>
+      <t>B.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_em body
+Text.
+
+# An *Emphasised* Title
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="an-emphasised-title">
+      <name>An <em>Emphasised</em> Title</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_entity body
+Text.
+
+# A &amp; B
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="a-amp-b">
+      <name>A &amp; B</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_escaped body
+Text.
+
+# Using \*stars\* Here
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="using-stars-here">
+      <name>Using *stars* Here</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_ial body
+Text, see {{other-id}}.
+
+# A Title
+{: #other-id}
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text, see <xref target="other-id"/>.</t>
+    </section>
+    <section anchor="other-id">
+      <name>A Title</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_id_inline body
+Text, see {{custom-id}}.
+
+# A Title {#custom-id}
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text, see <xref target="custom-id"/>.</t>
+    </section>
+    <section anchor="custom-id">
+      <name>A Title</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_link body
+Text.
+
+# See [the site](https://example.com)
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="see-the-sitehttpsexamplecom">
+      <name>See <eref target="https://example.com">the site</eref></name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_long body
+Text.
+
+# Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word 
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word">
+      <name>Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word Word</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_punct body
+Text.
+
+# What's New? (v2.0) & More_stuff
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="whats-new-v20-morestuff">
+      <name>What's New? (v2.0) &amp; More_stuff</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_reserved body
+Text.
+
+# Section Overview
+
+More.
+
+# Figure Skating
+
+More.
+
+# Table Manners
+
+More.
+%% want error
+the heading "Section Overview" gets the anchor "section-overview", and xml2rfc reserves anchors starting that way; give it another with a line {: #some-id} below it
+%% case heading_setext body
+Text.
+
+Setext Heading
+==============
+
+More.
+
+Sub Heading
+-----------
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="setext-heading">
+      <name>Setext Heading</name>
+      <t>More.</t>
+      <section anchor="sub-heading">
+        <name>Sub Heading</name>
+        <t>More.</t>
+      </section>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_trailing_space body
+Text.
+
+# Trailing Space   
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="trailing-space">
+      <name>Trailing Space</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_unicode body
+Text.
+
+# Café Überblick
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="caf-berblick">
+      <name>Café Überblick</name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case heading_xref body
+Text.
+
+# About {{!RFC8555}}
+
+More.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="about-rfc8555">
+      <name>About <xref target="RFC8555"/></name>
+      <t>More.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC8555"/>
+    </references>
+  </back>
+%% case hrule body
+Text.
+
+***
+
+More.
+%% want error
+unsupported Markdown construct (ThematicBreak)
+%% case html_block_comment body
+Text.
+
+<!-- a block comment -->
+
+More.
+%% want error
+unsupported Markdown construct (HTMLBlock)
+%% case html_comment body
+Text <!-- hidden --> more.
+%% want error
+unsupported Markdown construct (RawHTML)
+%% case html_inline body
+Line<br/>break.
+%% want error
+unsupported Markdown construct (RawHTML)
+%% case image body
+An ![image](https://example.com/i.png) here.
+%% want error
+unsupported Markdown construct (Image)
+%% case kd_abbrev body
+The HTML spec.
+
+*[HTML]: Hyper Text Markup Language
+%% want error
+a line starting with "*[" is an abbreviation definition in kramdown, which is not supported
+%% case kd_block_ial_list body
+Intro:
+
+{: spacing="compact"}
+* a
+* b
+%% want error
+unsupported kramdown directive {: spacing="compact"}
+%% case kd_comment body
+Text.
+
+{::comment}
+hidden
+{:/comment}
+
+More.
+%% want error
+unsupported kramdown directive {::comment}
+%% case kd_contact body
+Thanks to {{{Alice Example}}}.
+%% want error
+unsupported cross-reference {{{Alice Example}}
+%% case kd_index body
+A term(((term))) here.
+%% want error
+"(((" would be read by kramdown-rfc as an index entry, which is not supported
+%% case kd_nomarkdown body
+Text {::nomarkdown}<bcp14>MUST</bcp14>{:/nomarkdown} more.
+%% want error
+"{:" would be read by kramdown-rfc as an attribute list, which is not supported
+%% case kd_ol_type body
+Intro:
+
+{: type="a"}
+1. one
+2. two
+%% want error
+unsupported kramdown directive {: type="a"}
+%% case kd_para_ial body
+A paragraph.
+{: #para-id}
+
+See {{para-id}}.
+%% want error
+"{:" would be read by kramdown-rfc as an attribute list, which is not supported
+%% case kd_span_ial body
+Some `code`{:.cls} here.
+%% want error
+"{:" would be read by kramdown-rfc as an attribute list, which is not supported
+%% case line_leading_space body
+  Indented paragraph start
+  continues.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Indented paragraph start
+continues.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case link_angle body
+See [text](<https://example.com/a b>) here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>See <eref target="https://example.com/a b">text</eref> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case link_code body
+See [`code`](https://example.com/x) and [*em*](https://example.com/y).
+%% want error
+the text of a link must be plain text
+%% case link_email body
+Mail <user@example.com> now.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Mail <eref target="mailto:user@example.com">user@example.com</eref> now.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case link_parens body
+See [text](https://example.com/a_(b)) here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>See <eref target="https://example.com/a_(b)">text</eref> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case link_ref body
+A [ref link][r] here.
+
+[r]: https://example.com/r
+%% want error
+unsupported Markdown construct (LinkReferenceDefinition)
+%% case link_same body
+See [https://example.com/x](https://example.com/x) here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>See <eref target="https://example.com/x">https://example.com/x</eref> here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case link_title body
+A [text](https://example.com/x "The Title") here.
+%% want error
+a link with a title is not supported
+%% case links body
+A [text](https://example.com/x) and <https://example.com/auto> and bare https://example.com/bare end.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A <eref target="https://example.com/x">text</eref> and <eref target="https://example.com/auto">https://example.com/auto</eref> and bare https://example.com/bare end.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_3levels body
+Intro:
+
+* a
+  * b
+    * c
+  * d
+* e
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+          <ul spacing="normal">
+            <li>
+              <t>b</t>
+              <ul spacing="normal">
+                <li>
+                  <t>c</t>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <t>d</t>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <t>e</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_code body
+Intro:
+
+* item with code:
+
+      code line
+
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>item with code:</t>
+          <artwork><![CDATA[
+code line
+]]></artwork>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_fence body
+Intro:
+
+* item with fence:
+
+  ~~~
+  fenced
+  ~~~
+
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>item with fence:</t>
+          <artwork><![CDATA[
+fenced
+]]></artwork>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_item_fence_lang body
+Intro:
+
+* item:
+
+  ~~~ json
+  {"a": 1}
+  ~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>item:</t>
+          <sourcecode type="json"><![CDATA[
+{"a": 1}
+]]></sourcecode>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_lazy body
+Intro:
+
+* a long item
+continued lazily
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a long item
+continued lazily</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_long_item body
+Intro:
+
+* a long item that goes on
+  and continues on the next line
+  and another
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a long item that goes on
+and continues on the next line
+and another</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_loose body
+Intro:
+
+* a
+
+* b
+
+* c
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+        <li>
+          <t>c</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_markers body
+Intro:
+
+- a
+- b
+
+Then:
+
++ c
++ d
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+      <t>Then:</t>
+      <ul spacing="normal">
+        <li>
+          <t>c</t>
+        </li>
+        <li>
+          <t>d</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_mixed body
+Intro:
+
+1. one
+
+   * sub a
+   * sub b
+
+2. two
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ol spacing="normal" type="1">
+        <li>
+          <t>one</t>
+          <ul spacing="normal">
+            <li>
+              <t>sub a</t>
+            </li>
+            <li>
+              <t>sub b</t>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <t>two</t>
+        </li>
+      </ol>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_multi_para body
+Intro:
+
+* first para
+
+  second para of same item
+
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>first para</t>
+          <t>second para of same item</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_nested2 body
+Intro:
+
+* a
+  * a1
+  * a2
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+          <ul spacing="normal">
+            <li>
+              <t>a1</t>
+            </li>
+            <li>
+              <t>a2</t>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_nested4 body
+Intro:
+
+* a
+    * a1
+    * a2
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+          <ul spacing="normal">
+            <li>
+              <t>a1</t>
+            </li>
+            <li>
+              <t>a2</t>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_no_blank body
+Intro:
+* a
+* b
+%% want error
+a list needs a blank line before it
+%% case list_ol_in_ul body
+Intro:
+
+* a
+
+  1. one
+  2. two
+
+* b
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+          <ol spacing="normal" type="1">
+            <li>
+              <t>one</t>
+            </li>
+            <li>
+              <t>two</t>
+            </li>
+          </ol>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_ordered body
+Intro:
+
+1. one
+2. two
+3. three
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ol spacing="normal" type="1">
+        <li>
+          <t>one</t>
+        </li>
+        <li>
+          <t>two</t>
+        </li>
+        <li>
+          <t>three</t>
+        </li>
+      </ol>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_ordered_paren body
+Intro:
+
+1) one
+2) two
+%% want error
+a numbered list must be written "1." and not "1)"
+%% case list_ordered_same body
+Intro:
+
+1. one
+1. two
+1. three
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ol spacing="normal" type="1">
+        <li>
+          <t>one</t>
+        </li>
+        <li>
+          <t>two</t>
+        </li>
+        <li>
+          <t>three</t>
+        </li>
+      </ol>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_ordered_start body
+Intro:
+
+3. three
+4. four
+%% want error
+a numbered list must start at 1; kramdown-rfc would renumber this one from 1
+%% case list_then_para body
+Intro:
+
+* a
+* b
+
+After the list.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+      <t>After the list.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case list_tight body
+Intro:
+
+* a
+* b
+* c
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Intro:</t>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+        <li>
+          <t>c</t>
+        </li>
+      </ul>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case math body
+Inline $$a^2$$ math.
+%% want error
+"$$" would be read by kramdown-rfc as math, which is not supported
+%% case multi_blank body
+Para one.
+
+
+
+Para two.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Para one.</t>
+      <t>Para two.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case not_a_list body
+1986\. A great year.
+
+2 * 3 is six.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>1986. A great year.</t>
+      <t>2 * 3 is six.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case num_dot_text body
+In 2019. Something. 3.14 is pi. v1.2.3 ok.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>In 2019. Something. 3.14 is pi. v1.2.3 ok.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case para_starts_special body
+\# not a heading
+
++1 for this.
+
+- - -
+
+-5 degrees.
+%% want error
+unsupported Markdown construct (ThematicBreak)
+%% case pipe_text body
+a | b | c in text.
+%% want error
+"|" in text would be read by kramdown-rfc as a table; write "\|", or put the text in backticks
+%% case plus_minus_text body
+A + B - C = D, +1, -1, a - b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A + B - C = D, +1, -1, a - b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case quote_chars body
+He said "hi" -- and 'bye' ... `code "q" -- x` done.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>He said "hi" -- and 'bye' ... <tt>code "q" -- x</tt> done.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case refs_both body
+First {{!RFC8555}} then {{?RFC8555}} and {{?RFC2119}} then {{!RFC2119}}.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>First <xref target="RFC8555"/> then <xref target="RFC8555"/> and <xref target="RFC2119"/> then <xref target="RFC2119"/>.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC8555"/>
+      <reference anchor="RFC2119"/>
+    </references>
+  </back>
+%% case section_empty body
+Text.
+
+# Empty One
+
+# After Empty
+
+x
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="empty-one">
+      <name>Empty One</name>
+    </section>
+    <section anchor="after-empty">
+      <name>After Empty</name>
+      <t>x</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case section_only_list body
+Text.
+
+# Listy
+
+* a
+* b
+
+# Codey
+
+~~~
+x
+~~~
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Text.</t>
+    </section>
+    <section anchor="listy">
+      <name>Listy</name>
+      <ul spacing="normal">
+        <li>
+          <t>a</t>
+        </li>
+        <li>
+          <t>b</t>
+        </li>
+      </ul>
+    </section>
+    <section anchor="codey">
+      <name>Codey</name>
+      <artwork><![CDATA[
+x
+]]></artwork>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case soft_breaks body
+line one
+line two
+line three
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>line one
+line two
+line three</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case specials body
+1 < 2 & 3 > 2, AT&T, "quoted" and 'single', it's fine.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>1 &lt; 2 &amp; 3 &gt; 2, AT&amp;T, "quoted" and 'single', it's fine.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case star_escaped body
+A \*.example.org wildcard.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A *.example.org wildcard.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case star_words body
+A *.example.org wildcard and a**b and f(*args).
+%% want error
+'*' here is not clearly emphasis or plain text; write "\*" for the character itself, or put the text in backticks
+%% case strike body
+Some ~~struck~~ text.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Some ~~struck~~ text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case superscript body
+x^2^ and H~2~O.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>x^2^ and H~2~O.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case table body
+Intro:
+
+| a | b |
+|---|---|
+| 1 | 2 |
+%% want error
+"|" in text would be read by kramdown-rfc as a table; write "\|", or put the text in backticks
+%% case tabs body
+word	word and	tabs.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>word	word and	tabs.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case tilde_text body
+About ~5 and ~/path and a~b.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>About ~5 and ~/path and a~b.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case trailing_ws body
+trailing spaces here   
+
+Next.   
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>trailing spaces here</t>
+      <t>Next.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case typo_dashes body
+en -- dash, em --- dash, ellipsis... and it's "quoted" 'single' text.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>en -- dash, em --- dash, ellipsis... and it's "quoted" 'single' text.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case typo_guillemets_escaped body
+A \<\<quote\>\> here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>A &lt;&lt;quote&gt;&gt; here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case typography body
+en -- dash, em --- dash, ellipsis... and <<guillemets>> end.
+%% want error
+unsupported Markdown construct (RawHTML)
+%% case under_escaped body
+Use \_acme-challenge.example.org and \_\_init\_\_ fine.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Use _acme-challenge.example.org and __init__ fine.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case under_words body
+Use _acme-challenge.example.org and foo_bar and __init__ and a_ b _c.
+%% want error
+'_' here is not clearly emphasis or plain text; write "\_" for the character itself, or put the text in backticks
+%% case unicode body
+naïve café — “curly” ‘quotes’ and an arrow → here.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>naïve café — “curly” ‘quotes’ and an arrow → here.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case url_bare_trailing body
+See https://example.com/a_b_c/d-e?x=1&y=2#frag. Done.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>See https://example.com/a_b_c/d-e?x=1&amp;y=2#frag. Done.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+  </back>
+%% case xml_passthrough body
+Text.
+
+<aside><t>An aside.</t></aside>
+%% want error
+unsupported Markdown construct (HTMLBlock)
+%% case xref_format body
+See {{<<introduction}} and {{<introduction}}.
+%% want error
+unsupported cross-reference {{<<introduction}}
+%% case xref_forms body
+See {{!RFC8555}}, {{?RFC2119}}, {{RFC8555, Section 7.3}}, {{Section 8.1 of RFC8555}}, {{RFC8555 (Appendix A.1)}} and {{introduction}}.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>See <xref target="RFC8555"/>, <xref target="RFC2119"/>, <xref section="7.3" sectionFormat="comma" target="RFC8555"/>, <xref section="8.1" sectionFormat="of" target="RFC8555"/>, <xref section="A.1" sectionFormat="parens" target="RFC8555"/> and <xref target="introduction"/>.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-combined-references">
+      <name>References</name>
+      <references anchor="sec-normative-references">
+        <name>Normative References</name>
+        <reference anchor="RFC8555"/>
+      </references>
+      <references anchor="sec-informative-references">
+        <name>Informative References</name>
+        <reference anchor="RFC2119"/>
+      </references>
+    </references>
+  </back>
+%% case xref_in_emph body
+This is *really in {{!RFC8555}}* and `{{RFC8555}}` in code.
+%% want middle
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>This is <em>really in <xref target="RFC8555"/></em> and <tt>{{RFC8555}}</tt> in code.</t>
+    </section>
+  </middle>
+%% want back
+  <back>
+    <references anchor="sec-normative-references">
+      <name>Normative References</name>
+      <reference anchor="RFC8555"/>
+    </references>
+  </back>
+%% case xref_sections_multi body
+See {{Sections 7.3 and 8.1 of RFC8555}}. Also {{!RFC8555}}.
+%% want error
+unsupported cross-reference {{Sections 7.3 and 8.1 of RFC8555}}
+%% case xref_text body
+See {{RFC8555 (the ACME spec)}} and {{introduction (the intro)}}. Also {{!RFC8555}}.
+%% want error
+unsupported cross-reference {{RFC8555 (the ACME spec)}}

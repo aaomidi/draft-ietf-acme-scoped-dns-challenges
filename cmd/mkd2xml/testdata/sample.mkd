@@ -1,0 +1,122 @@
+---
+title: "A Sample Draft & Its Markup"
+abbrev: "SAMPLE"
+category: std
+submissiontype: IETF
+
+docname: draft-example-sample-02
+v: 3
+area: Security
+workgroup: Example Working Group
+keyword:
+  - sample
+  - example
+ipr: trust200902
+venue:
+  group: Example
+  type: Working Group
+  mail: example@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/example/
+  github: example/draft-example-sample
+  latest: https://example.github.io/draft-example-sample/
+
+author:
+ -
+    fullname: Alice Example
+    organization: Example Org
+    email: alice@example.com
+ -
+    fullname: Bob B. Sample
+    initials: B. B.
+    surname: Sample
+    email: bob@example.com
+
+normative:
+  HANDBOOK:
+    title: "The <Example> Handbook"
+    date: 2015-08
+    target: https://example.com/handbook?a=1&b=2
+    author:
+      org: Example Standards Body
+
+informative:
+  I-D.draft-ietf-example-thing:
+  REGISTRY:
+    title: "Example Registry"
+    target: https://example.com/registry
+    author:
+      -
+        name: Carol Sample
+        ins: C. Sample
+      -
+        org: Example Authority
+
+--- abstract
+
+This abstract has `code`, a reference to {{!RFC8555}} and an ampersand: A & B.
+
+--- middle
+
+# Introduction
+
+Plain text with *emphasis*, **strong text** and a [link](https://example.com/a?b=1&c=2).
+A second source line in the same paragraph, citing {{HANDBOOK}} and {{REGISTRY}}.
+
+Section references come in three forms: {{!RFC8555, Section 7.3}},
+{{Section 8.1 of RFC8555}} and {{RFC8555 (Appendix A.1)}}. See also {{nested-lists}}.
+
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+# Requirements & Lists
+
+A client MUST do this, SHOULD NOT do that, and MAY do the other. Text in
+`MUST code` is left alone, as is a word like MAYBE.
+
+* first item
+* second item, which MUST NOT be skipped
+
+## Nested Lists
+
+1. Step one
+
+   - Detail with a formula:
+
+         a < b && b > c
+
+     - a sub-detail
+     - another, with an empty object ({})
+
+   - Second detail
+
+2. Step two
+
+Example record:
+
+~~~
+_label._acme-challenge.example.org. 300 IN TXT (
+    "value" )
+~~~
+
+Example object, with a CDATA terminator ]]> inside:
+
+~~~ json
+{ "a": [[1]]> }
+~~~
+
+# Security Considerations
+
+Nothing to see here.
+
+--- back
+
+# Acknowledgments
+{:numbered="false"}
+
+Thanks to everyone, including the authors of {{?I-D.draft-ietf-example-thing}}.
+
+# Change Log
+{: #changes numbered="false" removeInRFC="true"}
+
+See {{changes}}.
