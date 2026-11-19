@@ -181,6 +181,19 @@ The validation succeeds only if all verifications pass. The ACME server MUST mar
 
 The ACME client SHOULD de-provision the resource record(s) provisioned for this challenge once the challenge is complete, i.e., once the "status" field of the challenge has the value "valid" or "invalid".
 
+Resource records left in place accumulate at the validation domain name over time and increase the DNS response size.
+Since their value is derived from a single-use challenge `token`, they cannot satisfy any future challenge. Therefore
+stale resource records do not affect security, so de-provisioning is not strictly required; an ACME client can, e.g.,
+remove them later in batches, or retry removal after an error asynchronously.
+
+Multiple challenges can share the same validation domain name, e.g., when the same ACME account requests a certificate
+for both a domain name and its wildcard. In this case, the ACME client provisions one `TXT` record per challenge and
+removes only the record for the completed challenge, since removing all `TXT` records at the validation domain name
+would cause the remaining validations to fail.
+
+Resource records not provisioned for a specific challenge, such as a `CNAME` record delegating the validation domain
+name, are not affected by this recommendation.
+
 ## Errors
 
 Errors encountered during challenge validation are reported as described in {{!RFC8555, Section 6.7}}.
